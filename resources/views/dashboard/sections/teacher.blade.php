@@ -4,8 +4,8 @@
         <i class="fas fa-presentation text-emerald-600"></i>Teaching Workload
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        @foreach($data['stats'] as $stat)
-            <div class="stat-card from-{{ $stat['color'] }}-500 to-{{ $stat['color'] }}-600">
+        @foreach($data['stats'] as $index => $stat)
+            <div class="stat-card from-{{ $stat['color'] }}-500 to-{{ $stat['color'] }}-600" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-{{ $stat['color'] }}-100 text-sm font-medium">{{ $stat['label'] }}</p>
@@ -25,17 +25,17 @@
 
 <!-- Teacher Quick Actions -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-    <a href="{{ route('teacher.results.classes') }}" class="group p-4 bg-indigo-50 border-2 border-indigo-200 rounded-lg hover:border-indigo-600 hover:bg-indigo-100 transition-all">
+    <a href="{{ route('teacher.results.classes') }}" class="group p-4 bg-indigo-50 border-2 border-indigo-200 rounded-lg hover:border-indigo-600 hover:bg-indigo-100 transition-all" data-aos="zoom-in" data-aos-delay="100">
         <i class="fas fa-plus-circle text-2xl text-indigo-600 mb-2 block"></i>
         <p class="font-semibold text-gray-900 text-sm">Enter Results</p>
         <p class="text-xs text-gray-600">Record student scores</p>
     </a>
-    <a href="{{ route('teacher.mark-attendance') }}" class="group p-4 bg-cyan-50 border-2 border-cyan-200 rounded-lg hover:border-cyan-600 hover:bg-cyan-100 transition-all">
+    <a href="{{ route('teacher.mark-attendance') }}" class="group p-4 bg-cyan-50 border-2 border-cyan-200 rounded-lg hover:border-cyan-600 hover:bg-cyan-100 transition-all" data-aos="zoom-in" data-aos-delay="200">
         <i class="fas fa-clipboard-check text-2xl text-cyan-600 mb-2 block"></i>
         <p class="font-semibold text-gray-900 text-sm">Take Attendance</p>
         <p class="text-xs text-gray-600">Mark daily attendance</p>
     </a>
-    <a href="{{ route('teacher.my-classes') }}" class="group p-4 bg-rose-50 border-2 border-rose-200 rounded-lg hover:border-rose-600 hover:bg-rose-100 transition-all">
+    <a href="{{ route('teacher.my-classes') }}" class="group p-4 bg-rose-50 border-2 border-rose-200 rounded-lg hover:border-rose-600 hover:bg-rose-100 transition-all" data-aos="zoom-in" data-aos-delay="300">
         <i class="fas fa-book text-2xl text-rose-600 mb-2 block"></i>
         <p class="font-semibold text-gray-900 text-sm">My Classes</p>
         <p class="text-xs text-gray-600">Manage class sections</p>
@@ -44,7 +44,7 @@
 
 <!-- Class Breakdown -->
 @if($data['classBreakdown'])
-<div class="card">
+<div class="card" data-aos="fade-up" data-aos-delay="200">
     <div class="card-header">
         <h2 class="text-lg font-semibold text-gray-900">My Classes - Current Term</h2>
     </div>
@@ -75,7 +75,7 @@
 
 <!-- Recent Results -->
 @if(count($data['recentResults']) > 0)
-<div class="card">
+<div class="card" data-aos="fade-up" data-aos-delay="300">
     <div class="card-header">
         <h2 class="text-lg font-semibold text-gray-900">Recently Entered Results</h2>
         <span class="text-sm text-gray-600">Last 5 entries</span>

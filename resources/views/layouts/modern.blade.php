@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" 
+      dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +18,9 @@
 
     <!-- Modern Design System -->
     <link rel="stylesheet" href="{{ asset('css/modern-design.css') }}">
+    
+    <!-- RTL Support CSS -->
+    <link rel="stylesheet" href="{{ asset('css/rtl.css') }}">
 
     <!-- Custom Tailwind Config -->
     <script>

@@ -23,4 +23,16 @@ class LocaleController extends Controller
         // Redirect back to previous page
         return redirect()->back()->with('success', 'Language changed successfully!');
     }
+
+    /**
+     * Get current locale
+     */
+    public function getCurrent()
+    {
+        $locale = app()->getLocale();
+        return response()->json([
+            'locale' => $locale,
+            'dir' => $locale === 'ar' ? 'rtl' : 'ltr',
+        ]);
+    }
 }

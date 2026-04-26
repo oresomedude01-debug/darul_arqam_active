@@ -4,8 +4,8 @@
         <i class="fas fa-wallet text-teal-600"></i>Billing & Payment Status
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        @foreach($data['stats'] as $stat)
-            <div class="stat-card from-{{ $stat['color'] }}-500 to-{{ $stat['color'] }}-600">
+        @foreach($data['stats'] as $index => $stat)
+            <div class="stat-card from-{{ $stat['color'] }}-500 to-{{ $stat['color'] }}-600" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-{{ $stat['color'] }}-100 text-sm font-medium">{{ $stat['label'] }}</p>
@@ -31,22 +31,22 @@
 
 <!-- Parent Quick Actions -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-    <a href="{{ route('parent-portal.bills') }}" class="group p-4 bg-red-50 border-2 border-red-200 rounded-lg hover:border-red-600 hover:bg-red-100 transition-all">
+    <a href="{{ route('parent-portal.bills') }}" class="group p-4 bg-red-50 border-2 border-red-200 rounded-lg hover:border-red-600 hover:bg-red-100 transition-all" data-aos="zoom-in" data-aos-delay="100">
         <i class="fas fa-file-invoice-dollar text-2xl text-red-600 mb-2 block"></i>
         <p class="font-semibold text-gray-900 text-sm">View Bills</p>
         <p class="text-xs text-gray-600">Check school charges</p>
     </a>
-    <a href="{{ route('parent-portal.payment-history') }}" class="group p-4 bg-green-50 border-2 border-green-200 rounded-lg hover:border-green-600 hover:bg-green-100 transition-all">
+    <a href="{{ route('parent-portal.payment-history') }}" class="group p-4 bg-green-50 border-2 border-green-200 rounded-lg hover:border-green-600 hover:bg-green-100 transition-all" data-aos="zoom-in" data-aos-delay="200">
         <i class="fas fa-history text-2xl text-green-600 mb-2 block"></i>
         <p class="font-semibold text-gray-900 text-sm">Payment History</p>
         <p class="text-xs text-gray-600">Track all transactions</p>
     </a>
-    <a href="{{ route('parent-portal.children') }}" class="group p-4 bg-blue-50 border-2 border-blue-200 rounded-lg hover:border-blue-600 hover:bg-blue-100 transition-all">
+    <a href="{{ route('parent-portal.children') }}" class="group p-4 bg-blue-50 border-2 border-blue-200 rounded-lg hover:border-blue-600 hover:bg-blue-100 transition-all" data-aos="zoom-in" data-aos-delay="300">
         <i class="fas fa-children text-2xl text-blue-600 mb-2 block"></i>
         <p class="font-semibold text-gray-900 text-sm">My Children</p>
         <p class="text-xs text-gray-600">View children profiles</p>
     </a>
-    <a href="{{ route('parent-portal.dashboard') }}" class="group p-4 bg-purple-50 border-2 border-purple-200 rounded-lg hover:border-purple-600 hover:bg-purple-100 transition-all">
+    <a href="{{ route('parent-portal.dashboard') }}" class="group p-4 bg-purple-50 border-2 border-purple-200 rounded-lg hover:border-purple-600 hover:bg-purple-100 transition-all" data-aos="zoom-in" data-aos-delay="400">
         <i class="fas fa-book text-2xl text-purple-600 mb-2 block"></i>
         <p class="font-semibold text-gray-900 text-sm">Children Results</p>
         <p class="text-xs text-gray-600">Check academic progress</p>
@@ -55,7 +55,7 @@
 
 <!-- Children Overview -->
 @if($data['childrenOverview'])
-<div class="card">
+<div class="card" data-aos="fade-up" data-aos-delay="200">
     <div class="card-header">
         <h2 class="text-lg font-semibold text-gray-900">Your Children</h2>
     </div>
@@ -111,7 +111,7 @@
 
 <!-- Payment Reminders -->
 @if($data['stats'][1]['value'] > 0)
-<div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg">
+<div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg" data-aos="flip-up" data-aos-delay="300">
     <div class="flex items-start">
         <div class="flex-shrink-0">
             <i class="fas fa-bell text-orange-600 text-2xl"></i>
@@ -128,7 +128,7 @@
 @endif
 
 <!-- Quick Links -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4" data-aos="fade-up" data-aos-delay="400">
     <a href="{{ route('parent-portal.children') }}" class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg hover:border-blue-400 transition-all text-center">
         <i class="fas fa-user-graduate text-3xl text-blue-600 mb-2"></i>
         <p class="font-semibold text-gray-900">My Children</p>

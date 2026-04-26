@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" 
+      dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,8 +19,15 @@
     <!-- Bootstrap CSS for calendar views -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
+    <!-- RTL Support CSS -->
+    <link rel="stylesheet" href="{{ asset('css/rtl.css') }}">
+    
     <!-- Optional Modern Design System CSS (from second layout) -->
     <link rel="stylesheet" href="{{ asset('css/modern-design.css') }}">
+    
+    <!-- AOS CSS & Lenis (Smooth Scroll) CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style> html.lenis, html.lenis body { height: auto; width: 100vw; overflow-x: hidden; } .lenis.lenis-smooth { scroll-behavior: auto !important; } .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; } .lenis.lenis-stopped { overflow: hidden; } .lenis.lenis-smooth iframe { pointer-events: none; } </style>
 
     <!-- Custom Tailwind Config -->
     <script>
@@ -65,12 +73,21 @@
 
         /* Page transition */
         .page-transition {
-            animation: fadeIn 0.3s ease-in-out;
+            animation: slideInRight 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .page-transition-back {
+            animation: slideInLeft 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px) scale(0.98); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px) scale(0.98); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
         }
 
         /* Active nav link indicator */
@@ -687,13 +704,7 @@
 
                     <!-- Right: Search, Language, Notifications -->
                     <div class="flex items-center gap-2 sm:gap-3">
-                        <!-- Search -->
-                        <div class="hidden md:block relative">
-                            <input type="text"
-                                   placeholder="Search..."
-                                   class="w-64 pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition">
-                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        </div>
+                        <!-- Search removed per user request -->
 
                         <!-- Language Switcher -->
                         <div x-data="{ open: false }" class="relative">
@@ -749,6 +760,54 @@
                 </div>
             </div>
         </footer>
+        
+        <!-- Push content up slightly so it doesn't hide behind tab bar on mobile -->
+        <div class="h-16 lg:hidden"></div>
+
+        <!-- Mobile Bottom Tab Bar -->
+        <nav class="lg:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 z-50 px-2 pt-2 pb-safe bg-opacity-95 backdrop-blur-md pb-1 touch-none shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+            <div class="flex justify-around items-center">
+                <a href="{{ route('dashboard') }}" @click.prevent="navigate('{{ route('dashboard') }}')" 
+                   :class="currentPath.includes('/dashboard') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
+                   class="flex flex-col items-center p-2 transition-colors flex-1 text-center">
+                    <i class="fas fa-home text-lg mb-1" :class="currentPath.includes('/dashboard') ? 'scale-110 shadow-sm' : ''" style="transition: transform 0.2s"></i>
+                    <span class="text-[10px] font-medium">Home</span>
+                </a>
+                
+                @hasPermission('view-students')
+                <a href="{{ url('students') }}" @click.prevent="navigate('{{ url('students') }}')"
+                   :class="currentPath.includes('/students') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
+                   class="flex flex-col items-center p-2 transition-colors flex-1 text-center">
+                    <i class="fas fa-user-graduate text-lg mb-1" :class="currentPath.includes('/students') ? 'scale-110 shadow-sm' : ''" style="transition: transform 0.2s"></i>
+                    <span class="text-[10px] font-medium">Students</span>
+                </a>
+                @endhasPermission
+                
+                <button @click="mobileMenuOpen = !mobileMenuOpen" 
+                        class="flex flex-col items-center p-2 text-primary-500 relative -top-5 flex-1 text-center">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-primary-500 to-primary-700 text-white flex items-center justify-center shadow-lg shadow-primary-500/40">
+                        <i class="fas fa-bars text-xl"></i>
+                    </div>
+                </button>
+                
+                @hasPermission('view-classes')
+                <a href="{{ url('classes') }}" @click.prevent="navigate('{{ url('classes') }}')"
+                   :class="currentPath.includes('/classes') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
+                   class="flex flex-col items-center p-2 transition-colors flex-1 text-center">
+                    <i class="fas fa-door-open text-lg mb-1" :class="currentPath.includes('/classes') ? 'scale-110 shadow-sm' : ''" style="transition: transform 0.2s"></i>
+                    <span class="text-[10px] font-medium">Classes</span>
+                </a>
+                @endhasPermission
+                
+                <a href="{{ route('profile.show') }}" @click.prevent="navigate('{{ route('profile.show') }}')"
+                   :class="currentPath.includes('/profile') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
+                   class="flex flex-col items-center p-2 transition-colors flex-1 text-center">
+                    <i class="fas fa-user text-lg mb-1" :class="currentPath.includes('/profile') ? 'scale-110 shadow-sm' : ''" style="transition: transform 0.2s"></i>
+                    <span class="text-[10px] font-medium">Profile</span>
+                </a>
+            </div>
+        </nav>
+        
     </div>
 
     <!-- Bootstrap JS -->
@@ -1020,6 +1079,32 @@
                 console.error('Form submission error:', error);
                 alert('An error occurred while submitting the form');
             }
+        });
+        
+
+    </script>
+    
+    <!-- AOS and Lenis Libraries -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+    <script>
+        // Init Smooth Scrolling
+        const lenis = new Lenis({ 
+            duration: 1.2, 
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) 
+        });
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Init Scroll Animations
+        AOS.init({ duration: 800, once: true, offset: 50 });
+        
+        // Re-init AOS on SPA loaded
+        document.addEventListener('spaContentLoaded', () => {
+            AOS.refresh();
         });
     </script>
 

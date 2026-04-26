@@ -9,13 +9,13 @@
 @section('content')
 <div class="space-y-6">
     <!-- Welcome Banner -->
-    <div class="bg-gradient-to-r from-primary-600 to-primary-800 rounded-xl p-8 text-white">
+    <div class="bg-gradient-to-r from-primary-600 to-primary-800 rounded-xl p-8 text-white" data-aos="fade-up">
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-bold mb-2">Welcome back, {{ $userName }}!</h1>
                 <p class="text-primary-100">{{ $userRole }} Dashboard - Here's your analysis and KPIs</p>
             </div>
-            <div class="hidden md:block">
+            <div class="hidden md:block" data-aos="zoom-in" data-aos-delay="200">
                 <i class="fas fa-chart-line text-6xl opacity-20"></i>
             </div>
         </div>
@@ -107,7 +107,7 @@
     <!-- Recent Activity & Upcoming Events -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Recent Activity -->
-        <div class="card">
+        <div class="card" data-aos="fade-right" data-aos-delay="100">
             <div class="card-header">
                 <h2 class="text-lg font-semibold text-gray-900">Recent Activity</h2>
                 <a href="#" class="text-sm text-primary-600 hover:text-primary-700">View All</a>
@@ -170,7 +170,7 @@
         </div>
 
         <!-- Upcoming Events -->
-        <div class="card">
+        <div class="card" data-aos="fade-left" data-aos-delay="200">
             <div class="card-header">
                 <h2 class="text-lg font-semibold text-gray-900">Upcoming Events</h2>
                 <a href="#" class="text-sm text-primary-600 hover:text-primary-700">View Calendar</a>
@@ -227,7 +227,7 @@
     </div>
 
     <!-- Performance Overview -->
-    <div class="card">
+    <div class="card" data-aos="fade-up" data-aos-delay="300">
         <div class="card-header">
             <h2 class="text-lg font-semibold text-gray-900">Class Performance Overview</h2>
             <select class="form-select text-sm py-1">

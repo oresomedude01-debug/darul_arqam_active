@@ -3,7 +3,9 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" 
+      dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}"
+      class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,6 +56,9 @@
         body { font-feature-settings: "cv11", "ss01"; }
         .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
     </style>
+    
+    <!-- RTL Support CSS -->
+    <link rel="stylesheet" href="{{ asset('css/rtl.css') }}">
     
     @stack('styles')
 </head>
