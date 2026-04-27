@@ -222,7 +222,10 @@
                 <tbody>
                     @forelse($classes as $class)
                     <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="font-mono text-sm font-semibold">{{ $class->class_code }}</td>
+                        <td class="font-mono text-sm font-semibold">
+                            <span class="text-xs text-gray-400">ID: {{ $class->id }}</span><br>
+                            {{ $class->class_code }}
+                        </td>
                         <td>
                             <div>
                                 <div class="font-semibold text-gray-900">{{ $class->full_name }}</div>
@@ -313,7 +316,10 @@
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <h4 class="font-bold text-gray-900 text-lg">{{ $class->full_name }}</h4>
-                        <p class="text-sm text-gray-600 font-mono">{{ $class->class_code }}</p>
+                        <p class="text-sm text-gray-600 font-mono">
+                            <span class="text-xs text-gray-400">ID: {{ $class->id }} |</span> 
+                            {{ $class->class_code }}
+                        </p>
                     </div>
                     @if($class->status === 'active')
                         <span class="badge badge-success">Active</span>

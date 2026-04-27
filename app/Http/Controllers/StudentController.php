@@ -560,24 +560,22 @@ class StudentController extends Controller
                     continue;
                 }
 
-                // Resolve school class ID from column 11 (could be class name or ID)
+                // Resolve school class ID from column 11
                 $classInput = trim($row[11] ?? '');
                 if (!empty($classInput)) {
-                    // Try to find class by ID first, then by name
-                    $schoolClass = SchoolClass::where('id', $classInput)
-                        ->orWhere('name', 'like', $classInput)
-                        ->first();
+                    // Find class by ID 
+                    $schoolClass = SchoolClass::where('id', $classInput)->first();
                     
                     if ($schoolClass) {
                         $data['school_class_id'] = $schoolClass->id;
                     } else {
                         $skipped++;
-                        $errors[] = "Row " . ($index + 2) . ": School class '{$classInput}' not found in the system";
+                        $errors[] = "Row " . ($index + 2) . ": School class with ID '{$classInput}' not found";
                         continue;
                     }
                 } else {
                     $skipped++;
-                    $errors[] = "Row " . ($index + 2) . ": School class is required";
+                    $errors[] = "Row " . ($index + 2) . ": School class ID is required";
                     continue;
                 }
 
@@ -651,16 +649,17 @@ class StudentController extends Controller
             // Output a BOM for Excel compatibility
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
 
-            // Get valid classes for instructions
-            $validClasses = SchoolClass::pluck('name')->toArray();
-            $classExample = !empty($validClasses) ? $validClasses[0] : 'Grade 1';
+            $validClasses = SchoolClass::select('id', 'name')->get()->map(function($c) {
+                return $c->name . '(ID:' . $c->id . ')';
+            })->toArray();
+            $classExample = SchoolClass::first() ? SchoolClass::first()->id : '1';
             
             // Add instructions row
             fputcsv($file, [
                 'INSTRUCTIONS:',
                 'Fill from Row 3.',
                 'Do not edit Row 2 headers.',
-                'Valid Class Names: ' . implode(', ', $validClasses),
+                'Valid Class IDs: ' . implode(', ', $validClasses),
                 'Dates must be YYYY-MM-DD',
                 'Leave Admission Number empty'
             ]);
@@ -678,7 +677,7 @@ class StudentController extends Controller
                 'Address',
                 'Email',
                 'Phone',
-                'Class Level * (Use exact name)',
+                'Class ID * (Use exact ID)',
                 'Section',
                 'Status (active/inactive)',
             ]);
