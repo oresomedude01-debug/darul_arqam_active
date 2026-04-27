@@ -4,7 +4,7 @@
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" 
-      dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}"
+      dir="ltr"
       class="h-full">
 <head>
     <meta charset="UTF-8">
