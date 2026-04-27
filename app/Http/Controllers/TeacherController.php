@@ -164,6 +164,18 @@ class TeacherController extends Controller
             'notes' => $validated['notes'] ?? null,
         ]);
 
+        // Assign classes to teacher (same as class edit logic)
+        if (!empty($validated['classes'])) {
+            foreach ($validated['classes'] as $className) {
+                // Extract the class name from "Name - Code" format
+                $classNameOnly = explode(' - ', $className)[0] ?? $className;
+                
+                // Find the class and update its teacher_id
+                SchoolClass::where('name', 'like', $classNameOnly)
+                    ->update(['teacher_id' => $user->id]);
+            }
+        }
+
         // Send welcome email to teacher
         try {
             $emailContent = view('emails.teacher-welcome', [

@@ -3,25 +3,25 @@
     <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
         <i class="fas fa-chart-pie text-primary-600"></i>School Overview
     </h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
         @foreach($data['stats'] as $index => $stat)
             <div class="stat-card from-{{ $stat['color'] }}-500 to-{{ $stat['color'] }}-600" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between">
                 <div>
-                    <p class="text-{{ $stat['color'] }}-100 text-sm font-medium">{{ $stat['label'] }}</p>
-                    <h3 class="text-3xl font-bold mt-2">
+                    <p class="text-{{ $stat['color'] }}-100 text-xs md:text-sm font-medium">{{ $stat['label'] }}</p>
+                    <h3 class="text-xl md:text-3xl font-bold mt-1 md:mt-2">
                         @if(isset($stat['format']) && $stat['format'] === 'currency')
                             ₦{{ number_format($stat['value'], 0) }}
                         @else
                             {{ $stat['value'] }}
                         @endif
                     </h3>
-                    <p class="text-{{ $stat['color'] }}-100 text-xs mt-2">
+                    <p class="text-{{ $stat['color'] }}-100 text-xs mt-1 md:mt-2">
                         <i class="fas fa-info-circle"></i> {{ $stat['trend'] }}
                     </p>
                 </div>
-                <div class="bg-white/20 rounded-full p-4">
-                    <i class="{{ $stat['icon'] }} text-3xl"></i>
+                <div class="bg-white/20 rounded-full p-2 md:p-4 mt-2 md:mt-0">
+                    <i class="{{ $stat['icon'] }} text-lg md:text-3xl"></i>
                 </div>
             </div>
         </div>
@@ -30,26 +30,26 @@
 </div>
 
 <!-- Admin Quick Actions -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-    <a href="{{ route('students.index') }}" class="group p-4 bg-blue-50 border-2 border-blue-200 rounded-lg hover:border-blue-600 hover:bg-blue-100 transition-all" data-aos="zoom-in" data-aos-delay="100">
-        <i class="fas fa-users text-2xl text-blue-600 mb-2 block"></i>
-        <p class="font-semibold text-gray-900 text-sm">Manage Students</p>
-        <p class="text-xs text-gray-600">View & edit student records</p>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-8">
+    <a href="{{ route('students.index') }}" class="group p-2 md:p-4 bg-blue-50 border-2 border-blue-200 rounded-lg hover:border-blue-600 hover:bg-blue-100 transition-all" data-aos="zoom-in" data-aos-delay="100">
+        <i class="fas fa-users text-lg md:text-2xl text-blue-600 mb-1 md:mb-2 block"></i>
+        <p class="font-semibold text-gray-900 text-xs md:text-sm">Manage Students</p>
+        <p class="text-xs text-gray-600 hidden md:block">View & edit student records</p>
     </a>
-    <a href="{{ route('teachers.index') }}" class="group p-4 bg-green-50 border-2 border-green-200 rounded-lg hover:border-green-600 hover:bg-green-100 transition-all" data-aos="zoom-in" data-aos-delay="200">
-        <i class="fas fa-chalkboard-user text-2xl text-green-600 mb-2 block"></i>
-        <p class="font-semibold text-gray-900 text-sm">Manage Teachers</p>
-        <p class="text-xs text-gray-600">Assign roles & permissions</p>
+    <a href="{{ route('teachers.index') }}" class="group p-2 md:p-4 bg-green-50 border-2 border-green-200 rounded-lg hover:border-green-600 hover:bg-green-100 transition-all" data-aos="zoom-in" data-aos-delay="200">
+        <i class="fas fa-chalkboard-user text-lg md:text-2xl text-green-600 mb-1 md:mb-2 block"></i>
+        <p class="font-semibold text-gray-900 text-xs md:text-sm">Manage Teachers</p>
+        <p class="text-xs text-gray-600 hidden md:block">Assign roles & permissions</p>
     </a>
-    <a href="{{ route('results.index') }}" class="group p-4 bg-purple-50 border-2 border-purple-200 rounded-lg hover:border-purple-600 hover:bg-purple-100 transition-all" data-aos="zoom-in" data-aos-delay="300">
-        <i class="fas fa-file-contract text-2xl text-purple-600 mb-2 block"></i>
-        <p class="font-semibold text-gray-900 text-sm">View Results</p>
-        <p class="text-xs text-gray-600">Monitor academic performance</p>
+    <a href="{{ route('results.index') }}" class="group p-2 md:p-4 bg-purple-50 border-2 border-purple-200 rounded-lg hover:border-purple-600 hover:bg-purple-100 transition-all" data-aos="zoom-in" data-aos-delay="300">
+        <i class="fas fa-file-contract text-lg md:text-2xl text-purple-600 mb-1 md:mb-2 block"></i>
+        <p class="font-semibold text-gray-900 text-xs md:text-sm">View Results</p>
+        <p class="text-xs text-gray-600 hidden md:block">Monitor academic performance</p>
     </a>
-    <a href="{{ route('billing.generate-bills') }}" class="group p-4 bg-orange-50 border-2 border-orange-200 rounded-lg hover:border-orange-600 hover:bg-orange-100 transition-all" data-aos="zoom-in" data-aos-delay="400">
-        <i class="fas fa-money-bill-wave text-2xl text-orange-600 mb-2 block"></i>
-        <p class="font-semibold text-gray-900 text-sm">Billing</p>
-        <p class="text-xs text-gray-600">Manage fees & payments</p>
+    <a href="{{ route('billing.generate-bills') }}" class="group p-2 md:p-4 bg-orange-50 border-2 border-orange-200 rounded-lg hover:border-orange-600 hover:bg-orange-100 transition-all" data-aos="zoom-in" data-aos-delay="400">
+        <i class="fas fa-money-bill-wave text-lg md:text-2xl text-orange-600 mb-1 md:mb-2 block"></i>
+        <p class="font-semibold text-gray-900 text-xs md:text-sm">Billing</p>
+        <p class="text-xs text-gray-600 hidden md:block">Manage fees & payments</p>
     </a>
 </div>
 

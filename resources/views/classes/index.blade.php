@@ -26,17 +26,17 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
         <!-- Total Classes -->
         <div class="card hover:shadow-lg transition-all duration-200">
             <div class="card-body">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col items-start justify-between gap-2">
                     <div>
                         <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Classes</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($stats['total']) }}</p>
+                        <p class="text-2xl md:text-3xl font-bold text-gray-900 mt-1">{{ number_format($stats['total']) }}</p>
                     </div>
-                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-school text-white text-2xl"></i>
+                    <div class="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-school text-white text-lg md:text-2xl"></i>
                     </div>
                 </div>
             </div>
@@ -45,13 +45,13 @@
         <!-- Active Classes -->
         <div class="card hover:shadow-lg transition-all duration-200">
             <div class="card-body">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col items-start justify-between gap-2">
                     <div>
                         <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Active</p>
-                        <p class="text-3xl font-bold text-green-600 mt-1">{{ number_format($stats['active']) }}</p>
+                        <p class="text-2xl md:text-3xl font-bold text-green-600 mt-1">{{ number_format($stats['active']) }}</p>
                     </div>
-                    <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-check-circle text-white text-2xl"></i>
+                    <div class="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-check-circle text-white text-lg md:text-2xl"></i>
                     </div>
                 </div>
             </div>
@@ -60,13 +60,13 @@
         <!-- Inactive Classes -->
         <div class="card hover:shadow-lg transition-all duration-200">
             <div class="card-body">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col items-start justify-between gap-2">
                     <div>
                         <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Inactive</p>
-                        <p class="text-3xl font-bold text-gray-600 mt-1">{{ number_format($stats['inactive']) }}</p>
+                        <p class="text-2xl md:text-3xl font-bold text-gray-600 mt-1">{{ number_format($stats['inactive']) }}</p>
                     </div>
-                    <div class="w-14 h-14 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-pause-circle text-white text-2xl"></i>
+                    <div class="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-pause-circle text-white text-lg md:text-2xl"></i>
                     </div>
                 </div>
             </div>
@@ -75,13 +75,13 @@
         <!-- Full Classes -->
         <div class="card hover:shadow-lg transition-all duration-200">
             <div class="card-body">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col items-start justify-between gap-2">
                     <div>
                         <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Full Classes</p>
-                        <p class="text-3xl font-bold text-red-600 mt-1">{{ number_format($stats['full']) }}</p>
+                        <p class="text-2xl md:text-3xl font-bold text-red-600 mt-1">{{ number_format($stats['full']) }}</p>
                     </div>
-                    <div class="w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-user-slash text-white text-2xl"></i>
+                    <div class="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user-slash text-white text-lg md:text-2xl"></i>
                     </div>
                 </div>
             </div>
@@ -168,7 +168,7 @@
     </div>
 
     <!-- Classes List -->
-    <div class="card">
+    <div class="card pb-16 md:pb-0">
         <div class="card-header flex items-center justify-between">
             <h3 class="text-lg font-semibold text-gray-900">
                 Classes ({{ $classes->total() }})
