@@ -27,6 +27,11 @@
     
     <!-- AOS CSS & Lenis (Smooth Scroll) CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
     <style> html.lenis, html.lenis body { height: auto; width: 100vw; overflow-x: hidden; } .lenis.lenis-smooth { scroll-behavior: auto !important; } .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; } .lenis.lenis-stopped { overflow: hidden; } .lenis.lenis-smooth iframe { pointer-events: none; } </style>
 
     <!-- Custom Tailwind Config -->
@@ -56,7 +61,7 @@
     <style>
         [x-cloak] { display: none !important; }
 
-        /* Loading spinner */
+        /* ===== LOADING STATES ===== */
         .spinner {
             border: 3px solid #f3f4f6;
             border-top: 3px solid #0284c7;
@@ -71,38 +76,321 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Page transition */
+        /* Skeleton Loading Effect */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .skeleton-loading {
+            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        /* ===== PAGE TRANSITIONS ===== */
         .page-transition {
-            animation: slideInRight 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation: slideInRight 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         .page-transition-back {
-            animation: slideInLeft 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation: slideInLeft 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .fade-in-down {
+            animation: fadeInDown 0.6s ease-out forwards;
         }
 
         @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(30px) scale(0.98); }
-            to { opacity: 1; transform: translateX(0) scale(1); }
+            from { 
+                opacity: 0;
+                transform: translateX(40px) rotateY(-10deg);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0) rotateY(0deg);
+            }
         }
 
         @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-30px) scale(0.98); }
-            to { opacity: 1; transform: translateX(0) scale(1); }
+            from { 
+                opacity: 0;
+                transform: translateX(-40px) rotateY(10deg);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0) rotateY(0deg);
+            }
         }
 
-        /* Active nav link indicator */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== FORM INTERACTIONS ===== */
+        .form-input, .form-select, .form-textarea {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-color: #e5e7eb;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.15);
+            border-color: #0284c7;
+        }
+
+        .form-input::placeholder, .form-textarea::placeholder {
+            transition: color 0.3s ease;
+        }
+
+        .form-input:focus::placeholder, .form-textarea:focus::placeholder {
+            color: #9ca3af;
+        }
+
+        /* ===== BUTTONS & INTERACTIVE ELEMENTS ===== */
+        .btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .btn:active::before {
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 15px 30px -5px rgba(2, 132, 199, 0.3);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(2, 132, 199, 0.05);
+        }
+
+        /* ===== CARDS & CONTAINERS ===== */
+        .card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Stagger animation for cards */
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+
+        /* ===== BADGES & LABELS ===== */
+        .badge, .label {
+            animation: slideInDown 0.3s ease-out;
+        }
+
+        /* ===== ALERTS & NOTIFICATIONS ===== */
+        .alert {
+            animation: slideInDown 0.4s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert:hover {
+            transform: translateX(5px);
+        }
+
+        /* ===== ACTIVE NAV LINK ===== */
         .nav-link-active {
             background: rgba(255, 255, 255, 0.1) !important;
             border-left: 4px solid #fbbf24;
+            transition: all 0.3s ease;
         }
 
-        /* Scrollable without visible scrollbar */
+        /* ===== SCROLLABLE ELEMENTS ===== */
         .scrollbar-hide {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;      /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         .scrollbar-hide::-webkit-scrollbar {
-            display: none;  /* Chrome, Safari and Opera */
+            display: none;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ===== CHECKBOXES & RADIOS ===== */
+        .form-checkbox, .form-radio {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .form-checkbox:checked, .form-radio:checked {
+            animation: scaleIn 0.2s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); }
+            to { transform: scale(1); }
+        }
+
+        /* ===== DROPDOWNS & EXPANDABLES ===== */
+        .dropdown-content {
+            animation: slideInDown 0.3s ease-out;
+            transform-origin: top;
+        }
+
+        .accordion-item {
+            transition: all 0.3s ease;
+        }
+
+        .accordion-item.open {
+            background-color: rgba(2, 132, 199, 0.05);
+        }
+
+        /* ===== SUCCESS/ERROR STATES ===== */
+        .success-feedback {
+            animation: slideInRight 0.4s ease-out;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        }
+
+        .error-feedback {
+            animation: slideInRight 0.4s ease-out;
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        }
+
+        .warning-feedback {
+            animation: slideInRight 0.4s ease-out;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        }
+
+        /* ===== PROGRESS INDICATORS ===== */
+        .progress-bar {
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .progress-bar::after {
+            content: '';
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ===== LIST ITEM ANIMATIONS ===== */
+        .list-item {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .list-item:nth-child(1) { animation-delay: 0.05s; }
+        .list-item:nth-child(2) { animation-delay: 0.1s; }
+        .list-item:nth-child(3) { animation-delay: 0.15s; }
+        .list-item:nth-child(4) { animation-delay: 0.2s; }
+        .list-item:nth-child(5) { animation-delay: 0.25s; }
+
+        /* ===== MODAL ANIMATIONS ===== */
+        .modal-backdrop {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            animation: zoomIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) rotateX(-10deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotateX(0deg);
+            }
+        }
+
+        /* ===== TOOLTIP ANIMATIONS ===== */
+        .tooltip {
+            animation: fadeInDown 0.2s ease-out;
+        }
+
+        /* ===== TABLE ANIMATIONS ===== */
+        .table-row {
+            animation: fadeInLeft 0.4s ease-out;
+        }
+
+        .table-row:nth-child(1) { animation-delay: 0.05s; }
+        .table-row:nth-child(2) { animation-delay: 0.1s; }
+        .table-row:nth-child(3) { animation-delay: 0.15s; }
+        .table-row:nth-child(4) { animation-delay: 0.2s; }
+        .table-row:nth-child(5) { animation-delay: 0.25s; }
+
+        .table-row:hover {
+            background-color: rgba(2, 132, 199, 0.05) !important;
+            transform: scale(1.01);
         }
     </style>
 
@@ -1184,8 +1472,15 @@
         // Re-init AOS on SPA loaded
         document.addEventListener('spaContentLoaded', () => {
             AOS.refresh();
+            // Reinitialize GSAP animations when content is loaded
+            if (typeof reinitializeAnimations === 'function') {
+                reinitializeAnimations();
+            }
         });
     </script>
+
+    <!-- Enhanced UX Animations with GSAP -->
+    <script src="{{ asset('js/animations.js') }}"></script>
 
     @stack('scripts')
 </body>

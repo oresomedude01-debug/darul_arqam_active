@@ -13,7 +13,7 @@
 @section('content')
 <div x-data="teacherForm()" class="max-w-5xl mx-auto space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center justify-between">
+    <div class="fade-in-down flex items-center justify-between">
         <div>
             <h1 class="text-3xl font-bold text-gray-900">Add New Teacher</h1>
             <p class="text-sm text-gray-600 mt-1">Fill in the teacher's information</p>
@@ -43,6 +43,7 @@
                             value="{{ old('email') }}"
                             class="form-input @error('email') border-red-500 @enderror"
                             required
+                            placeholder="teacher@school.com"
                         >
                         @error('email')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -54,8 +55,10 @@
                         <input
                             type="password"
                             name="password"
+                            value="password123"
                             class="form-input @error('password') border-red-500 @enderror"
                             required
+                            placeholder="Default: password123"
                         >
                         @error('password')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -67,8 +70,10 @@
                         <input
                             type="password"
                             name="password_confirmation"
+                            value="password123"
                             class="form-input @error('password_confirmation') border-red-500 @enderror"
                             required
+                            placeholder="Confirm password"
                         >
                         @error('password_confirmation')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -173,7 +178,7 @@
                     <label class="form-label">Profile Picture</label>
                     <div class="flex items-center space-x-4">
                         <div x-show="imagePreview" class="flex-shrink-0">
-                            <img :src="imagePreview" alt="Preview" class="w-24 h-24 rounded-full object-cover">
+                            <img :src="imagePreview" alt="Preview" class="w-24 h-24 rounded-full object-cover shadow-lg">
                         </div>
                         <div class="flex-1">
                             <input
@@ -203,20 +208,6 @@
             <div class="card-body space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="form-group">
-                        <label class="form-label">Email <span class="text-red-500">*</span></label>
-                        <input
-                            type="email"
-                            name="email"
-                            value="{{ old('email') }}"
-                            class="form-input @error('email') border-red-500 @enderror"
-                            required
-                        >
-                        @error('email')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
                         <label class="form-label">Phone <span class="text-red-500">*</span></label>
                         <input
                             type="tel"
@@ -237,6 +228,7 @@
                         name="address"
                         rows="2"
                         class="form-textarea @error('address') border-red-500 @enderror"
+                        placeholder="Street address"
                     >{{ old('address') }}</textarea>
                     @error('address')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -251,6 +243,7 @@
                             name="city"
                             value="{{ old('city') }}"
                             class="form-input @error('city') border-red-500 @enderror"
+                            placeholder="Lagos"
                         >
                         @error('city')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -264,6 +257,7 @@
                             name="state"
                             value="{{ old('state') }}"
                             class="form-input @error('state') border-red-500 @enderror"
+                            placeholder="Lagos"
                         >
                         @error('state')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -277,6 +271,7 @@
                             name="country"
                             value="{{ old('country', 'Nigeria') }}"
                             class="form-input @error('country') border-red-500 @enderror"
+                            placeholder="Nigeria"
                         >
                         @error('country')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -300,7 +295,7 @@
                         <div class="space-y-2">
                             <div class="flex flex-wrap gap-2" id="subjectsContainer">
                                 @foreach($allSubjects as $subject)
-                                    <label class="inline-flex items-center px-3 py-2 bg-gray-100 hover:bg-primary-50 rounded-lg cursor-pointer transition-colors">
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-100 hover:bg-primary-50 rounded-lg cursor-pointer transition-all hover:shadow-md">
                                         <input type="checkbox" name="subjects[]" value="{{ $subject }}" class="form-checkbox text-primary-600 mr-2" {{ in_array($subject, old('subjects', [])) ? 'checked' : '' }}>
                                         <span class="text-sm">{{ $subject }}</span>
                                     </label>
@@ -319,7 +314,7 @@
                         <div class="space-y-2">
                             <div class="flex flex-wrap gap-2" id="classesContainer">
                                 @foreach($allClasses as $class)
-                                    <label class="inline-flex items-center px-3 py-2 bg-gray-100 hover:bg-primary-50 rounded-lg cursor-pointer transition-colors">
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-100 hover:bg-primary-50 rounded-lg cursor-pointer transition-all hover:shadow-md">
                                         <input type="checkbox" name="classes[]" value="{{ $class }}" class="form-checkbox text-primary-600 mr-2" {{ in_array($class, old('classes', [])) ? 'checked' : '' }}>
                                         <span class="text-sm">{{ $class }}</span>
                                     </label>
@@ -360,7 +355,7 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-4 pb-4">
             <a href="{{ route('teachers.index') }}" class="btn btn-outline">
                 <i class="fas fa-times mr-2"></i>Cancel
             </a>
