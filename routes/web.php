@@ -492,6 +492,12 @@ Route::middleware(['auth', 'role.redirect'])->group(function () {
             Route::get('/config', [MailTestController::class, 'showConfig'])->name('config');
             Route::post('/connection', [MailTestController::class, 'testConnection'])->name('connection');
         });
+
+        // Send Mail - Admin sends official email to users
+        Route::prefix('send-mail')->name('send-mail.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\SendMailController::class, 'index'])->name('index');
+            Route::post('/send', [\App\Http\Controllers\Admin\SendMailController::class, 'send'])->name('send');
+        });
     });
 });
 

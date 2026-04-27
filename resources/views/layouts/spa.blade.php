@@ -631,8 +631,33 @@
                     </a>
                 @endhasPermission
 
+                @hasPermission('manage-school-settings')
+                    <a href="{{ route('admin.send-mail.index') }}"
+                    @click.prevent="navigate('{{ route('admin.send-mail.index') }}')"
+                    :class="currentPath.includes('/admin/send-mail') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
+                        <i class="fas fa-paper-plane text-base w-5"></i>
+                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Send Mail</span>
+                    </a>
+                @endhasPermission
+
             <!-- Divider -->
             <div class="my-4 border-t border-primary-700/50"></div>
+
+            <!-- Notifications Link in Sidebar -->
+            <a href="{{ route('notifications.index') }}"
+               @click.prevent="navigate('{{ route('notifications.index') }}')"
+               :class="currentPath === '{{ route('notifications.index') }}' ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all relative">
+                <i class="fas fa-bell text-base w-5"></i>
+                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Notifications</span>
+                @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="ml-auto bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    {{ auth()->user()->unreadNotifications->count() }}
+                </span>
+                <span x-show="sidebarCollapsed && !mobileMenuOpen" class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                @endif
+            </a>
 
             <!-- User Profile Collapsible Menu - For all authenticated users -->
             <div x-data="{ userMenuOpen: false }">
@@ -712,7 +737,27 @@
                                     class="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">
                                 <i class="fas fa-language text-lg"></i>
                                 <span class="hidden sm:inline text-sm font-medium">{{ app()->getLocale() === 'ar' ? 'العربية' : 'English' }}</span>
+                                <i class="fas fa-chevron-down text-xs hidden sm:inline"></i>
                             </button>
+                            <div x-show="open" @click.away="open = false" x-transition
+                                 class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border border-gray-100 z-50 overflow-hidden py-1" x-cloak>
+                                <a href="{{ route('locale.switch', 'en') }}"
+                                   class="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition {{ app()->getLocale() === 'en' ? 'text-primary-600 font-semibold bg-primary-50/50' : 'text-gray-700' }}">
+                                    <span class="text-lg">🇬🇧</span>
+                                    <span>English</span>
+                                    @if(app()->getLocale() === 'en')
+                                    <i class="fas fa-check ml-auto text-primary-500 text-xs"></i>
+                                    @endif
+                                </a>
+                                <a href="{{ route('locale.switch', 'ar') }}"
+                                   class="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition {{ app()->getLocale() === 'ar' ? 'text-primary-600 font-semibold bg-primary-50/50' : 'text-gray-700' }}">
+                                    <span class="text-lg">🇸🇦</span>
+                                    <span>العربية</span>
+                                    @if(app()->getLocale() === 'ar')
+                                    <i class="fas fa-check ml-auto text-primary-500 text-xs"></i>
+                                    @endif
+                                </a>
+                            </div>
                         </div>
 
                         <!-- Notifications -->
@@ -720,8 +765,42 @@
                             <button @click="open = !open"
                                     class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">
                                 <i class="fas fa-bell text-lg"></i>
+                                @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
                                 <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                @endif
                             </button>
+
+                            <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-50 overflow-hidden" x-cloak>
+                                <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                                    <h3 class="font-semibold text-gray-800 text-sm">Notifications</h3>
+                                    @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                                    <form action="{{ route('notifications.mark-all-read') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="text-xs text-primary-600 hover:text-primary-800 font-medium">Mark all as read</button>
+                                    </form>
+                                    @endif
+                                </div>
+                                <div class="max-h-80 overflow-y-auto">
+                                    @if(auth()->check())
+                                        @forelse(auth()->user()->unreadNotifications as $notification)
+                                            <div class="px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition {{ $notification->read_at ? 'opacity-75' : 'bg-blue-50/30' }}">
+                                                <p class="text-sm text-gray-800">{{ $notification->data['message'] ?? 'New notification' }}</p>
+                                                <span class="text-xs text-gray-500 mt-1 block">{{ $notification->created_at->diffForHumans() }}</span>
+                                            </div>
+                                        @empty
+                                            <div class="px-4 py-8 text-center flex flex-col items-center justify-center">
+                                                <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-2">
+                                                    <i class="fas fa-bell-slash text-gray-400"></i>
+                                                </div>
+                                                <p class="text-gray-500 text-sm">No new notifications</p>
+                                            </div>
+                                        @endforelse
+                                    @endif
+                                </div>
+                                <a href="{{ route('notifications.index') }}" @click="open = false; navigate('{{ route('notifications.index') }}')" class="block px-4 py-2 text-center text-xs font-medium text-primary-600 bg-gray-50 hover:bg-gray-100 transition">
+                                    View All Notifications
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
