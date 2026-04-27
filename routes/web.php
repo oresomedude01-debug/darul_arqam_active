@@ -73,6 +73,11 @@ Route::middleware(['auth', 'role.redirect'])->group(function () {
     Route::get('/profile/change-password', [ProfileController::class, 'changePasswordForm'])->name('profile.change-password');
     Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password.store');
 
+    // Notification Routes
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::post('/notifications/{id}/mark-read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+
     // Dashboard Routes - Role-based
     Route::get('/dashboard', function () {
         $user = auth()->user();
