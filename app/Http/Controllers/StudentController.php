@@ -508,8 +508,24 @@ class StudentController extends Controller
         $file = $request->file('csv_file');
         $path = $file->getRealPath();
 
-        $csv = array_map('str_getcsv', file($path));
-        $header = array_shift($csv); // Remove header row
+        $content = file_get_contents($path);
+        // Remove BOM if present
+        $content = preg_replace('/^[\xef\xbb\xbf]+/', '', $content);
+        $lines = explode("\n", str_replace("\r", "", trim($content)));
+        
+        $csv = array_map('str_getcsv', $lines);
+        
+        // Remove header rows
+        $firstRow = array_shift($csv); 
+        // If the first row was the instructions row, the next row is the actual header
+        if (isset($firstRow[0]) && strpos($firstRow[0], 'INSTRUCTIONS') !== false) {
+            array_shift($csv);
+        } else if (isset($firstRow[0]) && strpos($firstRow[0], 'Admission Number') !== false) {
+            // It was just the header row, already shifted
+        } else if (isset($csv[0][0]) && strpos($csv[0][0], 'Admission Number') !== false) {
+            // The first row was something else, and second row is header
+            array_shift($csv);
+        }
 
         $imported = 0;
         $skipped = 0;
@@ -517,24 +533,24 @@ class StudentController extends Controller
 
         foreach ($csv as $index => $row) {
             try {
-                // Skip empty rows
-                if (empty(array_filter($row))) {
+                // Skip empty rows or rows that look like headers
+                if (empty(array_filter($row)) || (isset($row[0]) && strpos($row[0], 'Admission Number') !== false)) {
                     continue;
                 }
 
                 $data = [
-                    'first_name' => $row[1] ?? null,
-                    'last_name' => $row[3] ?? null,
-                    'middle_name' => $row[2] ?? null,
-                    'date_of_birth' => $row[4] ?? null,
-                    'gender' => $row[5] ?? null,
-                    'blood_group' => $row[6] ?? null,
-                    'nationality' => $row[7] ?? 'Nigerian',
-                    'address' => $row[8] ?? null,
-                    'phone' => $row[10] ?? null,
+                    'first_name' => trim($row[1] ?? ''),
+                    'last_name' => trim($row[3] ?? ''),
+                    'middle_name' => trim($row[2] ?? ''),
+                    'date_of_birth' => trim($row[4] ?? ''),
+                    'gender' => strtolower(trim($row[5] ?? '')),
+                    'blood_group' => trim($row[6] ?? ''),
+                    'nationality' => trim($row[7] ?? '') ?: 'Nigerian',
+                    'address' => trim($row[8] ?? ''),
+                    'phone' => trim($row[10] ?? ''),
                     'school_class_id' => null, // Will be resolved below
                     'admission_date' => now()->toDateString(),
-                    'status' => $row[13] ?? 'active',
+                    'status' => strtolower(trim($row[13] ?? '')) ?: 'active',
                 ];
 
                 // Validate required fields
@@ -545,20 +561,24 @@ class StudentController extends Controller
                 }
 
                 // Resolve school class ID from column 11 (could be class name or ID)
-                $classInput = $row[11] ?? null;
+                $classInput = trim($row[11] ?? '');
                 if (!empty($classInput)) {
                     // Try to find class by ID first, then by name
                     $schoolClass = SchoolClass::where('id', $classInput)
-                        ->orWhere('name', $classInput)
+                        ->orWhere('name', 'like', $classInput)
                         ->first();
                     
                     if ($schoolClass) {
                         $data['school_class_id'] = $schoolClass->id;
                     } else {
                         $skipped++;
-                        $errors[] = "Row " . ($index + 2) . ": School class '{$classInput}' not found";
+                        $errors[] = "Row " . ($index + 2) . ": School class '{$classInput}' not found in the system";
                         continue;
                     }
+                } else {
+                    $skipped++;
+                    $errors[] = "Row " . ($index + 2) . ": School class is required";
+                    continue;
                 }
 
                 // Create admission number and email for this imported student
@@ -627,6 +647,23 @@ class StudentController extends Controller
 
         $callback = function() {
             $file = fopen('php://output', 'w');
+            
+            // Output a BOM for Excel compatibility
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Get valid classes for instructions
+            $validClasses = SchoolClass::pluck('name')->toArray();
+            $classExample = !empty($validClasses) ? $validClasses[0] : 'Grade 1';
+            
+            // Add instructions row
+            fputcsv($file, [
+                'INSTRUCTIONS:',
+                'Fill from Row 3.',
+                'Do not edit Row 2 headers.',
+                'Valid Class Names: ' . implode(', ', $validClasses),
+                'Dates must be YYYY-MM-DD',
+                'Leave Admission Number empty'
+            ]);
 
             // Add CSV headers
             fputcsv($file, [
@@ -635,20 +672,20 @@ class StudentController extends Controller
                 'Middle Name',
                 'Last Name *',
                 'Date of Birth (YYYY-MM-DD)',
-                'Gender (male/female/other)',
+                'Gender (male/female)',
                 'Blood Group',
                 'Nationality',
                 'Address',
                 'Email',
                 'Phone',
-                'Class Level',
+                'Class Level * (Use exact name)',
                 'Section',
-                'Status (active/inactive/suspended)',
+                'Status (active/inactive)',
             ]);
 
             // Add sample data row
             fputcsv($file, [
-                'Leave empty',
+                '', // Leave empty
                 'Ahmed',
                 'Hassan',
                 'Ibrahim',
@@ -659,7 +696,7 @@ class StudentController extends Controller
                 '123 Main Street, Lagos',
                 'student@example.com',
                 '+234 XXX XXX XXXX',
-                'Grade 1',
+                $classExample,
                 'A',
                 'active',
             ]);
