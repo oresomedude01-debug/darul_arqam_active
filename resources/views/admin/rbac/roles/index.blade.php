@@ -28,38 +28,47 @@
     </div>
     @endif
 
-    <!-- Roles Table -->
+    <!-- Roles Table/Grid -->
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-100 border-b">
-                <tr>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Role Name</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Description</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Users</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Permissions</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Actions</th>
+        <table class="w-full block md:table">
+            <thead class="bg-gray-100 border-b hidden md:table-header-group">
+                <tr class="block md:table-row">
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 block md:table-cell">Role Name</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 block md:table-cell">Description</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 block md:table-cell">Users</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 block md:table-cell">Permissions</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 block md:table-cell">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody class="block md:table-row-group divide-y md:divide-y-0 divide-gray-200">
                 @forelse($roles as $role)
-                <tr class="hover:bg-gray-50 transition">
-                    <td class="px-6 py-4">
+                <tr class="block md:table-row hover:bg-gray-50 transition p-4 md:p-0 border-b md:border-b-0 last:border-b-0">
+                    <td class="flex flex-col md:table-cell px-2 py-2 md:px-6 md:py-4 border-b md:border-b border-gray-100 md:border-gray-200">
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 md:hidden">Role Name</span>
                         <div class="font-medium text-gray-900">{{ $role->name }}</div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="flex flex-col md:table-cell px-2 py-2 md:px-6 md:py-4 border-b md:border-b border-gray-100 md:border-gray-200">
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 md:hidden">Description</span>
                         <div class="text-gray-600 text-sm">{{ $role->description ?? '-' }}</div>
                     </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                            {{ $role->users_count }}
-                        </span>
+                    <td class="flex flex-col md:table-cell px-2 py-2 md:px-6 md:py-4 border-b md:border-b border-gray-100 md:border-gray-200">
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 md:hidden">Users</span>
+                        <div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                {{ $role->users_count }}
+                            </span>
+                        </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                            {{ $role->permissions_count }}
-                        </span>
+                    <td class="flex flex-col md:table-cell px-2 py-2 md:px-6 md:py-4 border-b md:border-b border-gray-100 md:border-gray-200">
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 md:hidden">Permissions</span>
+                        <div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                {{ $role->permissions_count }}
+                            </span>
+                        </div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="flex flex-col md:table-cell px-2 py-3 md:px-6 md:py-4 md:border-b md:border-gray-200">
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 md:hidden">Actions</span>
                         <div class="flex gap-2">
                             <a href="{{ route('admin.roles.edit', $role) }}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded transition text-sm">
                                 <i class="fas fa-edit mr-1"></i>Edit
@@ -77,8 +86,8 @@
                     </td>
                 </tr>
                 @empty
-                <tr>
-                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                <tr class="block md:table-row">
+                    <td colspan="5" class="block md:table-cell px-6 py-8 text-center text-gray-500">
                         <i class="fas fa-inbox text-4xl mb-2 block opacity-50"></i>
                         No roles found
                     </td>
