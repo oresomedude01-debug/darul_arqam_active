@@ -155,8 +155,8 @@
                     @endif
                 </div>
                 <div x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity duration-200">
-                    <h1 class="text-base font-bold leading-tight">{{ $schoolSettings->school_name ?? 'Darul Arqam' }}</h1>
-                    <p class="text-xs text-primary-200">School System</p>
+                    <h1 class="text-base font-bold leading-tight">{{ $schoolSettings->school_name ?? __('common.app_name') }}</h1>
+                    <p class="text-xs text-primary-200">{{ __('common.app_tagline') }}</p>
                 </div>
             </div>
 
@@ -248,7 +248,7 @@
                    :class="currentPath === '/dashboard' ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                     <i class="fas fa-home text-base w-5"></i>
-                    <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Dashboard</span>
+                    <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.dashboard') }}</span>
                 </a>
 
                 <!-- Students - Visible to: Admin, Teachers, Students (own), Parents (own child) -->
@@ -258,7 +258,7 @@
                         :class="currentPath.includes('/students') ? 'bg-primary-700/50 text-white' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                         class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                     <i class="fas fa-user-graduate text-base w-5"></i>
-                    <span x-show="!sidebarCollapsed || mobileMenuOpen" class="flex-1 text-left transition-opacity">Students</span>
+                    <span x-show="!sidebarCollapsed || mobileMenuOpen" class="flex-1 text-left transition-opacity">{{ __('nav.students') }}</span>
                     <i x-show="!sidebarCollapsed || mobileMenuOpen" :class="open ? 'fa-chevron-down' : 'fa-chevron-right'" class="fas text-xs transition-transform"></i>
                 </button>
                 <div x-show="open && (!sidebarCollapsed || mobileMenuOpen)"
@@ -269,14 +269,14 @@
                        @click.prevent="navigate('/students')"
                        :class="currentPath === '/students' ? 'text-white bg-primary-700/30' : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                        class="block px-3 py-2 text-sm rounded-lg">
-                        All Students
+                        {{ __('nav.all_students') }}
                     </a>
                     @hasPermission('create-student')
                     <a href="/students/create"
                        @click.prevent="navigate('/students/create')"
                        :class="currentPath === '/students/create' ? 'text-white bg-primary-700/30' : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                        class="block px-3 py-2 text-sm rounded-lg">
-                        Add Student
+                        {{ __('nav.add_student') }}
                     </a>
                                                 <a href="{{ route('tokens.index') }}"
                                @click.prevent="navigate('{{ route('tokens.index') }}')"
@@ -284,7 +284,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg">
-                                Token Mgnt.
+                                {{ __('nav.token_mgnt') }}
                             </a>
                     @endhasPermission
                 </div>
@@ -298,7 +298,7 @@
                :class="currentPath.includes('/teachers') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                 <i class="fas fa-chalkboard-teacher text-base w-5"></i>
-                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Teachers</span>
+                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.teachers') }}</span>
             </a>
             @endhasPermission
 
@@ -309,7 +309,7 @@
                :class="currentPath.includes('/classes') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                 <i class="fas fa-door-open text-base w-5"></i>
-                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Classes</span>
+                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.classes') }}</span>
             </a>
             @endhasPermission
 
@@ -320,7 +320,7 @@
                :class="currentPath.includes('/subjects') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                 <i class="fas fa-book text-base w-5"></i>
-                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Subjects</span>
+                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.subjects') }}</span>
             </a>
             @endhasPermission
 
@@ -331,7 +331,7 @@
                :class="currentPath.includes('/attendance') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                 <i class="fas fa-calendar-check text-base w-5"></i>
-                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Attendance</span>
+                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.attendance') }}</span>
             </a>
             @endhasAnyPermission
 
@@ -342,7 +342,7 @@
                :class="currentPath.includes('/teacher/my-classes') || currentPath.includes('/teacher/class/') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                 <i class="fas fa-layer-group text-base w-5"></i>
-                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">My Class(es)</span>
+                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.my_classes') }}</span>
             </a>
             @endhasAnyPermission
 
@@ -355,7 +355,7 @@
                                         : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                             <i class="fas fa-user-friends text-base w-5"></i>
-                            <span x-show="!sidebarCollapsed || mobileMenuOpen" class="flex-1 text-left transition-opacity">Parent Management</span>
+                            <span x-show="!sidebarCollapsed || mobileMenuOpen" class="flex-1 text-left transition-opacity">{{ __('nav.parent_management') }}</span>
                             <i x-show="!sidebarCollapsed || mobileMenuOpen" :class="open ? 'fa-chevron-down' : 'fa-chevron-right'" class="fas text-xs transition-transform"></i>
                         </button>
                         <div x-show="open && (!sidebarCollapsed || mobileMenuOpen)"
@@ -366,13 +366,13 @@
                                @click.prevent="navigate('/admin/parents')"
                                :class="currentPath === '/admin/parents' || currentPath.includes('/admin/parents/') ? 'text-white bg-primary-700/30' : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-list mr-2 text-xs w-4"></i>View All Parents
+                                <i class="fas fa-list mr-2 text-xs w-4"></i>{{ __('nav.view_all_parents') }}
                             </a>
                             <a href="/admin/parents/create"
                                @click.prevent="navigate('/admin/parents/create')"
                                :class="currentPath === '/admin/parents/create' ? 'text-white bg-primary-700/30' : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-plus mr-2 text-xs w-4"></i>Add New Parent
+                                <i class="fas fa-plus mr-2 text-xs w-4"></i>{{ __('nav.add_new_parent') }}
                             </a>
                         </div>
                     </div>
@@ -384,7 +384,7 @@
                        :class="currentPath.includes('/timetable') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                         <i class="fas fa-calendar-week text-base w-5"></i>
-                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Timetable</span>
+                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.timetable') }}</span>
                     </a>
             @endhasPermission
             <!-- Grades - Visible to: Admin, Teachers, Students (own), Parents (own child) -->
@@ -442,7 +442,7 @@
                        :class="currentPath.includes('/teacher/results') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                         <i class="fas fa-chart-bar text-base w-5"></i>
-                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Class Results</span>
+                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.class_results') }}</span>
                     </a>
                  @endhasAnyPermission
 
@@ -455,7 +455,7 @@
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                             <i class="fas fa-chart-line text-base w-5"></i>
                             <span x-show="!sidebarCollapsed || mobileMenuOpen"
-                                  class="flex-1 text-left transition-opacity">Results</span>
+                                  class="flex-1 text-left transition-opacity">{{ __('nav.results') }}</span>
                             <i x-show="!sidebarCollapsed || mobileMenuOpen"
                                :class="open ? 'fa-chevron-down' : 'fa-chevron-right'"
                                class="fas text-xs transition-transform"></i>
@@ -470,7 +470,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-home mr-2 text-xs w-4"></i>Main Dashboard
+                                <i class="fas fa-home mr-2 text-xs w-4"></i>{{ __('nav.main_dashboard') }}
                             </a>
                             <a href="{{ route('results.print.selection') }}"
                                @click.prevent="navigate('{{ route('results.print.selection') }}')"
@@ -478,7 +478,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-print mr-2 text-xs w-4"></i>Print Result Card
+                                <i class="fas fa-print mr-2 text-xs w-4"></i>{{ __('nav.print_result_card') }}
                             </a>
                             <a href="{{ route('results.class.report.selection') }}"
                                @click.prevent="navigate('{{ route('results.class.report.selection') }}')"
@@ -486,7 +486,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-file-pdf mr-2 text-xs w-4"></i>Class Report Card
+                                <i class="fas fa-file-pdf mr-2 text-xs w-4"></i>{{ __('nav.class_report_card') }}
                             </a>
                         </div>
                     </div>
@@ -505,7 +505,7 @@
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                             <i class="fas fa-money-bill text-base w-5"></i>
                             <span x-show="!sidebarCollapsed || mobileMenuOpen"
-                                  class="flex-1 text-left transition-opacity">Payments</span>
+                                  class="flex-1 text-left transition-opacity">{{ __('nav.payments') }}</span>
                             <i x-show="!sidebarCollapsed || mobileMenuOpen"
                                :class="open ? 'fa-chevron-down' : 'fa-chevron-right'"
                                class="fas text-xs transition-transform"></i>
@@ -520,7 +520,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-home mr-2 text-xs w-4"></i>Dashboard
+                                <i class="fas fa-home mr-2 text-xs w-4"></i>{{ __('nav.dashboard') }}
                             </a>
                             <a href="{{ route('billing.fee-structures.index') }}"
                                @click.prevent="navigate('{{ route('billing.fee-structures.index') }}')"
@@ -528,7 +528,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-layer-group mr-2 text-xs w-4"></i>Fee Structures
+                                <i class="fas fa-layer-group mr-2 text-xs w-4"></i>{{ __('nav.fee_structures') }}
                             </a>
                             <a href="{{ route('billing.fee-items.index') }}"
                                @click.prevent="navigate('{{ route('billing.fee-items.index') }}')"
@@ -536,7 +536,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-receipt mr-2 text-xs w-4"></i>Fee Items
+                                <i class="fas fa-receipt mr-2 text-xs w-4"></i>{{ __('nav.fee_items') }}
                             </a>
                             <a href="{{ route('payments.bills.index') }}"
                                @click.prevent="navigate('{{ route('payments.bills.index') }}')"
@@ -544,7 +544,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-file-invoice mr-2 text-xs w-4"></i>Student Bills
+                                <i class="fas fa-file-invoice mr-2 text-xs w-4"></i>{{ __('nav.student_bills') }}
                             </a>
                             <a href="{{ route('payments.payment-history') }}"
                                @click.prevent="navigate('{{ route('payments.payment-history') }}')"
@@ -552,7 +552,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-history mr-2 text-xs w-4"></i>Payment History
+                                <i class="fas fa-history mr-2 text-xs w-4"></i>{{ __('nav.payment_history') }}
                             </a>
                             <a href="{{ route('payments.debt-management') }}"
                                @click.prevent="navigate('{{ route('payments.debt-management') }}')"
@@ -560,7 +560,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-chart-pie mr-2 text-xs w-4"></i>Debt Management
+                                <i class="fas fa-chart-pie mr-2 text-xs w-4"></i>{{ __('nav.debt_management') }}
                             </a>
                             <a href="{{ route('payments.receipts.list') }}"
                                @click.prevent="navigate('{{ route('payments.receipts.list') }}')"
@@ -568,7 +568,7 @@
                                         ? 'text-white bg-primary-700/30'
                                         : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-receipt mr-2 text-xs w-4"></i>Receipts
+                                <i class="fas fa-receipt mr-2 text-xs w-4"></i>{{ __('nav.receipts') }}
                             </a>
                         </div>
                     </div>
@@ -586,7 +586,7 @@
                                         : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                             <i class="fas fa-lock text-base w-5"></i>
-                            <span x-show="!sidebarCollapsed || mobileMenuOpen" class="flex-1 text-left transition-opacity">Access Control</span>
+                            <span x-show="!sidebarCollapsed || mobileMenuOpen" class="flex-1 text-left transition-opacity">{{ __('nav.access_control') }}</span>
                             <i x-show="!sidebarCollapsed || mobileMenuOpen" :class="open ? 'fa-chevron-down' : 'fa-chevron-right'" class="fas text-xs transition-transform"></i>
                         </button>
                         <div x-show="open && (!sidebarCollapsed || mobileMenuOpen)"
@@ -597,25 +597,25 @@
                                @click.prevent="navigate('/admin/rbac')"
                                :class="currentPath === '/admin/rbac' ? 'text-white bg-primary-700/30' : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-home mr-2 text-xs w-4"></i>RBAC Dashboard
+                                <i class="fas fa-home mr-2 text-xs w-4"></i>{{ __('nav.rbac_dashboard') }}
                             </a>
                             <a href="/admin/roles"
                                @click.prevent="navigate('/admin/roles')"
                                :class="currentPath === '/admin/roles' || currentPath.includes('/admin/roles/') ? 'text-white bg-primary-700/30' : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-user-tag mr-2 text-xs w-4"></i>Manage Roles
+                                <i class="fas fa-user-tag mr-2 text-xs w-4"></i>{{ __('nav.manage_roles') }}
                             </a>
                             <a href="/admin/permissions"
                                @click.prevent="navigate('/admin/permissions')"
                                :class="currentPath === '/admin/permissions' || currentPath.includes('/admin/permissions/') ? 'text-white bg-primary-700/30' : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-key mr-2 text-xs w-4"></i>Manage Permissions
+                                <i class="fas fa-key mr-2 text-xs w-4"></i>{{ __('nav.manage_permissions') }}
                             </a>
                             <a href="/admin/user-roles"
                                @click.prevent="navigate('/admin/user-roles')"
                                :class="currentPath === '/admin/user-roles' ? 'text-white bg-primary-700/30' : 'text-primary-200 hover:text-white hover:bg-primary-700/20'"
                                class="block px-3 py-2 text-sm rounded-lg transition-all">
-                                <i class="fas fa-users mr-2 text-xs w-4"></i>Assign User Roles
+                                <i class="fas fa-users mr-2 text-xs w-4"></i>{{ __('nav.assign_user_roles') }}
                             </a>
                         </div>
                     </div>
@@ -627,7 +627,7 @@
                     :class="currentPath.includes('/settings') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                         <i class="fas fa-cog text-base w-5"></i>
-                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">School Settings</span>
+                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.settings') }}</span>
                     </a>
                 @endhasPermission
 
@@ -637,7 +637,7 @@
                     :class="currentPath.includes('/admin/send-mail') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                         <i class="fas fa-paper-plane text-base w-5"></i>
-                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Send Mail</span>
+                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.send_mail') }}</span>
                     </a>
                 @endhasPermission
 
@@ -650,7 +650,7 @@
                :class="currentPath === '{{ route('notifications.index') }}' ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all relative">
                 <i class="fas fa-bell text-base w-5"></i>
-                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Notifications</span>
+                <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.notifications') }}</span>
                 @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
                 <span x-show="!sidebarCollapsed || mobileMenuOpen" class="ml-auto bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                     {{ auth()->user()->unreadNotifications->count() }}
@@ -679,25 +679,25 @@
                        @click.prevent="navigate('{{ route('profile.show') }}')"
                        class="flex items-center gap-3 px-3 py-2 text-sm text-primary-200 hover:text-white hover:bg-primary-700/20 rounded-lg transition-all">
                         <i class="fas fa-user-circle text-sm w-4"></i>
-                        <span>My Profile</span>
+                        <span>{{ __('nav.my_profile') }}</span>
                     </a>
                     <a href="{{ route('profile.edit') }}"
                        @click.prevent="navigate('{{ route('profile.edit') }}')"
                        class="flex items-center gap-3 px-3 py-2 text-sm text-primary-200 hover:text-white hover:bg-primary-700/20 rounded-lg transition-all">
                         <i class="fas fa-sliders text-sm w-4"></i>
-                        <span>Account Settings</span>
+                        <span>{{ __('nav.account_settings') }}</span>
                     </a>
                     <a href="{{ route('profile.change-password') }}"
                        @click.prevent="navigate('{{ route('profile.change-password') }}')"
                        class="flex items-center gap-3 px-3 py-2 text-sm text-primary-200 hover:text-white hover:bg-primary-700/20 rounded-lg transition-all">
                         <i class="fas fa-key text-sm w-4"></i>
-                        <span>Change Password</span>
+                        <span>{{ __('nav.change_password') }}</span>
                     </a>
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-primary-200 hover:text-white hover:bg-primary-700/20 rounded-lg transition-all text-left">
                             <i class="fas fa-sign-out-alt text-sm w-4"></i>
-                            <span>Logout</span>
+                            <span>{{ __('nav.logout') }}</span>
                         </button>
                     </form>
                 </div>
@@ -816,7 +816,7 @@
                  x-cloak>
                 <div class="text-center">
                     <div class="spinner mx-auto mb-4"></div>
-                    <p class="text-gray-600">Loading...</p>
+                    <p class="text-gray-600">{{ __('nav.loading') }}</p>
                 </div>
             </div>
 
@@ -833,9 +833,9 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
                 <p>&copy; {{ date('Y') }} Darul Arqam School Management System. All rights reserved.</p>
                 <div class="flex items-center gap-4">
-                    <a href="#" class="hover:text-primary-600 transition">Privacy</a>
-                    <a href="#" class="hover:text-primary-600 transition">Terms</a>
-                    <a href="#" class="hover:text-primary-600 transition">Support</a>
+                    <a href="#" class="hover:text-primary-600 transition">{{ __('nav.privacy') }}</a>
+                    <a href="#" class="hover:text-primary-600 transition">{{ __('nav.terms') }}</a>
+                    <a href="#" class="hover:text-primary-600 transition">{{ __('nav.support') }}</a>
                 </div>
             </div>
         </footer>
@@ -850,7 +850,7 @@
                    :class="currentPath.includes('/dashboard') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
                    class="flex flex-col items-center p-2 transition-colors flex-1 text-center">
                     <i class="fas fa-home text-lg mb-1" :class="currentPath.includes('/dashboard') ? 'scale-110 shadow-sm' : ''" style="transition: transform 0.2s"></i>
-                    <span class="text-[10px] font-medium">Home</span>
+                    <span class="text-[10px] font-medium">{{ __('nav.home') }}</span>
                 </a>
                 
                 @hasPermission('view-students')
@@ -858,7 +858,7 @@
                    :class="currentPath.includes('/students') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
                    class="flex flex-col items-center p-2 transition-colors flex-1 text-center">
                     <i class="fas fa-user-graduate text-lg mb-1" :class="currentPath.includes('/students') ? 'scale-110 shadow-sm' : ''" style="transition: transform 0.2s"></i>
-                    <span class="text-[10px] font-medium">Students</span>
+                    <span class="text-[10px] font-medium">{{ __('nav.students') }}</span>
                 </a>
                 @endhasPermission
                 
@@ -874,7 +874,7 @@
                    :class="currentPath.includes('/classes') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
                    class="flex flex-col items-center p-2 transition-colors flex-1 text-center">
                     <i class="fas fa-door-open text-lg mb-1" :class="currentPath.includes('/classes') ? 'scale-110 shadow-sm' : ''" style="transition: transform 0.2s"></i>
-                    <span class="text-[10px] font-medium">Classes</span>
+                    <span class="text-[10px] font-medium">{{ __('nav.classes') }}</span>
                 </a>
                 @endhasPermission
                 
@@ -882,7 +882,7 @@
                    :class="currentPath.includes('/profile') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
                    class="flex flex-col items-center p-2 transition-colors flex-1 text-center">
                     <i class="fas fa-user text-lg mb-1" :class="currentPath.includes('/profile') ? 'scale-110 shadow-sm' : ''" style="transition: transform 0.2s"></i>
-                    <span class="text-[10px] font-medium">Profile</span>
+                    <span class="text-[10px] font-medium">{{ __('nav.profile') }}</span>
                 </a>
             </div>
         </nav>
