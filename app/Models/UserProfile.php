@@ -124,16 +124,18 @@ class UserProfile extends Model
     {
         $assignedClasses = $this->getAssignedClasses();
         
-        if (empty($assignedClasses)) {
-            return SchoolClass::whereRaw('1 = 0'); // Return empty query
-        }
-        
         // Extract class names from "Name - Code" format
         $classNames = array_map(function($class) {
             return explode(' - ', $class)[0] ?? $class;
         }, $assignedClasses);
         
-        return SchoolClass::whereIn('name', $classNames);
+        return SchoolClass::where(function($query) use ($classNames) {
+            if (!empty($classNames)) {
+                $query->whereIn('name', $classNames);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
+        })->orWhere('teacher_id', $this->user_id);
     }
 
     /**

@@ -273,7 +273,7 @@
                             @endif
                         </td>
                         <td>
-                            @php $classes = $teacher->getAssignedClasses(); @endphp
+                            @php $classes = $teacher->teacher_classes()->pluck('name')->toArray(); @endphp
                             @if(count($classes) > 0)
                                 <div class="flex flex-wrap gap-1">
                                     @foreach(array_slice($classes, 0, 2) as $class)
@@ -400,7 +400,7 @@
                     </div>
                     @endif
 
-                    @php $mobileClasses = $teacher->getAssignedClasses(); @endphp
+                    @php $mobileClasses = $teacher->teacher_classes()->pluck('name')->toArray(); @endphp
                     @if(count($mobileClasses) > 0)
                     <div>
                         <div class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-2">Classes</div>

@@ -280,7 +280,8 @@
                             <div class="flex flex-wrap gap-2" id="subjectsContainer">
                                 @php
                                     $teacherSubjects = old('subjects', $userProfile->subjects ?? []);
-                                    $allSubjects = array_unique(array_merge(['Mathematics', 'English Language', 'Arabic', 'Islamic Studies', 'Qur\'an', 'Hadith', 'Basic Science', 'Social Studies', 'Computer Science', 'Physical Education'], $teacherSubjects));
+                                    $allSubjectsList = isset($subjects) ? $subjects->pluck('name')->toArray() : [];
+                                    $allSubjects = array_unique(array_merge($allSubjectsList, $teacherSubjects));
                                 @endphp
                                 @foreach($allSubjects as $subject)
                                     <label class="inline-flex items-center px-3 py-2 bg-gray-100 hover:bg-primary-50 rounded-lg cursor-pointer transition-colors">
@@ -334,7 +335,8 @@
                             <div class="flex flex-wrap gap-2" id="classesContainer">
                                 @php
                                     $teacherClasses = old('classes', $userProfile->classes ?? []);
-                                    $allClasses = array_unique(array_merge(['Nursery 1', 'Nursery 2', 'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6', 'JSS 1', 'JSS 2', 'JSS 3', 'SSS 1', 'SSS 2', 'SSS 3'], $teacherClasses));
+                                    $allClassesList = isset($classes) ? $classes->map(fn($c) => $c->name . ' - ' . $c->class_code)->toArray() : [];
+                                    $allClasses = array_unique(array_merge($allClassesList, $teacherClasses));
                                 @endphp
                                 @foreach($allClasses as $class)
                                     <label class="inline-flex items-center px-3 py-2 bg-gray-100 hover:bg-primary-50 rounded-lg cursor-pointer transition-colors">
