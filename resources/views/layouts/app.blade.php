@@ -22,6 +22,9 @@
     
     <!-- RTL Support CSS -->
     <link rel="stylesheet" href="{{ asset('css/rtl.css') }}">
+    
+    <!-- Scrollbar CSS -->
+    <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}">
 
     <!-- Tailwind Config -->
     <script>
@@ -78,7 +81,7 @@
 
     <div class="flex h-full">
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-primary-800 to-primary-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto"
+        <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-primary-800 to-primary-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto flex flex-col"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
                x-cloak>
 
@@ -99,12 +102,12 @@
             </div>
 
             <!-- Navigation -->
-            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-primary-600 scrollbar-track-primary-800">
                 <!-- Dashboard -->
                 <a href="{{ route('dashboard') }}"
                    class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <i class="fas fa-home w-5"></i>
-                    <span>Dashboard</span>
+                    <span>{{ __('nav.dashboard') }}</span>
                 </a>
 
                 <!-- Students Section - Admin, Teachers -->
@@ -114,7 +117,7 @@
                             class="nav-item w-full justify-between">
                         <div class="flex items-center space-x-3">
                             <i class="fas fa-user-graduate w-5"></i>
-                            <span>Students</span>
+                            <span>{{ __('nav.students') }}</span>
                         </div>
                         <i class="fas fa-chevron-down text-xs transform transition-transform"
                            :class="open ? 'rotate-180' : ''"></i>
@@ -123,12 +126,12 @@
                          x-collapse
                          class="ml-8 mt-2 space-y-1">
                         @if(auth()->user()->hasPermission('view-students'))
-                        <a href="{{ route('students.index') }}" class="nav-sub-item">All Students</a>
+                        <a href="{{ route('students.index') }}" class="nav-sub-item">{{ __('nav.all_students') }}</a>
                         @endif
                         @if(auth()->user()->hasPermission('create-student'))
-                        <a href="{{ route('students.create') }}" class="nav-sub-item">Add New</a>
+                        <a href="{{ route('students.create') }}" class="nav-sub-item">{{ __('nav.add_new') }}</a>
                         @endif
-                        <a href="#" class="nav-sub-item">Import Students</a>
+                        <a href="#" class="nav-sub-item">{{ __('nav.import_students') }}</a>
                     </div>
                 </div>
                 @endif
@@ -138,7 +141,7 @@
                 <a href="{{ route('students.show', auth()->user()->profile->id ?? '') }}"
                    class="nav-item">
                     <i class="fas fa-id-card w-5"></i>
-                    <span>My Profile</span>
+                    <span>{{ __('nav.profile') }}</span>
                 </a>
                 @endif
 
@@ -149,7 +152,7 @@
                             class="nav-item w-full justify-between">
                         <div class="flex items-center space-x-3">
                             <i class="fas fa-ticket-alt w-5"></i>
-                            <span>Registration Tokens</span>
+                            <span>{{ __('nav.tokens') }}</span>
                         </div>
                         <i class="fas fa-chevron-down text-xs transform transition-transform"
                            :class="open ? 'rotate-180' : ''"></i>
@@ -157,8 +160,8 @@
                     <div x-show="open"
                          x-collapse
                          class="ml-8 mt-2 space-y-1">
-                        <a href="{{ route('tokens.index') }}" class="nav-sub-item">All Tokens</a>
-                        <a href="{{ route('tokens.create') }}" class="nav-sub-item">Generate Tokens</a>
+                        <a href="{{ route('tokens.index') }}" class="nav-sub-item">{{ __('nav.all_tokens') }}</a>
+                        <a href="{{ route('tokens.create') }}" class="nav-sub-item">{{ __('nav.generate_tokens') }}</a>
                     </div>
                 </div>
                 @endif
@@ -170,7 +173,7 @@
                             class="nav-item w-full justify-between">
                         <div class="flex items-center space-x-3">
                             <i class="fas fa-chalkboard-teacher w-5"></i>
-                            <span>Teachers</span>
+                            <span>{{ __('nav.teachers') }}</span>
                         </div>
                         <i class="fas fa-chevron-down text-xs transform transition-transform"
                            :class="open ? 'rotate-180' : ''"></i>
@@ -178,9 +181,9 @@
                     <div x-show="open"
                          x-collapse
                          class="ml-8 mt-2 space-y-1">
-                        <a href="{{ route('teachers.index') }}" class="nav-sub-item">All Teachers</a>
+                        <a href="{{ route('teachers.index') }}" class="nav-sub-item">{{ __('nav.all_teachers') }}</a>
                         @if(auth()->user()->hasPermission('create-teacher'))
-                        <a href="{{ route('teachers.create') }}" class="nav-sub-item">Add New</a>
+                        <a href="{{ route('teachers.create') }}" class="nav-sub-item">{{ __('nav.add_new') }}</a>
                         @endif
                     </div>
                 </div>
@@ -193,7 +196,7 @@
                             class="nav-item w-full justify-between">
                         <div class="flex items-center space-x-3">
                             <i class="fas fa-book-open w-5"></i>
-                            <span>Classes</span>
+                            <span>{{ __('nav.classes') }}</span>
                         </div>
                         <i class="fas fa-chevron-down text-xs transform transition-transform"
                            :class="open ? 'rotate-180' : ''"></i>
@@ -201,11 +204,11 @@
                     <div x-show="open"
                          x-collapse
                          class="ml-8 mt-2 space-y-1">
-                        <a href="{{ route('classes.index') }}" class="nav-sub-item">All Classes</a>
+                        <a href="{{ route('classes.index') }}" class="nav-sub-item">{{ __('nav.all_classes') }}</a>
                         @if(auth()->user()->hasPermission('create-class'))
-                        <a href="{{ route('classes.create') }}" class="nav-sub-item">Add New</a>
+                        <a href="{{ route('classes.create') }}" class="nav-sub-item">{{ __('nav.add_new') }}</a>
                         @endif
-                        <a href="#" class="nav-sub-item">Class Schedule</a>
+                        <a href="#" class="nav-sub-item">{{ __('nav.class_schedule') }}</a>
                     </div>
                 </div>
                 @endif
@@ -215,7 +218,7 @@
                 <a href="{{ route('attendance.index') }}"
                    class="nav-item {{ request()->routeIs('attendance.*') ? 'active' : '' }}">
                     <i class="fas fa-clipboard-check w-5"></i>
-                    <span>Attendance</span>
+                    <span>{{ __('nav.attendance') }}</span>
                 </a>
                 @endif
 
@@ -224,7 +227,7 @@
                 <a href="{{ route('grades.index') }}"
                    class="nav-item {{ request()->routeIs('grades.*') ? 'active' : '' }}">
                     <i class="fas fa-chart-line w-5"></i>
-                    <span>Grades & Results</span>
+                    <span>{{ __('nav.grades') }}</span>
                 </a>
                 @endif
 
@@ -232,7 +235,7 @@
                 @if(auth()->user()->hasRole(['admin', 'teacher']) && auth()->user()->hasPermission('view-exams'))
                 <a href="#" class="nav-item">
                     <i class="fas fa-file-alt w-5"></i>
-                    <span>Examinations</span>
+                    <span>{{ __('nav.examinations') }}</span>
                 </a>
                 @endif
 
@@ -240,7 +243,7 @@
                 @if(auth()->user()->hasPermission('view-library'))
                 <a href="#" class="nav-item">
                     <i class="fas fa-book w-5"></i>
-                    <span>Library</span>
+                    <span>{{ __('nav.library') }}</span>
                 </a>
                 @endif
 
@@ -251,7 +254,7 @@
                             class="nav-item w-full justify-between">
                         <div class="flex items-center space-x-3">
                             <i class="fas fa-dollar-sign w-5"></i>
-                            <span>Finance</span>
+                            <span>{{ __('nav.finance') }}</span>
                         </div>
                         <i class="fas fa-chevron-down text-xs transform transition-transform"
                            :class="open ? 'rotate-180' : ''"></i>
@@ -274,13 +277,13 @@
                                  x-collapse
                                  class="ml-6 mt-1 space-y-1">
                                 <a href="{{ route('billing.generate-bills.form') }}" class="nav-sub-item text-sm">
-                                    <i class="fas fa-plus-circle mr-2 w-4"></i>Generate Bills
+                                    <i class="fas fa-plus-circle mr-2 w-4"></i>{{ __('common.create') }}
                                 </a>
                                 <a href="{{ route('billing.debt-management') }}" class="nav-sub-item text-sm">
-                                    <i class="fas fa-exclamation-circle mr-2 w-4"></i>Outstanding Bills
+                                    <i class="fas fa-exclamation-circle mr-2 w-4"></i>{{ __('common.pending') }}
                                 </a>
                                 <a href="{{ route('billing.payment-history') }}" class="nav-sub-item text-sm">
-                                    <i class="fas fa-history mr-2 w-4"></i>Payment History
+                                    <i class="fas fa-history mr-2 w-4"></i>{{ __('common.view') }}
                                 </a>
                             </div>
                         </div>
@@ -300,19 +303,19 @@
                                  x-collapse
                                  class="ml-6 mt-1 space-y-1">
                                 <a href="{{ route('payments.index') }}" class="nav-sub-item text-sm">
-                                    <i class="fas fa-list mr-2 w-4"></i>All Payments
+                                    <i class="fas fa-list mr-2 w-4"></i>{{ __('common.all') }}
                                 </a>
                             </div>
                         </div>
 
                         <!-- Fee Structures -->
                         <a href="{{ route('billing.fee-structures.index') }}" class="nav-sub-item">
-                            <i class="fas fa-list-alt mr-2 w-4"></i>Fee Structures
+                            <i class="fas fa-list-alt mr-2 w-4"></i>{{ __('common.filter') }}
                         </a>
 
                         <!-- Fee Items -->
                         <a href="{{ route('billing.fee-items.index') }}" class="nav-sub-item">
-                            <i class="fas fa-tags mr-2 w-4"></i>Fee Items
+                            <i class="fas fa-tags mr-2 w-4"></i>{{ __('common.create') }}
                         </a>
                     </div>
                 </div>
@@ -322,7 +325,7 @@
                 @if(auth()->user()->hasRole('admin') && auth()->user()->hasPermission('view-reports'))
                 <a href="#" class="nav-item">
                     <i class="fas fa-chart-bar w-5"></i>
-                    <span>Reports</span>
+                    <span>{{ __('nav.reports') }}</span>
                 </a>
                 @endif
 
@@ -330,7 +333,7 @@
                 @if(auth()->user()->hasRole('admin'))
                 <a href="#" class="nav-item">
                     <i class="fas fa-cog w-5"></i>
-                    <span>Settings</span>
+                    <span>{{ __('nav.settings') }}</span>
                 </a>
                 @endif
             </nav>
@@ -360,16 +363,16 @@
                             <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
                         </div>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-user-circle mr-2"></i> Profile
+                            <i class="fas fa-user-circle mr-2"></i> {{ __('nav.profile') }}
                         </a>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-cog mr-2"></i> Settings
+                            <i class="fas fa-cog mr-2"></i> {{ __('nav.settings') }}
                         </a>
                         <hr class="my-2">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                                <i class="fas fa-sign-out-alt mr-2"></i> {{ __('nav.logout') }}
                             </button>
                         </form>
                     </div>

@@ -1,0 +1,24 @@
+/* Scrollbar styling for sidebar */
+/* These styles are for webkit browsers (Chrome, Safari, Edge) */
+nav::-webkit-scrollbar {
+    width: 8px;
+}
+
+nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+nav::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.6);
+    border-radius: 4px;
+}
+
+nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.8);
+}
+
+/* Firefox scrollbar styling */
+nav {
+    scrollbar-color: rgba(59, 130, 246, 0.6) transparent;
+    scrollbar-width: thin;
+}

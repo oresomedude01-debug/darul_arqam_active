@@ -46,7 +46,7 @@
             
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Member Since</label>
-                <p class="text-gray-900">{{ Auth::user()->created_at->format('F j, Y') }}</p>
+                <p class="text-gray-900">{{ Auth::user()->created_at ? Auth::user()->created_at->format('F j, Y') : 'N/A' }}</p>
             </div>
         </div>
     </div>
