@@ -10,6 +10,11 @@ class SchoolSetting extends Model
 
     protected $fillable = [
         'school_name',
+        'pwa_app_name',
+        'pwa_short_name',
+        'pwa_icon',
+        'pwa_theme_color',
+        'pwa_background_color',
         'school_address',
         'school_phone',
         'school_email',

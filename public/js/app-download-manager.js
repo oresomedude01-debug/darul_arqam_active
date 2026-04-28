@@ -2,6 +2,7 @@
  * App Download Manager
  * Detects device platform and PWA installation status
  * Shows platform-specific download/install buttons
+ * Uses school logo as app icon from settings
  */
 
 class AppDownloadManager {
@@ -10,7 +11,73 @@ class AppDownloadManager {
         this.isInstalled = this.checkIfInstalled();
         this.platform = this.detectPlatform();
         this.installPrompt = null;
+        this.appSettings = null;
         this.init();
+    }
+
+    /**
+     * Fetch PWA settings from server (school logo, app name, etc)
+     */
+    async fetchAppSettings() {
+        try {
+            // First try to fetch from API endpoint
+            const response = await fetch('/api/pwa/settings');
+            if (response.ok) {
+                const data = await response.json();
+                this.appSettings = {
+                    appName: data.appName || data.school_name || 'School Management System',
+                    shortName: data.shortName || 'School',
+                    logoUrl: data.logoUrl || '/images/icon-192x192.png'
+                };
+                return;
+            }
+        } catch (error) {
+            console.warn('Failed to fetch PWA settings from API:', error);
+        }
+
+        // Fallback: fetch from manifest.json
+        try {
+            const response = await fetch('/manifest.json');
+            if (response.ok) {
+                const manifest = await response.json();
+                this.appSettings = {
+                    appName: manifest.name || 'School Management System',
+                    shortName: manifest.short_name || 'School',
+                    logoUrl: manifest.icons[0]?.src || '/images/icon-192x192.png'
+                };
+                return;
+            }
+        } catch (error) {
+            console.warn('Failed to fetch manifest:', error);
+        }
+
+        // Final fallback
+        this.appSettings = {
+            appName: 'School Management System',
+            shortName: 'School',
+            logoUrl: '/images/icon-192x192.png'
+        };
+    }
+
+    /**
+     * Get app icon URL (school logo or PWA icon)
+     */
+    getSchoolLogo() {
+        return this.appSettings?.logoUrl || '/images/icon-192x192.png';
+    }
+
+    /**
+     * Get app name
+     */
+    getAppName() {
+        return this.appSettings?.appName || 'School Management System';
+    }
+
+    /**
+     * Get short app name
+     */
+    getShortName() {
+        return this.appSettings?.shortName || 'School';
     }
 
     /**
@@ -49,7 +116,10 @@ class AppDownloadManager {
     /**
      * Initialize download manager
      */
-    init() {
+    async init() {
+        // Fetch app settings first
+        await this.fetchAppSettings();
+
         // Hide download section if app is already installed
         const downloadSection = document.getElementById('app-download-section');
         if (!downloadSection) return;
@@ -108,11 +178,14 @@ class AppDownloadManager {
      * Get iOS-specific content
      */
     getIOSContent() {
+        const logoUrl = this.getSchoolLogo();
+        const appName = this.getAppName();
+        
         return `
             <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
                 <div class="flex items-start gap-4">
                     <div class="flex-shrink-0">
-                        <i class="fas fa-apple text-blue-600 text-3xl"></i>
+                        <img src="${logoUrl}" alt="${appName}" class="w-12 h-12 rounded-lg object-cover" />
                     </div>
                     <div class="flex-1">
                         <h3 class="font-bold text-gray-900 mb-2">Add App to Home Screen</h3>
@@ -141,12 +214,15 @@ class AppDownloadManager {
      * Get Android-specific content
      */
     getAndroidContent() {
+        const logoUrl = this.getSchoolLogo();
+        const appName = this.getAppName();
+        
         return `
             <div class="space-y-4">
                 <div class="bg-green-50 border border-green-200 rounded-xl p-6">
                     <div class="flex items-start gap-4">
                         <div class="flex-shrink-0">
-                            <i class="fas fa-android text-green-600 text-3xl"></i>
+                            <img src="${logoUrl}" alt="${appName}" class="w-12 h-12 rounded-lg object-cover" />
                         </div>
                         <div class="flex-1">
                             <h3 class="font-bold text-gray-900 mb-2">Install App</h3>
@@ -164,7 +240,7 @@ class AppDownloadManager {
                 <div class="bg-gray-50 border border-gray-200 rounded-xl p-6">
                     <div class="flex items-start gap-4">
                         <div class="flex-shrink-0">
-                            <i class="fas fa-store text-gray-600 text-3xl"></i>
+                            <img src="${logoUrl}" alt="${appName}" class="w-12 h-12 rounded-lg object-cover" />
                         </div>
                         <div class="flex-1">
                             <h3 class="font-bold text-gray-900 mb-2">Google Play Store</h3>
@@ -186,11 +262,14 @@ class AppDownloadManager {
      * Get Desktop-specific content
      */
     getDesktopContent() {
+        const logoUrl = this.getSchoolLogo();
+        const appName = this.getAppName();
+        
         return `
             <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6">
                 <div class="flex items-start gap-4">
                     <div class="flex-shrink-0">
-                        <i class="fas fa-desktop text-indigo-600 text-3xl"></i>
+                        <img src="${logoUrl}" alt="${appName}" class="w-12 h-12 rounded-lg object-cover" />
                     </div>
                     <div class="flex-1">
                         <h3 class="font-bold text-gray-900 mb-2">Install as App</h3>

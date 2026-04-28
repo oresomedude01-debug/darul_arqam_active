@@ -62,10 +62,14 @@ Route::get('/api/locale/current', [LocaleController::class, 'getCurrent'])->name
 
 // PWA API Routes
 Route::prefix('api')->group(function () {
+    Route::get('/pwa/settings', [App\Http\Controllers\Api\PWASettingsController::class, 'getSettings'])->name('api.pwa.settings');
     Route::post('/push-subscriptions', [App\Http\Controllers\Api\PushNotificationController::class, 'store'])->middleware('auth');
     Route::get('/notifications/pending', [App\Http\Controllers\Api\PushNotificationController::class, 'getPending'])->middleware('auth');
     Route::post('/push-notifications/test', [App\Http\Controllers\Api\PushNotificationController::class, 'sendTest'])->middleware('auth');
 });
+
+// PWA Manifest Route
+Route::get('/manifest.json', [SchoolSettingsController::class, 'manifestJson'])->name('manifest.json');
 
 // Authentication Routes
 require __DIR__ . '/auth.php';
@@ -232,6 +236,8 @@ Route::middleware(['auth', 'role.redirect'])->group(function () {
             Route::put('/financial', [SchoolSettingsController::class, 'updateFinancial'])->name('update-financial');
             Route::get('/paystack/edit', [SchoolSettingsController::class, 'editPaystack'])->name('edit-paystack');
             Route::put('/paystack', [SchoolSettingsController::class, 'updatePaystack'])->name('update-paystack');
+            Route::get('/pwa/edit', [SchoolSettingsController::class, 'editPWA'])->name('edit-pwa');
+            Route::put('/pwa', [SchoolSettingsController::class, 'updatePWA'])->name('update-pwa');
         });
     });
     // Payment Routes - Admin only

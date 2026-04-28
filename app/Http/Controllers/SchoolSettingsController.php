@@ -42,6 +42,12 @@ class SchoolSettingsController extends Controller
             'school_email' => 'nullable|email',
             'school_motto' => 'nullable|string',
             'school_logo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            // PWA Settings
+            'pwa_app_name' => 'nullable|string|max:255',
+            'pwa_short_name' => 'nullable|string|max:12',
+            'pwa_icon' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:5120',
+            'pwa_theme_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'pwa_background_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
         ]);
 
         $settings = SchoolSetting::getInstance();
@@ -54,6 +60,24 @@ class SchoolSettingsController extends Controller
             }
 
             $validated['school_logo'] = $request->file('school_logo')->store('school-logo', 'public');
+        }
+
+        // Handle PWA icon upload
+        if ($request->hasFile('pwa_icon')) {
+            // Delete old PWA icon if exists
+            if ($settings->pwa_icon && Storage::exists('public/' . $settings->pwa_icon)) {
+                Storage::delete('public/' . $settings->pwa_icon);
+            }
+
+            $validated['pwa_icon'] = $request->file('pwa_icon')->store('pwa-icon', 'public');
+        }
+
+        // Set defaults for PWA settings if empty
+        if (empty($validated['pwa_app_name'])) {
+            $validated['pwa_app_name'] = $validated['school_name'];
+        }
+        if (empty($validated['pwa_short_name'])) {
+            $validated['pwa_short_name'] = substr($validated['school_name'], 0, 12);
         }
 
         $settings->update($validated);
@@ -566,5 +590,162 @@ class SchoolSettingsController extends Controller
 
         return redirect()->route('settings.school.index')
             ->with('success', 'Paystack settings updated successfully!');
+    }
+
+    /**
+     * Serve dynamic manifest.json for PWA
+     */
+    public function manifestJson()
+    {
+        $settings = SchoolSetting::getInstance();
+        
+        // Determine icon path - use custom PWA icon if available, otherwise use school logo
+        $iconPath = $settings->pwa_icon ? url('storage/' . $settings->pwa_icon) : url('storage/' . $settings->school_logo);
+        
+        $manifest = [
+            'name' => $settings->pwa_app_name ?? $settings->school_name ?? 'Darul Arqam School Management System',
+            'short_name' => $settings->pwa_short_name ?? substr($settings->school_name ?? 'Darul Arqam', 0, 12),
+            'description' => 'A comprehensive school management system with PWA capabilities for seamless mobile access',
+            'start_url' => '/',
+            'scope' => '/',
+            'display' => 'standalone',
+            'orientation' => 'portrait-primary',
+            'theme_color' => $settings->pwa_theme_color ?? '#0284c7',
+            'background_color' => $settings->pwa_background_color ?? '#ffffff',
+            'icons' => [
+                [
+                    'src' => $iconPath,
+                    'sizes' => '192x192',
+                    'type' => 'image/png',
+                    'purpose' => 'any'
+                ],
+                [
+                    'src' => $iconPath,
+                    'sizes' => '512x512',
+                    'type' => 'image/png',
+                    'purpose' => 'any'
+                ],
+            ],
+            'screenshots' => [
+                [
+                    'src' => '/images/screenshot-540x720.png',
+                    'sizes' => '540x720',
+                    'type' => 'image/png',
+                    'form_factor' => 'narrow'
+                ],
+                [
+                    'src' => '/images/screenshot-1280x720.png',
+                    'sizes' => '1280x720',
+                    'type' => 'image/png',
+                    'form_factor' => 'wide'
+                ]
+            ],
+            'categories' => ['education', 'productivity'],
+            'shortcuts' => [
+                [
+                    'name' => 'Dashboard',
+                    'short_name' => 'Dashboard',
+                    'description' => 'View your dashboard',
+                    'url' => '/dashboard',
+                    'icons' => [
+                        [
+                            'src' => $iconPath,
+                            'sizes' => '96x96'
+                        ]
+                    ]
+                ],
+                [
+                    'name' => 'Students',
+                    'short_name' => 'Students',
+                    'description' => 'Manage students',
+                    'url' => '/students',
+                    'icons' => [
+                        [
+                            'src' => $iconPath,
+                            'sizes' => '96x96'
+                        ]
+                    ]
+                ],
+                [
+                    'name' => 'Teachers',
+                    'short_name' => 'Teachers',
+                    'description' => 'Manage teachers',
+                    'url' => '/teachers',
+                    'icons' => [
+                        [
+                            'src' => $iconPath,
+                            'sizes' => '96x96'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        return response()->json($manifest)
+            ->header('Content-Type', 'application/manifest+json')
+            ->header('Cache-Control', 'public, max-age=3600');
+    }
+
+    /**
+     * Display the PWA settings form
+     */
+    public function editPWA()
+    {
+        $settings = SchoolSetting::getInstance();
+        
+        return view('settings.school.edit-pwa', compact('settings'));
+    }
+
+    /**
+     * Update PWA settings
+     */
+    public function updatePWA(Request $request)
+    {
+        $validated = $request->validate([
+            'pwa_app_name' => 'nullable|string|max:255',
+            'pwa_short_name' => 'nullable|string|max:12',
+            'pwa_icon' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:5120',
+            'pwa_theme_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'pwa_background_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+        ]);
+
+        // Handle color text inputs (from form input fields)
+        if ($request->has('pwa_theme_color_text') && !empty($request->input('pwa_theme_color_text'))) {
+            $validated['pwa_theme_color'] = $request->input('pwa_theme_color_text');
+        }
+        if ($request->has('pwa_background_color_text') && !empty($request->input('pwa_background_color_text'))) {
+            $validated['pwa_background_color'] = $request->input('pwa_background_color_text');
+        }
+
+        $settings = SchoolSetting::getInstance();
+
+        // Handle PWA icon upload
+        if ($request->hasFile('pwa_icon')) {
+            // Delete old PWA icon if exists
+            if ($settings->pwa_icon && Storage::exists('public/' . $settings->pwa_icon)) {
+                Storage::delete('public/' . $settings->pwa_icon);
+            }
+
+            $validated['pwa_icon'] = $request->file('pwa_icon')->store('pwa-icon', 'public');
+        }
+
+        // Set defaults for PWA settings if empty
+        if (empty($validated['pwa_app_name'])) {
+            $validated['pwa_app_name'] = $settings->school_name . ' School Management';
+        }
+        if (empty($validated['pwa_short_name'])) {
+            $validated['pwa_short_name'] = substr($settings->school_name, 0, 12);
+        }
+        if (empty($validated['pwa_theme_color'])) {
+            $validated['pwa_theme_color'] = '#0284c7';
+        }
+        if (empty($validated['pwa_background_color'])) {
+            $validated['pwa_background_color'] = '#ffffff';
+        }
+
+        $settings->update($validated);
+
+        return redirect()->route('settings.school.index')
+            ->with('success', 'PWA settings updated successfully!');
     }
 }

@@ -266,6 +266,32 @@
             </div>
         </div>
 
+        <!-- 8. PWA Settings Card -->
+        <div class="card hover:shadow-lg transition-all duration-200">
+            <div class="card-body">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white">
+                        <i class="fas fa-mobile-alt text-xl"></i>
+                    </div>
+                    <a href="{{ route('settings.school.edit-pwa') }}" class="btn btn-sm btn-outline">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">PWA Settings</h3>
+                <p class="text-sm text-gray-600 mb-4">Mobile app icon and branding</p>
+                
+                <div class="space-y-2 text-sm">
+                    <p><span class="font-semibold text-gray-700">App Name:</span> <span class="text-gray-900">{{ $settings->pwa_app_name ?? $settings->school_name }}</span></p>
+                    <p><span class="font-semibold text-gray-700">Short Name:</span> <span class="text-gray-900">{{ $settings->pwa_short_name ?? substr($settings->school_name, 0, 12) }}</span></p>
+                    @if($settings->pwa_icon)
+                        <p><i class="fas fa-check text-success-600 mr-2"></i><span class="text-success-600">Custom icon configured</span></p>
+                    @else
+                        <p><i class="fas fa-info-circle text-blue-600 mr-2"></i><span class="text-blue-600">Using school logo as icon</span></p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
         <!-- 7. System Preferences Card -->
         <div class="card hover:shadow-lg transition-all duration-200">
             <div class="card-body">
