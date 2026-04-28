@@ -31,50 +31,150 @@
     <style>
         * { font-family: 'Inter', system-ui, sans-serif; }
         html { scroll-behavior: smooth; }
-        
-        /* Animations */
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
-        @keyframes pulse-soft { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        
-        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
-        .animate-fade-in-left { animation: fadeInLeft 0.8s ease-out forwards; }
-        .animate-fade-in-right { animation: fadeInRight 0.8s ease-out forwards; }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        .animate-pulse-soft { animation: pulse-soft 3s ease-in-out infinite; }
-        
-        .delay-100 { animation-delay: 0.1s; opacity: 0; }
-        .delay-200 { animation-delay: 0.2s; opacity: 0; }
-        .delay-300 { animation-delay: 0.3s; opacity: 0; }
-        .delay-400 { animation-delay: 0.4s; opacity: 0; }
-        
-        /* Islamic Pattern */
-        .islamic-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 0L80 40L40 80L0 40z' fill='none' stroke='%23ffffff' stroke-width='0.5' opacity='0.1'/%3E%3Ccircle cx='40' cy='40' r='15' fill='none' stroke='%23ffffff' stroke-width='0.5' opacity='0.08'/%3E%3C/svg%3E");
-        }
-        
-        /* Card Effects */
-        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 25px 50px -12px rgba(11, 77, 115, 0.2); }
-        
-        /* Gradient overlays */
-        .hero-overlay {
-            background: linear-gradient(135deg, rgba(11, 77, 115, 0.92) 0%, rgba(11, 77, 115, 0.85) 50%, rgba(11, 77, 115, 0.75) 100%);
-        }
-        
-        /* Decorative shapes */
-        .shape-blob { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-        
-        /* Scroll reveal */
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Fade out animation */
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
-        .fade-out { animation: fadeOut 0.5s ease-out forwards; }
+        /* ── Keyframes ── */
+        @keyframes fadeInUp   { from { opacity:0; transform:translateY(32px);  } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeInLeft { from { opacity:0; transform:translateX(-32px); } to { opacity:1; transform:translateX(0); } }
+        @keyframes float      { 0%,100%{ transform:translateY(0);    } 50%{ transform:translateY(-18px); } }
+        @keyframes pulse-soft { 0%,100%{ opacity:.3; } 50%{ opacity:.7; } }
+        @keyframes fadeOut    { to { opacity:0; transform:translateY(-20px); } }
+        @keyframes orbit      { from{ transform:rotate(0deg) translateX(120px) rotate(0deg); } to{ transform:rotate(360deg) translateX(120px) rotate(-360deg); } }
+        @keyframes gradMove   { 0%,100%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } }
+        @keyframes scanline   { from{ transform:translateY(-100%); } to{ transform:translateY(100vh); } }
+        @keyframes ripple     { 0%{ transform:scale(.8); opacity:1; } 100%{ transform:scale(2.4); opacity:0; } }
+        @keyframes sparkle    { 0%,100%{ transform:scale(0) rotate(0deg); opacity:0; } 50%{ transform:scale(1) rotate(180deg); opacity:1; } }
+
+        .animate-fade-in-up   { animation: fadeInUp   .8s ease-out forwards; }
+        .animate-fade-in-left { animation: fadeInLeft .8s ease-out forwards; }
+        .animate-float        { animation: float 6s ease-in-out infinite; }
+        .animate-pulse-soft   { animation: pulse-soft 3s ease-in-out infinite; }
+        .fade-out             { animation: fadeOut .5s ease-out forwards; }
+
+        .delay-100 { animation-delay:.1s; opacity:0; }
+        .delay-200 { animation-delay:.2s; opacity:0; }
+        .delay-300 { animation-delay:.3s; opacity:0; }
+        .delay-400 { animation-delay:.4s; opacity:0; }
+        .delay-500 { animation-delay:.5s; opacity:0; }
+
+        /* Islamic geometric pattern */
+        .islamic-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 0L80 40L40 80L0 40z' fill='none' stroke='%23ffffff' stroke-width='.5' opacity='.1'/%3E%3Ccircle cx='40' cy='40' r='15' fill='none' stroke='%23ffffff' stroke-width='.5' opacity='.08'/%3E%3C/svg%3E");
+        }
+
+        /* Cards */
+        .card-hover { transition: all .4s cubic-bezier(.4,0,.2,1); }
+        .card-hover:hover { transform:translateY(-10px); box-shadow:0 32px 64px -12px rgba(11,77,115,.25); }
+
+        /* Hero */
+        .hero-overlay { background: linear-gradient(135deg, rgba(4,22,40,.96) 0%, rgba(11,77,115,.88) 55%, rgba(11,77,115,.70) 100%); }
+        .shape-blob   { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+
+        /* Scroll reveal */
+        .reveal { opacity:0; transform:translateY(30px); transition:all .8s ease; }
+        .reveal.active { opacity:1; transform:translateY(0); }
+
+        /* ── PWA Download Section ── */
+        .pwa-section {
+            background: linear-gradient(135deg, #020c18 0%, #041f2e 40%, #0B4D73 100%);
+            background-size: 200% 200%;
+            animation: gradMove 8s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        .pwa-section::before {
+            content:'';
+            position:absolute; inset:0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='.3' opacity='.06'%3E%3Cpolygon points='30,2 58,16 58,44 30,58 2,44 2,16'/%3E%3Ccircle cx='30' cy='30' r='10'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events:none;
+        }
+        .pwa-glow { 
+            position:absolute; border-radius:50%; filter:blur(80px); pointer-events:none;
+        }
+        /* Phone mockup */
+        .phone-frame {
+            width:200px; height:360px;
+            background: linear-gradient(160deg, #1a2940, #0d1f33);
+            border-radius: 32px;
+            border: 2px solid rgba(255,255,255,.15);
+            box-shadow: 0 0 0 1px rgba(255,255,255,.05), 0 40px 80px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1);
+            position: relative;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 14px 10px 10px;
+            flex-shrink: 0;
+        }
+        .phone-notch {
+            width: 70px; height: 18px;
+            background: #0a0f1a;
+            border-radius: 0 0 12px 12px;
+            margin-bottom: 8px;
+        }
+        .phone-screen {
+            flex: 1; width: 100%;
+            background: linear-gradient(160deg, #0d2137, #0B4D73);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            padding: 10px 8px;
+            gap: 6px;
+        }
+        .phone-bar {
+            height: 7px; border-radius: 4px;
+            background: rgba(255,255,255,.15);
+        }
+        .phone-bar.accent { background: linear-gradient(90deg,#3387af,#66a5c3); width:60%; }
+        .phone-tile {
+            height: 32px; border-radius: 8px;
+            background: rgba(255,255,255,.08);
+            display: flex; align-items: center; padding: 0 8px; gap: 6px;
+        }
+        .phone-dot { width:8px; height:8px; border-radius:50%; }
+
+        /* Store badge buttons */
+        .store-btn {
+            display: inline-flex; align-items: center; gap: 12px;
+            padding: 12px 22px; border-radius: 14px;
+            transition: all .3s cubic-bezier(.4,0,.2,1);
+            cursor: pointer; border: none; text-decoration: none;
+            min-width: 190px;
+        }
+        .store-btn:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,.4); }
+        .store-btn:active { transform: translateY(-1px); }
+        .store-btn-android {
+            background: linear-gradient(135deg, #1a7c4e, #22a06b);
+            border: 1px solid rgba(255,255,255,.15);
+        }
+        .store-btn-ios {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border: 1px solid rgba(255,255,255,.15);
+        }
+        .store-btn-desktop {
+            background: linear-gradient(135deg, #6d28d9, #7c3aed);
+            border: 1px solid rgba(255,255,255,.15);
+        }
+        .store-btn-play {
+            background: linear-gradient(135deg, #374151, #111827);
+            border: 1px solid rgba(255,255,255,.12);
+        }
+        .store-btn-icon { font-size: 26px; color: #fff; flex-shrink: 0; }
+        .store-btn-text { display: flex; flex-direction: column; text-align: left; }
+        .store-btn-label { font-size: 10px; color: rgba(255,255,255,.7); letter-spacing:.04em; text-transform:uppercase; }
+        .store-btn-name  { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.2; }
+
+        /* Ripple ring */
+        .ripple-ring {
+            position: absolute; border-radius: 50%;
+            border: 1.5px solid rgba(51,135,175,.4);
+            animation: ripple 3s ease-out infinite;
+        }
+
+        /* Stat chip */
+        .stat-chip {
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.12);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 12px 18px;
+        }
     </style>
 </head>
 
@@ -154,46 +254,53 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-32">
             <div class="max-w-3xl">
                 <!-- Badge -->
-                <div class="animate-fade-in-up inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
-                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                    <span class="text-white/90 text-sm font-medium">Admissions Open</span>
+                <div class="animate-fade-in-up inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/20 px-5 py-2.5 rounded-full mb-7 shadow-lg">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
+                    </span>
+                    <span class="text-white/95 text-sm font-semibold tracking-wide">Admissions Now Open</span>
                 </div>
 
                 <!-- Headline -->
-                <h1 class="animate-fade-in-up delay-100 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
-                    {{ $schoolSettings->school_name ?? 'Excellence in Islamic Education' }}
+                <h1 class="animate-fade-in-up delay-100 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4">
+                    {{ $schoolSettings->school_name ?? 'Excellence in' }}
+                    <span class="block" style="background:linear-gradient(90deg,#ffffff,#99c3d7,#66a5c3);-webkit-background-clip:text;background-clip:text;color:transparent;">
+                        Islamic Education
+                    </span>
                 </h1>
 
                 <!-- Subtext -->
-                <p class="animate-fade-in-up delay-200 text-lg lg:text-xl text-white/85 leading-relaxed mb-8 max-w-2xl">
+                <p class="animate-fade-in-up delay-200 text-lg lg:text-xl text-white/75 leading-relaxed mb-8 max-w-2xl">
                     {{ $schoolSettings->school_mission ?? 'Nurturing hearts and minds through authentic Quranic and Arabic education in the tradition of the righteous scholars.' }}
                 </p>
 
                 <!-- CTA Buttons -->
                 <div class="animate-fade-in-up delay-300 flex flex-col sm:flex-row gap-4">
-                    <a href="{{ route('enrollment.token') }}" class="group inline-flex items-center justify-center gap-2 bg-white text-brand-500 font-semibold px-8 py-4 rounded-xl hover:bg-warm-100 transition-all hover:shadow-xl text-center">
+                    <a href="{{ route('enrollment.token') }}" class="group inline-flex items-center justify-center gap-2.5 bg-white text-brand-600 font-bold px-8 py-4 rounded-2xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-center" style="box-shadow:0 8px 32px rgba(255,255,255,.25);">
                         <i class="fas fa-user-plus group-hover:scale-110 transition-transform"></i>
                         <span>Start Enrollment</span>
+                        <i class="fas fa-arrow-right text-xs opacity-60 group-hover:translate-x-1 transition-transform"></i>
                     </a>
-                    <a href="#programs" class="inline-flex items-center justify-center gap-2 border-2 border-white/40 text-white font-semibold px-8 py-4 rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all text-center">
+                    <a href="#programs" class="inline-flex items-center justify-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold px-8 py-4 rounded-2xl hover:bg-white/20 transition-all duration-300 text-center">
                         <i class="fas fa-book-quran"></i>
                         <span>View Programs</span>
                     </a>
                 </div>
 
                 <!-- Trust Stats -->
-                <div class="animate-fade-in-up delay-400 grid grid-cols-3 gap-8 mt-16 pt-8 border-t border-white/20">
+                <div class="animate-fade-in-up delay-400 grid grid-cols-3 gap-4 mt-14 pt-8 border-t border-white/15">
                     <div class="text-center sm:text-left">
-                        <div class="text-3xl lg:text-4xl font-bold text-white">20+</div>
-                        <div class="text-sm text-white/70 mt-1">Years Teaching</div>
+                        <div class="text-3xl lg:text-4xl font-extrabold text-white">20+</div>
+                        <div class="text-xs text-white/55 mt-1 uppercase tracking-wider font-semibold">Years Teaching</div>
                     </div>
                     <div class="text-center sm:text-left">
-                        <div class="text-3xl lg:text-4xl font-bold text-white">100+</div>
-                        <div class="text-sm text-white/70 mt-1">Huffaz Produced</div>
+                        <div class="text-3xl lg:text-4xl font-extrabold text-white">100+</div>
+                        <div class="text-xs text-white/55 mt-1 uppercase tracking-wider font-semibold">Huffaz Produced</div>
                     </div>
                     <div class="text-center sm:text-left">
-                        <div class="text-3xl lg:text-4xl font-bold text-white">30+</div>
-                        <div class="text-sm text-white/70 mt-1">Qualified Scholars</div>
+                        <div class="text-3xl lg:text-4xl font-extrabold text-white">30+</div>
+                        <div class="text-xs text-white/55 mt-1 uppercase tracking-wider font-semibold">Qualified Scholars</div>
                     </div>
                 </div>
             </div>
@@ -205,56 +312,148 @@
         </div>
     </section>
 
-    <!-- App Download Section -->
-    <section id="app-download-section" class="py-16 lg:py-20 bg-gradient-to-br from-gray-50 to-gray-100 border-b border-gray-200">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- ═══ PWA App Download Section ═══ -->
+    <section id="app-download-section" class="pwa-section py-20 lg:py-28">
+
+        <!-- Glow orbs -->
+        <div class="pwa-glow" style="width:500px;height:500px;background:rgba(51,135,175,.18);top:-120px;right:-80px;"></div>
+        <div class="pwa-glow" style="width:400px;height:400px;background:rgba(11,77,115,.25);bottom:-100px;left:-60px;"></div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
             <!-- Header -->
-            <div class="text-center mb-12">
-                <div class="inline-flex items-center justify-center w-12 h-12 bg-brand-500 rounded-full mb-4">
-                    <i class="fas fa-mobile-alt text-white text-xl"></i>
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/15 text-white/80 text-xs font-semibold uppercase tracking-widest px-4 py-2 rounded-full mb-5">
+                    <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+                    Available Now
                 </div>
-                <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                    Get the App
+                <h2 class="text-4xl lg:text-5xl font-extrabold text-white mb-4 leading-tight">
+                    Take the School Portal
+                    <span class="block text-transparent" style="background:linear-gradient(90deg,#66a5c3,#3387af,#99c3d7);-webkit-background-clip:text;background-clip:text;">Everywhere You Go</span>
                 </h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Access the school portal instantly from your device. Works offline and syncs your data automatically.
+                <p class="text-white/65 text-lg max-w-xl mx-auto">
+                    Install our Progressive Web App on any device — works offline, loads instantly, and feels native.
                 </p>
             </div>
 
-            <!-- Platform Specific Content -->
-            <div id="platform-specific-content" class="mb-8">
-                <!-- Content loaded by JavaScript -->
+            <!-- Main Content: Phone + Buttons -->
+            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+
+                <!-- Phone Mockup -->
+                <div class="flex-shrink-0 relative flex items-center justify-center">
+                    <!-- Ripple rings -->
+                    <div class="ripple-ring" style="width:260px;height:260px;top:50%;left:50%;margin:-130px 0 0 -130px;"></div>
+                    <div class="ripple-ring" style="width:320px;height:320px;top:50%;left:50%;margin:-160px 0 0 -160px;animation-delay:1s;"></div>
+                    <div class="ripple-ring" style="width:380px;height:380px;top:50%;left:50%;margin:-190px 0 0 -190px;animation-delay:2s;"></div>
+
+                    <div class="phone-frame animate-float">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <!-- fake app UI -->
+                            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                                <div class="phone-dot" style="background:#3387af;"></div>
+                                <div class="phone-bar accent" style="height:6px;flex:1;"></div>
+                            </div>
+                            <div class="phone-tile"><div class="phone-dot" style="background:#66a5c3;"></div><div class="phone-bar" style="width:70%;height:5px;"></div></div>
+                            <div class="phone-tile"><div class="phone-dot" style="background:#22a06b;"></div><div class="phone-bar" style="width:55%;height:5px;"></div></div>
+                            <div class="phone-tile"><div class="phone-dot" style="background:#f59e0b;"></div><div class="phone-bar" style="width:80%;height:5px;"></div></div>
+                            <div style="height:8px;"></div>
+                            <div style="background:rgba(51,135,175,.2);border-radius:10px;height:60px;display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-mosque" style="color:rgba(102,165,195,.7);font-size:22px;"></i>
+                            </div>
+                            <div class="phone-bar" style="width:90%;height:5px;margin-top:4px;"></div>
+                            <div class="phone-bar" style="width:75%;height:5px;"></div>
+                            <div class="phone-bar accent" style="height:5px;width:50%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Floating badge -->
+                    <div style="position:absolute;top:10px;right:-20px;background:linear-gradient(135deg,#22a06b,#16a34a);border-radius:50px;padding:7px 14px;display:flex;align-items:center;gap:6px;box-shadow:0 8px 24px rgba(34,160,107,.4);">
+                        <i class="fas fa-check-circle" style="color:#fff;font-size:12px;"></i>
+                        <span style="color:#fff;font-size:11px;font-weight:700;">Offline Ready</span>
+                    </div>
+                    <div style="position:absolute;bottom:30px;left:-28px;background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:7px 14px;display:flex;align-items:center;gap:6px;">
+                        <i class="fas fa-bolt" style="color:#f59e0b;font-size:12px;"></i>
+                        <span style="color:#fff;font-size:11px;font-weight:600;">Lightning Fast</span>
+                    </div>
+                </div>
+
+                <!-- Right: Buttons + Features -->
+                <div class="flex-1 w-full">
+
+                    <!-- Platform buttons -->
+                    <div id="platform-specific-content" class="mb-8">
+                        <!-- Loaded by JS; default shown below as fallback -->
+                        <div id="pwa-default-btns">
+                            <p class="text-white/50 text-sm mb-5 font-medium uppercase tracking-widest">Install on your device</p>
+                            <div class="flex flex-col sm:flex-row flex-wrap gap-4">
+                                <button id="pwa-install-btn" onclick="appDownloadManager && appDownloadManager.installApp()" class="store-btn store-btn-android">
+                                    <i class="fab fa-android store-btn-icon"></i>
+                                    <span class="store-btn-text">
+                                        <span class="store-btn-label">Install for</span>
+                                        <span class="store-btn-name">Android</span>
+                                    </span>
+                                </button>
+                                <button id="pwa-ios-btn" class="store-btn store-btn-ios">
+                                    <i class="fab fa-apple store-btn-icon"></i>
+                                    <span class="store-btn-text">
+                                        <span class="store-btn-label">Add to</span>
+                                        <span class="store-btn-name">iPhone / iPad</span>
+                                    </span>
+                                </button>
+                                <button id="pwa-desktop-btn" onclick="appDownloadManager && appDownloadManager.installApp()" class="store-btn store-btn-desktop">
+                                    <i class="fas fa-desktop store-btn-icon"></i>
+                                    <span class="store-btn-text">
+                                        <span class="store-btn-label">Install on</span>
+                                        <span class="store-btn-name">Desktop / PC</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <p class="text-white/35 text-xs mt-4"><i class="fas fa-info-circle mr-1"></i>iOS: tap <strong class="text-white/50">Share</strong> → <strong class="text-white/50">Add to Home Screen</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- Stats chips -->
+                    <div class="grid grid-cols-3 gap-3 mb-8">
+                        <div class="stat-chip text-center">
+                            <div class="text-2xl font-bold text-white">0 MB</div>
+                            <div class="text-white/50 text-xs mt-0.5">To Download</div>
+                        </div>
+                        <div class="stat-chip text-center">
+                            <div class="text-2xl font-bold text-white">100%</div>
+                            <div class="text-white/50 text-xs mt-0.5">Offline</div>
+                        </div>
+                        <div class="stat-chip text-center">
+                            <div class="text-2xl font-bold text-white">Free</div>
+                            <div class="text-white/50 text-xs mt-0.5">Always</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature pills -->
+                    <div class="flex flex-wrap gap-2">
+                        <span class="inline-flex items-center gap-1.5 bg-white/10 border border-white/10 text-white/70 text-xs font-medium px-3 py-1.5 rounded-full">
+                            <i class="fas fa-wifi text-emerald-400"></i>Works Offline
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 bg-white/10 border border-white/10 text-white/70 text-xs font-medium px-3 py-1.5 rounded-full">
+                            <i class="fas fa-bell text-sky-400"></i>Push Notifications
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 bg-white/10 border border-white/10 text-white/70 text-xs font-medium px-3 py-1.5 rounded-full">
+                            <i class="fas fa-sync-alt text-violet-400"></i>Auto Sync
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 bg-white/10 border border-white/10 text-white/70 text-xs font-medium px-3 py-1.5 rounded-full">
+                            <i class="fas fa-lock text-amber-400"></i>Secure
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 bg-white/10 border border-white/10 text-white/70 text-xs font-medium px-3 py-1.5 rounded-full">
+                            <i class="fas fa-bolt text-rose-400"></i>Lightning Fast
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Features Grid -->
-            <div class="grid md:grid-cols-3 gap-6 mt-12 pt-8 border-t border-gray-200">
-                <div class="text-center">
-                    <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-3">
-                        <i class="fas fa-wifi text-green-600 text-lg"></i>
-                    </div>
-                    <h4 class="font-semibold text-gray-900 mb-1">Works Offline</h4>
-                    <p class="text-sm text-gray-600">Access your data even without internet</p>
-                </div>
-                <div class="text-center">
-                    <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
-                        <i class="fas fa-bolt text-blue-600 text-lg"></i>
-                    </div>
-                    <h4 class="font-semibold text-gray-900 mb-1">Lightning Fast</h4>
-                    <p class="text-sm text-gray-600">Instant loading and smooth performance</p>
-                </div>
-                <div class="text-center">
-                    <div class="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-3">
-                        <i class="fas fa-bell text-purple-600 text-lg"></i>
-                    </div>
-                    <h4 class="font-semibold text-gray-900 mb-1">Notifications</h4>
-                    <p class="text-sm text-gray-600">Get instant alerts and updates</p>
-                </div>
-            </div>
-
-            <!-- Dismiss option -->
-            <div class="text-center mt-8">
-                <button onclick="document.getElementById('app-download-section').style.display='none'" class="text-sm text-gray-500 hover:text-gray-700 transition-colors">
-                    Dismiss this banner
+            <!-- Dismiss -->
+            <div class="text-center mt-12">
+                <button onclick="document.getElementById('app-download-section').style.display='none'" class="text-white/25 hover:text-white/50 text-sm transition-colors">
+                    <i class="fas fa-times mr-1"></i>Dismiss
                 </button>
             </div>
         </div>
