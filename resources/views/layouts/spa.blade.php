@@ -1070,10 +1070,17 @@
 
                     <!-- Right: Install, Language, Notifications -->
                     <div class="flex items-center gap-2 sm:gap-3">
-                        <!-- PWA Install Button -->
+                        <!-- PWA Install Button (Header) -->
+                        <button id="pwa-install-btn-header" onclick="window.unifiedPWAManager && window.unifiedPWAManager.handleInstallClick()" class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:-translate-y-0.5" style="display: none;" title="Install app for offline access">
+                            <i class="fas fa-download"></i>
+                            <span class="hidden sm:inline text-sm font-medium">Install</span>
+                        </button>
+
+                        <!-- PWA Install Button (Original) -->
                         <button id="pwa-install-btn" 
-                                class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:-translate-y-0.5"
-                                title="Install app for offline access and quick launch">
+                                class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:-translate-y-0.5" style="display: none;"
+                                title="Install app for offline access and quick launch"
+                                onclick="window.unifiedPWAManager && window.unifiedPWAManager.handleInstallClick()">
                             <i class="fas fa-download"></i>
                             <span class="hidden sm:inline text-sm font-medium">Install App</span>
                         </button>
@@ -1542,6 +1549,8 @@
     <script src="{{ asset('js/animations.js') }}"></script>
 
     <!-- PWA Registration & Installation Handler -->
+    <!-- PWA Scripts -->
+    <script src="{{ asset('js/unified-pwa-manager.js') }}"></script>
     <script src="{{ asset('js/pwa.js') }}"></script>
 
     @stack('scripts')
