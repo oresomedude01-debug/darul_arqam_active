@@ -38,6 +38,11 @@ use App\Http\Controllers\ProfileController;
 // Landing Page (Public)
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
+// PWA Offline Page
+Route::get('/offline', function () {
+    return view('offline');
+})->name('offline');
+
 // Public Pages
 Route::get('/about', function () {
     return view('about');
@@ -54,6 +59,13 @@ Route::get('/blog', function () {
 // Language/Localization Routes
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 Route::get('/api/locale/current', [LocaleController::class, 'getCurrent'])->name('locale.current');
+
+// PWA API Routes
+Route::prefix('api')->group(function () {
+    Route::post('/push-subscriptions', [App\Http\Controllers\Api\PushNotificationController::class, 'store'])->middleware('auth');
+    Route::get('/notifications/pending', [App\Http\Controllers\Api\PushNotificationController::class, 'getPending'])->middleware('auth');
+    Route::post('/push-notifications/test', [App\Http\Controllers\Api\PushNotificationController::class, 'sendTest'])->middleware('auth');
+});
 
 // Authentication Routes
 require __DIR__ . '/auth.php';

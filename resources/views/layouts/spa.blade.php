@@ -3,8 +3,25 @@
       dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="Darul Arqam School Management System - A comprehensive platform for managing students, teachers, and school operations">
+    <meta name="theme-color" content="#0284c7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Darul Arqam">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#0284c7">
+    <meta name="msapplication-config" content="{{ asset('browserconfig.xml') }}">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="{{ asset('images/icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/icon-512x512.png') }}">
+    
     <title id="page-title">@yield('title', 'Dashboard') - Darul Arqam</title>
 
     <!-- Tailwind CSS CDN -->
@@ -391,6 +408,42 @@
         .table-row:hover {
             background-color: rgba(2, 132, 199, 0.05) !important;
             transform: scale(1.01);
+        }
+
+        /* ===== PWA STYLES ===== */
+        #pwa-offline-indicator {
+            animation: slideInDown 0.3s ease-out;
+        }
+
+        #pwa-install-btn {
+            display: none;
+            gap: 0.5rem;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+
+        #pwa-install-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+        }
+
+        #pwa-install-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        #pwa-install-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
     </style>
 
@@ -1015,9 +1068,15 @@
                         </div>
                     </div>
 
-                    <!-- Right: Search, Language, Notifications -->
+                    <!-- Right: Install, Language, Notifications -->
                     <div class="flex items-center gap-2 sm:gap-3">
-                        <!-- Search removed per user request -->
+                        <!-- PWA Install Button -->
+                        <button id="pwa-install-btn" 
+                                class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+                                title="Install app for offline access and quick launch">
+                            <i class="fas fa-download"></i>
+                            <span class="hidden sm:inline text-sm font-medium">Install App</span>
+                        </button>
 
                         <!-- Language Switcher -->
                         <div x-data="{ open: false }" class="relative">
@@ -1481,6 +1540,9 @@
 
     <!-- Enhanced UX Animations with GSAP -->
     <script src="{{ asset('js/animations.js') }}"></script>
+
+    <!-- PWA Registration & Installation Handler -->
+    <script src="{{ asset('js/pwa.js') }}"></script>
 
     @stack('scripts')
 </body>
