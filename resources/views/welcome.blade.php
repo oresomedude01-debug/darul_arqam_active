@@ -71,6 +71,10 @@
         /* Scroll reveal */
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
         .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Fade out animation */
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
+        .fade-out { animation: fadeOut 0.5s ease-out forwards; }
     </style>
 </head>
 
@@ -198,6 +202,61 @@
         <!-- Scroll Indicator -->
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 animate-bounce">
             <i class="fas fa-chevron-down text-2xl"></i>
+        </div>
+    </section>
+
+    <!-- App Download Section -->
+    <section id="app-download-section" class="py-16 lg:py-20 bg-gradient-to-br from-gray-50 to-gray-100 border-b border-gray-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-brand-500 rounded-full mb-4">
+                    <i class="fas fa-mobile-alt text-white text-xl"></i>
+                </div>
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+                    Get the App
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Access the school portal instantly from your device. Works offline and syncs your data automatically.
+                </p>
+            </div>
+
+            <!-- Platform Specific Content -->
+            <div id="platform-specific-content" class="mb-8">
+                <!-- Content loaded by JavaScript -->
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid md:grid-cols-3 gap-6 mt-12 pt-8 border-t border-gray-200">
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-3">
+                        <i class="fas fa-wifi text-green-600 text-lg"></i>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 mb-1">Works Offline</h4>
+                    <p class="text-sm text-gray-600">Access your data even without internet</p>
+                </div>
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
+                        <i class="fas fa-bolt text-blue-600 text-lg"></i>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 mb-1">Lightning Fast</h4>
+                    <p class="text-sm text-gray-600">Instant loading and smooth performance</p>
+                </div>
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-3">
+                        <i class="fas fa-bell text-purple-600 text-lg"></i>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 mb-1">Notifications</h4>
+                    <p class="text-sm text-gray-600">Get instant alerts and updates</p>
+                </div>
+            </div>
+
+            <!-- Dismiss option -->
+            <div class="text-center mt-8">
+                <button onclick="document.getElementById('app-download-section').style.display='none'" class="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+                    Dismiss this banner
+                </button>
+            </div>
         </div>
     </section>
 
@@ -564,5 +623,8 @@
             });
         });
     </script>
+
+    <!-- App Download Manager -->
+    <script src="{{ asset('js/app-download-manager.js') }}"></script>
 </body>
 </html>
