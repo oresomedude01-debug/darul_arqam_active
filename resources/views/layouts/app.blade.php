@@ -81,7 +81,7 @@
 
     <div class="flex h-full">
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-primary-800 to-primary-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:max-h-screen flex flex-col"
+        <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-primary-800 to-primary-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen flex flex-col"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
                x-cloak>
 
@@ -319,6 +319,15 @@
                         </a>
                     </div>
                 </div>
+                @endif
+
+                <!-- Blog - Admin -->
+                @if(auth()->user()->hasRole('admin'))
+                <a href="{{ route('admin.blog.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.blog.*') ? 'active' : '' }}">
+                    <i class="fas fa-newspaper w-5"></i>
+                    <span>Blog</span>
+                </a>
                 @endif
 
                 <!-- Reports - Admin -->

@@ -225,10 +225,6 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button id="pwa-install-btn-header" onclick="window.appDownloadManager && window.appDownloadManager.handleInstallClick()" class="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all px-4 py-2 text-sm font-semibold opacity-0 transition-opacity duration-300" style="display: none;">
-                        <i class="fas fa-download"></i>
-                        <span>Install App</span>
-                    </button>
                     @if (Route::has('login'))
                         @auth
                             <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-brand-500 hover:text-brand-600 hidden sm:block">Dashboard</a>

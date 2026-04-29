@@ -982,6 +982,17 @@
                     </a>
                 @endhasPermission
 
+                <!-- Blog Management - Admin Only -->
+                @hasRole('admin')
+                    <a href="{{ route('admin.blog.index') }}"
+                    @click.prevent="navigate('{{ route('admin.blog.index') }}')"
+                    :class="currentPath.includes('/admin/blog') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
+                        <i class="fas fa-newspaper text-base w-5"></i>
+                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Blog Management</span>
+                    </a>
+                @endhasRole
+
             <!-- Divider -->
             <div class="my-4 border-t border-primary-700/50"></div>
 

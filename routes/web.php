@@ -34,6 +34,8 @@ use App\Http\Controllers\Admin\RBACController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\MailTestController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 
 // Landing Page (Public)
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -52,9 +54,8 @@ Route::get('/gallery', function () {
     return view('gallery');
 })->name('gallery');
 
-Route::get('/blog', function () {
-    return view('blog.index');
-})->name('blog.index');
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // Language/Localization Routes
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
@@ -515,6 +516,17 @@ Route::middleware(['auth', 'role.redirect'])->group(function () {
         Route::prefix('send-mail')->name('send-mail.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\SendMailController::class, 'index'])->name('index');
             Route::post('/send', [\App\Http\Controllers\Admin\SendMailController::class, 'send'])->name('send');
+        });
+
+        // Blog Management
+        Route::prefix('blog')->name('blog.')->group(function () {
+            Route::get('/', [AdminBlogController::class, 'index'])->name('index');
+            Route::get('/create', [AdminBlogController::class, 'create'])->name('create');
+            Route::post('/', [AdminBlogController::class, 'store'])->name('store');
+            Route::get('/{blog}/edit', [AdminBlogController::class, 'edit'])->name('edit');
+            Route::put('/{blog}', [AdminBlogController::class, 'update'])->name('update');
+            Route::delete('/{blog}', [AdminBlogController::class, 'destroy'])->name('destroy');
+            Route::patch('/{blog}/toggle', [AdminBlogController::class, 'toggleStatus'])->name('toggle');
         });
     });
 });
