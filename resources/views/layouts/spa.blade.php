@@ -100,10 +100,15 @@
         }
 
         .skeleton-loading {
-            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background: linear-gradient(90deg, #f3f4f6 25%, #e9ebee 50%, #f3f4f6 75%);
             background-size: 1000px 100%;
-            animation: shimmer 2s infinite;
+            animation: shimmer 1.6s ease-in-out infinite;
+            border-radius: 6px;
         }
+
+        /* Skeleton block shorthand */
+        .sk { display: block; }
+        .sk-rounded { border-radius: 9999px; }
 
         /* ===== PAGE TRANSITIONS ===== */
         .page-transition {
@@ -446,7 +451,7 @@
            x-transition:leave-start="translate-x-0"
            x-transition:leave-end="-translate-x-full"
            :class="sidebarCollapsed && !mobileMenuOpen ? 'lg:w-20' : 'lg:w-64'"
-           class="fixed inset-y-0 left-0 z-50 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 text-white shadow-2xl transition-all duration-300 lg:translate-x-0 lg:static lg:h-screen lg:flex-shrink-0 flex flex-col"
+           class="fixed top-0 bottom-16 lg:bottom-0 left-0 z-50 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 text-white shadow-2xl transition-all duration-300 lg:translate-x-0 lg:static lg:h-screen lg:flex-shrink-0 flex flex-col"
            x-cloak>
 
         <!-- Sidebar Header -->
@@ -959,7 +964,7 @@
                     :class="currentPath.includes('/admin/blog') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all">
                         <i class="fas fa-newspaper text-base w-5"></i>
-                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Blog Management</span>
+                        <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">{{ __('nav.blog_management') }}</span>
                     </a>
                 @endif
 
@@ -981,50 +986,63 @@
                 @endif
             </a>
 
-            <!-- User Profile Collapsible Menu - For all authenticated users -->
-            <div x-data="{ userMenuOpen: false }">
-                <button @click="userMenuOpen = !userMenuOpen"
-                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-primary-100 hover:bg-primary-700/30 hover:text-white transition-all">
-                    <div class="w-5 h-5 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
-                        {{ substr(Auth::user()->name, 0, 1) }}
+
+        </nav>
+
+        <!-- User Profile (Bottom) -->
+        <div class="p-4 border-t border-primary-700/50 mt-auto">
+            <div x-data="{ open: false }" class="relative">
+                <button @click="open = !open"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-100 hover:bg-primary-700/30 transition-all">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+                        {{ substr(Auth::user()->name, 0, 2) }}
                     </div>
-                    <span x-show="!sidebarCollapsed || mobileMenuOpen" class="flex-1 text-left transition-opacity truncate">{{ Auth::user()->name }}</span>
-                    <i x-show="!sidebarCollapsed || mobileMenuOpen" :class="userMenuOpen ? 'fa-chevron-down' : 'fa-chevron-right'" class="fas text-xs transition-transform"></i>
+                    <div x-show="!sidebarCollapsed || mobileMenuOpen" class="flex-1 text-left transition-opacity">
+                        <p class="text-sm font-medium text-white leading-tight truncate">{{ Auth::user()->name }}</p>
+                        <p class="text-xs text-primary-200 truncate">{{ Auth::user()->email }}</p>
+                    </div>
+                    <i x-show="!sidebarCollapsed || mobileMenuOpen" class="fas fa-chevron-up text-xs"></i>
                 </button>
-                
-                <!-- User Menu Items -->
-                <div x-show="userMenuOpen && (!sidebarCollapsed || mobileMenuOpen)"
-                     x-transition
-                     class="ml-8 mt-1 space-y-1"
+
+                <div x-show="open"
+                     @click.away="open = false"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden"
                      x-cloak>
                     <a href="{{ route('profile.show') }}"
-                       @click.prevent="navigate('{{ route('profile.show') }}')"
-                       class="flex items-center gap-3 px-3 py-2 text-sm text-primary-200 hover:text-white hover:bg-primary-700/20 rounded-lg transition-all">
-                        <i class="fas fa-user-circle text-sm w-4"></i>
-                        <span>{{ __('nav.my_profile') }}</span>
+                       @click.prevent="navigate('{{ route('profile.show') }}'); open = false;"
+                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                        <i class="fas fa-user-circle mr-2 text-gray-400"></i>
+                        {{ __('nav.my_profile') }}
                     </a>
                     <a href="{{ route('profile.edit') }}"
-                       @click.prevent="navigate('{{ route('profile.edit') }}')"
-                       class="flex items-center gap-3 px-3 py-2 text-sm text-primary-200 hover:text-white hover:bg-primary-700/20 rounded-lg transition-all">
-                        <i class="fas fa-sliders text-sm w-4"></i>
-                        <span>{{ __('nav.account_settings') }}</span>
+                       @click.prevent="navigate('{{ route('profile.edit') }}'); open = false;"
+                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                        <i class="fas fa-sliders mr-2 text-gray-400"></i>
+                        {{ __('nav.account_settings') }}
                     </a>
                     <a href="{{ route('profile.change-password') }}"
-                       @click.prevent="navigate('{{ route('profile.change-password') }}')"
-                       class="flex items-center gap-3 px-3 py-2 text-sm text-primary-200 hover:text-white hover:bg-primary-700/20 rounded-lg transition-all">
-                        <i class="fas fa-key text-sm w-4"></i>
-                        <span>{{ __('nav.change_password') }}</span>
+                       @click.prevent="navigate('{{ route('profile.change-password') }}'); open = false;"
+                       class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                        <i class="fas fa-key mr-2 text-gray-400"></i>
+                        {{ __('nav.change_password') }}
                     </a>
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    <div class="border-t border-gray-200"></div>
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-primary-200 hover:text-white hover:bg-primary-700/20 rounded-lg transition-all text-left">
-                            <i class="fas fa-sign-out-alt text-sm w-4"></i>
-                            <span>{{ __('nav.logout') }}</span>
+                        <button type="submit" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                            {{ __('nav.logout') }}
                         </button>
                     </form>
                 </div>
             </div>
-        </nav>
+        </div>
     </aside>
 
     <!-- Main Content Area -->
@@ -1129,14 +1147,83 @@
 
         <!-- Main Content (SPA Container) -->
         <main class="flex-1 overflow-y-auto overscroll-contain relative w-full" id="main-scroll-container">
-            <!-- Loading Indicator -->
+            <!-- Skeleton Screen - Page Transition Placeholder -->
             <div x-show="loading"
-                 x-transition
-                 class="flex items-center justify-center py-20"
+                 x-transition:enter="transition ease-out duration-150"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="px-4 sm:px-6 lg:px-8 py-6 space-y-6"
                  x-cloak>
-                <div class="text-center">
-                    <div class="spinner mx-auto mb-4"></div>
-                    <p class="text-gray-600">{{ __('nav.loading') }}</p>
+
+                <!-- Page Title Skeleton -->
+                <div class="flex items-center justify-between">
+                    <div class="space-y-2">
+                        <span class="sk skeleton-loading block h-7 w-48 rounded-md"></span>
+                        <span class="sk skeleton-loading block h-4 w-72 rounded-md"></span>
+                    </div>
+                    <span class="sk skeleton-loading block h-9 w-28 rounded-lg"></span>
+                </div>
+
+                <!-- Stats Cards Skeleton -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <template x-for="i in 4" :key="i">
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="sk skeleton-loading block h-4 w-24 rounded"></span>
+                                <span class="sk skeleton-loading block w-9 h-9 rounded-full"></span>
+                            </div>
+                            <span class="sk skeleton-loading block h-8 w-16 rounded"></span>
+                            <span class="sk skeleton-loading block h-3 w-32 rounded"></span>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Content Panels Skeleton -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+                    <!-- Main Panel -->
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <!-- Panel header -->
+                        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                            <span class="sk skeleton-loading block h-5 w-36 rounded"></span>
+                            <span class="sk skeleton-loading block h-4 w-20 rounded"></span>
+                        </div>
+                        <!-- Table rows -->
+                        <div class="divide-y divide-gray-50">
+                            <template x-for="i in 5" :key="i">
+                                <div class="px-5 py-3.5 flex items-center gap-4">
+                                    <span class="sk skeleton-loading block w-8 h-8 rounded-full flex-shrink-0"></span>
+                                    <div class="flex-1 space-y-1.5">
+                                        <span class="sk skeleton-loading block h-3.5 rounded" :style="'width:' + (55 + i * 6) + '%'"></span>
+                                        <span class="sk skeleton-loading block h-3 w-2/5 rounded"></span>
+                                    </div>
+                                    <span class="sk skeleton-loading block h-6 w-16 rounded-full"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Side Panel -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="px-5 py-4 border-b border-gray-100">
+                            <span class="sk skeleton-loading block h-5 w-32 rounded"></span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <template x-for="i in 4" :key="i">
+                                <div class="flex items-center gap-3">
+                                    <span class="sk skeleton-loading block w-9 h-9 rounded-lg flex-shrink-0"></span>
+                                    <div class="flex-1 space-y-1.5">
+                                        <span class="sk skeleton-loading block h-3.5 w-3/4 rounded"></span>
+                                        <span class="sk skeleton-loading block h-3 w-1/2 rounded"></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 

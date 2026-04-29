@@ -36,6 +36,7 @@ return [
     'reports' => 'التقارير',
     'settings' => 'إعدادات المدرسة',
     'send_mail' => 'إرسال بريد',
+    'blog_management' => 'إدارة المدونة',
 
     'results' => 'النتائج',
     'main_dashboard' => 'لوحة التحكم الرئيسية',

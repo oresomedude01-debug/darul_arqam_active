@@ -36,6 +36,7 @@ return [
     'reports' => 'Reports',
     'settings' => 'School Settings',
     'send_mail' => 'Send Mail',
+    'blog_management' => 'Blog Management',
 
     'results' => 'Results',
     'main_dashboard' => 'Main Dashboard',
