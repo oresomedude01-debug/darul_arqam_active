@@ -225,7 +225,7 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button id="pwa-install-btn-header" onclick="window.unifiedPWAManager && window.unifiedPWAManager.handleInstallClick()" class="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all px-4 py-2 text-sm font-semibold" style="display: none;">
+                    <button id="pwa-install-btn-header" onclick="window.appDownloadManager && window.appDownloadManager.handleInstallClick()" class="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all px-4 py-2 text-sm font-semibold opacity-0 transition-opacity duration-300" style="display: none;">
                         <i class="fas fa-download"></i>
                         <span>Install App</span>
                     </button>
@@ -306,7 +306,7 @@
                         <span>Start Enrollment</span>
                         <i class="fas fa-arrow-right text-xs opacity-60 group-hover:translate-x-1 transition-transform"></i>
                     </a>
-                    <button id="pwa-hero-download-btn" onclick="window.unifiedPWAManager && window.unifiedPWAManager.handleInstallClick()" class="group inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold px-8 py-4 rounded-2xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-center" style="box-shadow:0 8px 32px rgba(52,211,153,.25); display: none; opacity: 0;">
+                    <button id="pwa-hero-download-btn" onclick="window.appDownloadManager && window.appDownloadManager.handleInstallClick()" class="group inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold px-8 py-4 rounded-2xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-center opacity-0 transition-opacity" style="box-shadow:0 8px 32px rgba(52,211,153,.25); display: none;">
                         <i class="fas fa-download group-hover:scale-110 transition-transform"></i>
                         <span>Install App</span>
                     </button>

@@ -174,21 +174,20 @@ class AppDownloadManager {
         const headerBtn = document.getElementById('pwa-install-btn-header');
         const heroBtn = document.getElementById('pwa-hero-download-btn');
         
-        // Check if install prompt is available
-        if (this.installPrompt || this.platform !== 'Desktop') {
-            // Fade in buttons
-            if (headerBtn) {
-                headerBtn.style.display = 'inline-flex';
-                setTimeout(() => {
-                    headerBtn.style.opacity = '1';
-                }, 50);
-            }
-            if (heroBtn) {
-                heroBtn.style.display = 'inline-flex';
-                setTimeout(() => {
-                    heroBtn.style.opacity = '1';
-                }, 50);
-            }
+        // Show buttons if not installed - they will trigger modal or install prompt
+        // Fade in with opacity transition
+        if (headerBtn) {
+            headerBtn.style.display = 'inline-flex';
+            setTimeout(() => {
+                headerBtn.style.opacity = '1';
+            }, 100);
+        }
+        
+        if (heroBtn) {
+            heroBtn.style.display = 'inline-flex';
+            setTimeout(() => {
+                heroBtn.style.opacity = '1';
+            }, 100);
         }
     }
 
