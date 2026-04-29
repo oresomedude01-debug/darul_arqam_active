@@ -64,6 +64,9 @@ class User extends Authenticatable
         // System Fields
         'created_by',
         'updated_by',
+        
+        // Push notification fields
+        'fcm_token',
     ];
 
     /**

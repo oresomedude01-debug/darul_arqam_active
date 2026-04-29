@@ -18,6 +18,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PaymentReminderNotification as PaymentReminderMail;
+use App\Notifications\PaymentReminderNotification as PaymentReminderAppNotification;
 
 /**
  * PaymentController
@@ -391,7 +394,8 @@ class PaymentController extends Controller
         // Send reminder emails
         $remindersCount = 0;
         foreach ($parentBills as $parentData) {
-            Mail::send(new PaymentReminderNotification($parentData['parent'], $parentData['bills']));
+            Mail::send(new PaymentReminderMail($parentData['parent'], $parentData['bills']));
+            $parentData['parent']->notify(new PaymentReminderAppNotification($parentData['bills'], $parentData['bills']->sum('balance_due')));
             $remindersCount++;
         }
 
