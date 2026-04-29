@@ -1,4 +1,4 @@
-@extends('layouts.modern')
+@extends('layouts.spa')
 @section('title', 'Classes Directory')
 
 @section('breadcrumb')

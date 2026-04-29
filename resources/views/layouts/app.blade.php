@@ -64,7 +64,7 @@
 
     @stack('styles')
 </head>
-<body class="h-full" x-data="{ sidebarOpen: false, mobileMenuOpen: false }">
+<body class="h-screen overflow-hidden flex w-full" x-data="{ sidebarOpen: false, mobileMenuOpen: false }">
 
     <!-- Mobile Sidebar Backdrop -->
     <div x-show="sidebarOpen"
@@ -79,10 +79,9 @@
          style="display: none;">
     </div>
 
-    <div class="flex h-full">
-        <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-primary-800 to-primary-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen flex flex-col"
-               :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+    <!-- Sidebar -->
+    <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-primary-800 to-primary-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:flex-shrink-0 flex flex-col"
+           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
                x-cloak>
 
             <!-- Logo -->
@@ -102,7 +101,7 @@
             </div>
 
             <!-- Navigation -->
-            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-primary-600 scrollbar-track-primary-800">
+            <nav class="flex-1 px-4 py-6 pb-24 space-y-2 overflow-y-auto overscroll-contain overflow-x-hidden scrollbar-thin scrollbar-thumb-primary-600 scrollbar-track-primary-800">
                 <!-- Dashboard -->
                 <a href="{{ route('dashboard') }}"
                    class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -390,9 +389,9 @@
         </aside>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col min-w-0">
+        <div class="flex-1 flex flex-col h-full overflow-hidden w-0 relative">
             <!-- Top Header -->
-            <header class="bg-white shadow-sm sticky top-0 z-30">
+            <header class="bg-white shadow-sm flex-shrink-0 z-30">
                 <div class="flex items-center justify-between px-4 py-4 lg:px-8">
                     <!-- Mobile Menu Button & Breadcrumb -->
                     <div class="flex items-center space-x-4">
@@ -497,14 +496,14 @@
             </header>
 
             <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto bg-gray-50">
+            <main class="flex-1 overflow-y-auto overscroll-contain bg-gray-50 relative w-full pb-24 lg:pb-0" id="main-scroll-container">
                 <div class="px-4 py-6 lg:px-8">
                     @yield('content')
                 </div>
             </main>
 
             <!-- Footer -->
-            <footer class="bg-white border-t border-gray-200 py-4 px-4 lg:px-8">
+            <footer class="hidden md:block bg-white border-t border-gray-200 py-4 px-4 lg:px-8 flex-shrink-0">
                 <div class="flex flex-col md:flex-row justify-between items-center text-sm text-gray-600">
                     <p>&copy; {{ date('Y') }} Darul Arqam School Management System. All rights reserved.</p>
                     <p class="mt-2 md:mt-0">Version 1.0.0</p>
@@ -512,6 +511,46 @@
             </footer>
         </div>
     </div>
+
+    <!-- Mobile Bottom Tab Bar -->
+    <nav class="lg:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 z-50 px-2 pt-2 pb-safe bg-opacity-95 backdrop-blur-md pb-1 touch-none shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-around items-center">
+            <a href="{{ route('dashboard') }}" 
+               class="{{ request()->routeIs('dashboard') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900' }} flex flex-col items-center p-2 transition-colors flex-1 text-center">
+                <i class="fas fa-home text-lg mb-1 {{ request()->routeIs('dashboard') ? 'scale-110 shadow-sm' : '' }}" style="transition: transform 0.2s"></i>
+                <span class="text-[10px] font-medium">{{ __('nav.home') }}</span>
+            </a>
+            
+            @if(auth()->user() && auth()->user()->hasPermission('view-students'))
+            <a href="{{ url('students') }}" 
+               class="{{ request()->is('students*') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900' }} flex flex-col items-center p-2 transition-colors flex-1 text-center">
+                <i class="fas fa-user-graduate text-lg mb-1 {{ request()->is('students*') ? 'scale-110 shadow-sm' : '' }}" style="transition: transform 0.2s"></i>
+                <span class="text-[10px] font-medium">{{ __('nav.students') }}</span>
+            </a>
+            @endif
+            
+            <button @click="sidebarOpen = true" 
+                    class="flex flex-col items-center p-2 text-primary-500 relative -top-5 flex-1 text-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-primary-500 to-primary-700 text-white flex items-center justify-center shadow-lg shadow-primary-500/40">
+                    <i class="fas fa-bars text-xl"></i>
+                </div>
+            </button>
+            
+            @if(auth()->user() && auth()->user()->hasPermission('view-classes'))
+            <a href="{{ url('classes') }}" 
+               class="{{ request()->is('classes*') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900' }} flex flex-col items-center p-2 transition-colors flex-1 text-center">
+                <i class="fas fa-door-open text-lg mb-1 {{ request()->is('classes*') ? 'scale-110 shadow-sm' : '' }}" style="transition: transform 0.2s"></i>
+                <span class="text-[10px] font-medium">{{ __('nav.classes') }}</span>
+            </a>
+            @endif
+            
+            <a href="{{ route('profile.show') }}" 
+               class="{{ request()->routeIs('profile.*') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900' }} flex flex-col items-center p-2 transition-colors flex-1 text-center">
+                <i class="fas fa-user text-lg mb-1 {{ request()->routeIs('profile.*') ? 'scale-110 shadow-sm' : '' }}" style="transition: transform 0.2s"></i>
+                <span class="text-[10px] font-medium">{{ __('nav.profile') }}</span>
+            </a>
+        </div>
+    </nav>
 
     <!-- Custom JavaScript -->
     <script src="{{ asset('js/custom.js') }}"></script>

@@ -156,15 +156,15 @@ class AppDownloadManager {
     hideAllPWAElements() {
         // Hide download section
         const downloadSection = document.getElementById('app-download-section');
-        if (downloadSection) downloadSection.style.display = 'none';
+        if (downloadSection) downloadSection.classList.add('hidden');
         
         // Hide header button
         const headerBtn = document.getElementById('pwa-install-btn-header');
-        if (headerBtn) headerBtn.style.display = 'none';
+        if (headerBtn) headerBtn.classList.add('hidden');
         
         // Hide hero button
         const heroBtn = document.getElementById('pwa-hero-download-btn');
-        if (heroBtn) heroBtn.style.display = 'none';
+        if (heroBtn) heroBtn.classList.add('hidden');
     }
 
     /**
@@ -177,14 +177,14 @@ class AppDownloadManager {
         // Show buttons if not installed - they will trigger modal or install prompt
         // Fade in with opacity transition
         if (headerBtn) {
-            headerBtn.style.display = 'inline-flex';
+            headerBtn.classList.remove('hidden');
             setTimeout(() => {
                 headerBtn.style.opacity = '1';
             }, 100);
         }
         
         if (heroBtn) {
-            heroBtn.style.display = 'inline-flex';
+            heroBtn.classList.remove('hidden');
             setTimeout(() => {
                 heroBtn.style.opacity = '1';
             }, 100);

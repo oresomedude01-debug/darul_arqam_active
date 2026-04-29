@@ -49,7 +49,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
-    <style> html.lenis, html.lenis body { height: auto; width: 100vw; overflow-x: hidden; } .lenis.lenis-smooth { scroll-behavior: auto !important; } .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; } .lenis.lenis-stopped { overflow: hidden; } .lenis.lenis-smooth iframe { pointer-events: none; } </style>
+    <style> .lenis.lenis-smooth { scroll-behavior: auto !important; } .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; } .lenis.lenis-stopped { overflow: hidden; } .lenis.lenis-smooth iframe { pointer-events: none; } </style>
 
     <!-- Custom Tailwind Config -->
     <script>
@@ -415,41 +415,11 @@
             animation: slideInDown 0.3s ease-out;
         }
 
-        #pwa-install-btn {
-            display: none;
-            gap: 0.5rem;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
-        }
-
-        #pwa-install-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
-        }
-
-        #pwa-install-btn:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        #pwa-install-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
     </style>
 
     @stack('styles')
 </head>
-<body class="bg-gray-50 font-sans antialiased"
+<body class="bg-gray-50 font-sans antialiased flex h-screen overflow-hidden w-full"
       x-data="spaApp()"
       x-init="initSPA()"
       @popstate.window="handlePopState($event)">
@@ -476,7 +446,7 @@
            x-transition:leave-start="translate-x-0"
            x-transition:leave-end="-translate-x-full"
            :class="sidebarCollapsed && !mobileMenuOpen ? 'lg:w-20' : 'lg:w-64'"
-           class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 text-white shadow-2xl transition-all duration-300 lg:translate-x-0 flex flex-col"
+           class="fixed inset-y-0 left-0 z-50 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 text-white shadow-2xl transition-all duration-300 lg:translate-x-0 lg:static lg:h-screen lg:flex-shrink-0 flex flex-col"
            x-cloak>
 
         <!-- Sidebar Header -->
@@ -515,7 +485,7 @@
         </div>
 
         <!-- Navigation Menu -->
-        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-hide">
+        <nav class="flex-1 px-3 py-4 pb-24 space-y-1 overflow-y-auto overscroll-contain scrollbar-hide">
             <!-- Hide all admin/teacher navigation for students - Show only Student Portal -->
             @if(auth()->check() && auth()->user()->hasRole('student'))
                 <!-- Student Portal Navigation Only - Visible to students only -->
@@ -982,8 +952,8 @@
                     </a>
                 @endhasPermission
 
-                <!-- Blog Management - Admin Only -->
-                @hasRole('admin')
+                <!-- Blog Management -->
+                @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasPermission('manage-blog')))
                     <a href="{{ route('admin.blog.index') }}"
                     @click.prevent="navigate('{{ route('admin.blog.index') }}')"
                     :class="currentPath.includes('/admin/blog') ? 'bg-primary-700/50 text-white shadow-lg' : 'text-primary-100 hover:bg-primary-700/30 hover:text-white'"
@@ -991,7 +961,7 @@
                         <i class="fas fa-newspaper text-base w-5"></i>
                         <span x-show="!sidebarCollapsed || mobileMenuOpen" class="transition-opacity">Blog Management</span>
                     </a>
-                @endhasRole
+                @endif
 
             <!-- Divider -->
             <div class="my-4 border-t border-primary-700/50"></div>
@@ -1058,11 +1028,10 @@
     </aside>
 
     <!-- Main Content Area -->
-    <div :class="sidebarOpen && !mobileMenuOpen && !sidebarCollapsed ? 'lg:ml-64' : (sidebarOpen && !mobileMenuOpen && sidebarCollapsed ? 'lg:ml-20' : '')"
-         class="flex-1 flex flex-col min-h-screen transition-all duration-300">
+    <div class="flex-1 flex flex-col h-full overflow-hidden w-0 relative transition-all duration-300">
 
         <!-- Top Header -->
-        <header class="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+        <header class="flex-shrink-0 z-30 bg-white border-b border-gray-200 shadow-sm">
             <div class="px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <!-- Left: Menu Button + Breadcrumb -->
@@ -1081,20 +1050,6 @@
 
                     <!-- Right: Install, Language, Notifications -->
                     <div class="flex items-center gap-2 sm:gap-3">
-                        <!-- PWA Install Button (Header) -->
-                        <button id="pwa-install-btn-header" onclick="window.unifiedPWAManager && window.unifiedPWAManager.handleInstallClick()" class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:-translate-y-0.5" style="display: none;" title="Install app for offline access">
-                            <i class="fas fa-download"></i>
-                            <span class="hidden sm:inline text-sm font-medium">Install</span>
-                        </button>
-
-                        <!-- PWA Install Button (Original) -->
-                        <button id="pwa-install-btn" 
-                                class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:-translate-y-0.5" style="display: none;"
-                                title="Install app for offline access and quick launch"
-                                onclick="window.unifiedPWAManager && window.unifiedPWAManager.handleInstallClick()">
-                            <i class="fas fa-download"></i>
-                            <span class="hidden sm:inline text-sm font-medium">Install App</span>
-                        </button>
 
                         <!-- Language Switcher -->
                         <div x-data="{ open: false }" class="relative">
@@ -1173,7 +1128,7 @@
         </header>
 
         <!-- Main Content (SPA Container) -->
-        <main class="flex-1 overflow-y-auto">
+        <main class="flex-1 overflow-y-auto overscroll-contain relative w-full" id="main-scroll-container">
             <!-- Loading Indicator -->
             <div x-show="loading"
                  x-transition
@@ -1194,7 +1149,7 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 py-4 px-4 sm:px-6 lg:px-8">
+        <footer class="hidden md:block bg-white border-t border-gray-200 py-4 px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
                 <p>&copy; {{ date('Y') }} Darul Arqam School Management System. All rights reserved.</p>
                 <div class="flex items-center gap-4">

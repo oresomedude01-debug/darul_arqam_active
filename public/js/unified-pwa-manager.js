@@ -186,7 +186,7 @@ class UnifiedPWAManager {
         // Show with fade animation
         [installBtn, desktopBtn, heroBtn, headerBtn].forEach(btn => {
             if (btn) {
-                btn.style.display = 'inline-flex';
+                btn.classList.remove('hidden');
                 setTimeout(() => {
                     btn.style.opacity = '1';
                 }, 10);
@@ -207,12 +207,12 @@ class UnifiedPWAManager {
         const appDownloadSection = document.getElementById('app-download-section');
         
         [installBtn, desktopBtn, heroBtn, headerBtn].forEach(btn => {
-            if (btn) btn.style.display = 'none';
+            if (btn) btn.classList.add('hidden');
         });
         
         // Hide entire section if it exists
         if (appDownloadSection && this.isInstalled) {
-            appDownloadSection.style.display = 'none';
+            appDownloadSection.classList.add('hidden');
         }
     }
 
