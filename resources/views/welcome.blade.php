@@ -851,6 +851,110 @@
         });
     </script>
 
+    <!-- PWA Welcome Modal -->
+    <style>
+        #pwa-welcome-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #pwa-welcome-modal.show {
+            opacity: 1;
+        }
+
+        #pwa-welcome-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <div id="pwa-welcome-modal">
+        <div id="pwa-welcome-modal-content">
+            <!-- Close button -->
+            <button onclick="window.appDownloadManager && window.appDownloadManager.closeWelcomeModal()" class="float-right text-gray-400 hover:text-gray-600 text-2xl leading-none">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <!-- Icon -->
+            <div class="text-center mb-6 mt-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg mb-4">
+                    <i class="fas fa-mobile-alt text-white text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">
+                Take {{ $schoolSettings->school_name ?? 'School' }} Anywhere
+            </h3>
+
+            <!-- Description -->
+            <p class="text-gray-600 text-center mb-6">
+                Install our app on your device for instant access, offline support, and a native app experience.
+            </p>
+
+            <!-- Features -->
+            <div class="space-y-3 mb-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-wifi text-emerald-600 text-sm"></i>
+                    </div>
+                    <span class="text-sm text-gray-700">Works offline</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-bolt text-blue-600 text-sm"></i>
+                    </div>
+                    <span class="text-sm text-gray-700">Lightning fast</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-bell text-purple-600 text-sm"></i>
+                    </div>
+                    <span class="text-sm text-gray-700">Push notifications</span>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-col gap-3">
+                <button onclick="window.appDownloadManager && window.appDownloadManager.installApp()" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold py-3 px-4 rounded-xl hover:shadow-lg transition-all">
+                    <i class="fas fa-download mr-2"></i>Install App
+                </button>
+                <button onclick="window.appDownloadManager && window.appDownloadManager.closeWelcomeModal()" class="w-full bg-gray-100 text-gray-700 font-semibold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all">
+                    Later
+                </button>
+            </div>
+
+            <!-- Footer text -->
+            <p class="text-xs text-gray-500 text-center mt-6">
+                <i class="fas fa-info-circle mr-1"></i>
+                You can always install the app later from the download section
+            </p>
+        </div>
+    </div>
+
     <!-- App Download Manager -->
     <script src="{{ asset('js/app-download-manager.js') }}"></script>
 </body>

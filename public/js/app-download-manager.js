@@ -1,7 +1,7 @@
 /**
  * App Download Manager
  * Detects device platform and PWA installation status
- * Shows platform-specific download/install buttons
+ * Shows platform-specific download/install buttons with welcome modal
  * Uses school logo as app icon from settings
  */
 
@@ -12,6 +12,8 @@ class AppDownloadManager {
         this.platform = this.detectPlatform();
         this.installPrompt = null;
         this.appSettings = null;
+        this.modalShown = false;
+        this.modalShowDelay = 1500; // Delay before showing modal
         this.init();
     }
 
@@ -120,12 +122,9 @@ class AppDownloadManager {
         // Fetch app settings first
         await this.fetchAppSettings();
 
-        // Hide download section if app is already installed
-        const downloadSection = document.getElementById('app-download-section');
-        if (!downloadSection) return;
-
         if (this.isInstalled) {
-            downloadSection.style.display = 'none';
+            // Hide all PWA UI if already installed
+            this.hideAllPWAElements();
             return;
         }
 
@@ -143,8 +142,89 @@ class AppDownloadManager {
             this.handleAppInstalled();
         });
 
-        // Show appropriate buttons based on platform
+        // Show buttons and modal after page is loaded
         this.showPlatformButtons();
+        this.initializeHeaderAndHeroButtons();
+        
+        // Show welcome modal after delay
+        setTimeout(() => this.showWelcomeModal(), this.modalShowDelay);
+    }
+
+    /**
+     * Hide all PWA-related UI elements
+     */
+    hideAllPWAElements() {
+        // Hide download section
+        const downloadSection = document.getElementById('app-download-section');
+        if (downloadSection) downloadSection.style.display = 'none';
+        
+        // Hide header button
+        const headerBtn = document.getElementById('pwa-install-btn-header');
+        if (headerBtn) headerBtn.style.display = 'none';
+        
+        // Hide hero button
+        const heroBtn = document.getElementById('pwa-hero-download-btn');
+        if (heroBtn) heroBtn.style.display = 'none';
+    }
+
+    /**
+     * Initialize header and hero download buttons
+     */
+    initializeHeaderAndHeroButtons() {
+        const headerBtn = document.getElementById('pwa-install-btn-header');
+        const heroBtn = document.getElementById('pwa-hero-download-btn');
+        
+        // Check if install prompt is available
+        if (this.installPrompt || this.platform !== 'Desktop') {
+            // Fade in buttons
+            if (headerBtn) {
+                headerBtn.style.display = 'inline-flex';
+                setTimeout(() => {
+                    headerBtn.style.opacity = '1';
+                }, 50);
+            }
+            if (heroBtn) {
+                heroBtn.style.display = 'inline-flex';
+                setTimeout(() => {
+                    heroBtn.style.opacity = '1';
+                }, 50);
+            }
+        }
+    }
+
+    /**
+     * Show welcome modal for first-time visitors
+     */
+    showWelcomeModal() {
+        if (this.modalShown || this.isInstalled || localStorage.getItem('pwaModalDismissed')) {
+            return;
+        }
+
+        const modal = document.getElementById('pwa-welcome-modal');
+        if (!modal) return;
+
+        // Show modal
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 10);
+
+        this.modalShown = true;
+    }
+
+    /**
+     * Close welcome modal
+     */
+    closeWelcomeModal() {
+        const modal = document.getElementById('pwa-welcome-modal');
+        if (!modal) return;
+
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+
+        localStorage.setItem('pwaModalDismissed', 'true');
     }
 
     /**
@@ -303,6 +383,9 @@ class AppDownloadManager {
      * Handle app install
      */
     async installApp() {
+        // Close modal if open
+        this.closeWelcomeModal();
+        
         if (!this.installPrompt) {
             console.log('Install prompt not available');
             alert('App installation is not available on your device at this time.');
@@ -363,6 +446,22 @@ class AppDownloadManager {
                 downloadSection.style.transition = 'opacity 0.5s ease-in-out';
                 downloadSection.style.opacity = '1';
             }, 100);
+        }
+    }
+
+    /**
+     * Handle install button click from header or hero
+     */
+    handleInstallClick() {
+        if (this.isInstalled) {
+            return;
+        }
+
+        if (this.installPrompt) {
+            this.installApp();
+        } else {
+            // If no install prompt, show modal to guide user
+            this.showWelcomeModal();
         }
     }
 
