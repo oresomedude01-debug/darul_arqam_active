@@ -4,11 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Services\BlogCacheService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
+    private BlogCacheService $cacheService;
+
+    public function __construct(BlogCacheService $cacheService)
+    {
+        $this->cacheService = $cacheService;
+    }
+
     public function index(Request $request)
     {
         $status   = $request->get('status', 'all');
@@ -60,7 +68,13 @@ class BlogController extends Controller
             $validated['published_at'] = now();
         }
 
-        Blog::create($validated);
+        $blog = Blog::create($validated);
+
+        // Invalidate cache after creating published post
+        if ($blog->status === 'published') {
+            $this->cacheService->invalidateLists();
+            $this->cacheService->invalidateCategory($blog->category);
+        }
 
         return redirect()->route('admin.blog.index')
             ->with('success', 'Post created successfully!');
@@ -95,7 +109,20 @@ class BlogController extends Controller
             $validated['slug'] = Blog::generateSlug($validated['title']);
         }
 
+        $oldCategory = $blog->category;
         $blog->update($validated);
+
+        // Invalidate cache after update
+        $this->cacheService->invalidatePost($blog);
+        $this->cacheService->invalidateLists();
+        
+        // If category changed, invalidate both old and new category caches
+        if ($oldCategory !== $blog->category) {
+            $this->cacheService->invalidateCategory($oldCategory);
+            $this->cacheService->invalidateCategory($blog->category);
+        } else {
+            $this->cacheService->invalidateCategory($blog->category);
+        }
 
         return redirect()->route('admin.blog.index')
             ->with('success', 'Post updated successfully!');
@@ -103,7 +130,14 @@ class BlogController extends Controller
 
     public function destroy(Blog $blog)
     {
+        $category = $blog->category;
         $blog->delete();
+
+        // Invalidate cache after deletion
+        $this->cacheService->invalidatePost($blog);
+        $this->cacheService->invalidateLists();
+        $this->cacheService->invalidateCategory($category);
+
         return redirect()->route('admin.blog.index')
             ->with('success', 'Post deleted.');
     }
@@ -117,6 +151,11 @@ class BlogController extends Controller
             $blog->update(['status' => 'draft']);
             $message = 'Post moved to draft.';
         }
+
+        // Invalidate cache
+        $this->cacheService->invalidatePost($blog);
+        $this->cacheService->invalidateLists();
+        $this->cacheService->invalidateCategory($blog->category);
 
         return back()->with('success', $message);
     }
