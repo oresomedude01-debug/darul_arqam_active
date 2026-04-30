@@ -59,7 +59,11 @@ class SchoolSettingsController extends Controller
                 Storage::delete('public/' . $settings->school_logo);
             }
 
-            $validated['school_logo'] = $request->file('school_logo')->store('school-logo', 'public');
+            // Store with a safe ASCII filename to avoid UTF-8 encoding issues
+            $ext = $request->file('school_logo')->getClientOriginalExtension();
+            $safeName = 'school-logo/logo_' . time() . '.' . $ext;
+            $request->file('school_logo')->storeAs('', $safeName, 'public');
+            $validated['school_logo'] = $safeName;
         }
 
         // Handle PWA icon upload
@@ -69,7 +73,10 @@ class SchoolSettingsController extends Controller
                 Storage::delete('public/' . $settings->pwa_icon);
             }
 
-            $validated['pwa_icon'] = $request->file('pwa_icon')->store('pwa-icon', 'public');
+            $ext = $request->file('pwa_icon')->getClientOriginalExtension();
+            $safeName = 'pwa-icon/icon_' . time() . '.' . $ext;
+            $request->file('pwa_icon')->storeAs('', $safeName, 'public');
+            $validated['pwa_icon'] = $safeName;
         }
 
         // Set defaults for PWA settings if empty
@@ -79,6 +86,9 @@ class SchoolSettingsController extends Controller
         if (empty($validated['pwa_short_name'])) {
             $validated['pwa_short_name'] = substr($validated['school_name'], 0, 12);
         }
+
+        // Sanitize all string fields to valid UTF-8 before saving
+        $validated = $this->sanitizeUtf8($validated);
 
         $settings->update($validated);
 
@@ -282,6 +292,8 @@ class SchoolSettingsController extends Controller
             'currency_code' => 'required|string|max:3',
             'currency_symbol' => 'required|string|max:5',
         ]);
+
+        $validated = $this->sanitizeUtf8($validated);
 
         $settings = SchoolSetting::getInstance();
         $settings->currency_code = $validated['currency_code'];
@@ -555,6 +567,7 @@ class SchoolSettingsController extends Controller
         ]);
 
         $settings = SchoolSetting::getInstance();
+        $validated = $this->sanitizeUtf8($validated);
         $settings->update($validated);
 
         return redirect()->route('settings.school.index')
@@ -762,7 +775,10 @@ class SchoolSettingsController extends Controller
                 Storage::delete('public/' . $settings->pwa_icon);
             }
 
-            $validated['pwa_icon'] = $request->file('pwa_icon')->store('pwa-icon', 'public');
+            $ext = $request->file('pwa_icon')->getClientOriginalExtension();
+            $safeName = 'pwa-icon/icon_' . time() . '.' . $ext;
+            $request->file('pwa_icon')->storeAs('', $safeName, 'public');
+            $validated['pwa_icon'] = $safeName;
         }
 
         // Set defaults for PWA settings if empty
@@ -779,9 +795,32 @@ class SchoolSettingsController extends Controller
             $validated['pwa_background_color'] = '#ffffff';
         }
 
+        $validated = $this->sanitizeUtf8($validated);
         $settings->update($validated);
 
         return redirect()->route('settings.school.index')
             ->with('success', 'PWA settings updated successfully!');
+    }
+
+    /**
+     * Recursively sanitize all string values in an array to valid UTF-8.
+     * This prevents JsonException (Malformed UTF-8 characters) when fields
+     * contain Arabic text or other multibyte characters.
+     */
+    private function sanitizeUtf8(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->sanitizeUtf8($value);
+            } elseif (is_string($value)) {
+                // Convert to UTF-8, replacing invalid sequences
+                $data[$key] = mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+                // As a fallback, strip any remaining invalid bytes
+                if (!mb_check_encoding($data[$key], 'UTF-8')) {
+                    $data[$key] = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+                }
+            }
+        }
+        return $data;
     }
 }
