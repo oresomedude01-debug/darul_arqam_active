@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Services\BlogCacheService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BlogController extends Controller
@@ -50,15 +51,16 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'category'    => 'required|in:news,islamic,events,tips',
-            'type'        => 'required|in:article,video',
+            'title'            => 'required|string|max:255',
+            'category'         => 'required|in:news,islamic,events,tips',
+            'type'             => 'required|in:article,video',
             'youtube_video_id' => 'nullable|string|max:50',
-            'cover_color' => 'required|string',
-            'cover_icon'  => 'required|string',
-            'excerpt'     => 'required|string|max:500',
-            'body'        => 'required|string',
-            'status'      => 'required|in:draft,published',
+            'cover_color'      => 'required|string',
+            'cover_icon'       => 'required|string',
+            'excerpt'          => 'required|string|max:500',
+            'body'             => 'required|string',
+            'status'           => 'required|in:draft,published',
+            'featured_image'   => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
         ]);
 
         $validated['slug']      = Blog::generateSlug($validated['title']);
@@ -66,6 +68,14 @@ class BlogController extends Controller
 
         if ($validated['status'] === 'published') {
             $validated['published_at'] = now();
+        }
+
+        // Handle featured image upload
+        if ($request->hasFile('featured_image')) {
+            $ext  = $request->file('featured_image')->getClientOriginalExtension();
+            $name = 'blog-images/img_' . time() . '_' . Str::random(6) . '.' . $ext;
+            $request->file('featured_image')->storeAs('', $name, 'public');
+            $validated['featured_image'] = $name;
         }
 
         $blog = Blog::create($validated);
@@ -88,15 +98,17 @@ class BlogController extends Controller
     public function update(Request $request, Blog $blog)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'category'    => 'required|in:news,islamic,events,tips',
-            'type'        => 'required|in:article,video',
+            'title'            => 'required|string|max:255',
+            'category'         => 'required|in:news,islamic,events,tips',
+            'type'             => 'required|in:article,video',
             'youtube_video_id' => 'nullable|string|max:50',
-            'cover_color' => 'required|string',
-            'cover_icon'  => 'required|string',
-            'excerpt'     => 'required|string|max:500',
-            'body'        => 'required|string',
-            'status'      => 'required|in:draft,published',
+            'cover_color'      => 'required|string',
+            'cover_icon'       => 'required|string',
+            'excerpt'          => 'required|string|max:500',
+            'body'             => 'required|string',
+            'status'           => 'required|in:draft,published',
+            'featured_image'   => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'remove_image'     => 'nullable|boolean',
         ]);
 
         // Set published_at only when first publishing
@@ -109,13 +121,31 @@ class BlogController extends Controller
             $validated['slug'] = Blog::generateSlug($validated['title']);
         }
 
+        // Handle featured image removal
+        if ($request->boolean('remove_image') && $blog->featured_image) {
+            Storage::disk('public')->delete($blog->featured_image);
+            $validated['featured_image'] = null;
+        }
+
+        // Handle new featured image upload
+        if ($request->hasFile('featured_image')) {
+            // Delete old image
+            if ($blog->featured_image) {
+                Storage::disk('public')->delete($blog->featured_image);
+            }
+            $ext  = $request->file('featured_image')->getClientOriginalExtension();
+            $name = 'blog-images/img_' . time() . '_' . Str::random(6) . '.' . $ext;
+            $request->file('featured_image')->storeAs('', $name, 'public');
+            $validated['featured_image'] = $name;
+        }
+
         $oldCategory = $blog->category;
         $blog->update($validated);
 
         // Invalidate cache after update
         $this->cacheService->invalidatePost($blog);
         $this->cacheService->invalidateLists();
-        
+
         // If category changed, invalidate both old and new category caches
         if ($oldCategory !== $blog->category) {
             $this->cacheService->invalidateCategory($oldCategory);
@@ -131,6 +161,12 @@ class BlogController extends Controller
     public function destroy(Blog $blog)
     {
         $category = $blog->category;
+
+        // Delete featured image from storage
+        if ($blog->featured_image) {
+            Storage::disk('public')->delete($blog->featured_image);
+        }
+
         $blog->delete();
 
         // Invalidate cache after deletion
