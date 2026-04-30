@@ -67,6 +67,17 @@ Route::prefix('api')->group(function () {
     Route::post('/push-subscriptions', [App\Http\Controllers\Api\PushNotificationController::class, 'store'])->middleware('auth');
     Route::get('/notifications/pending', [App\Http\Controllers\Api\PushNotificationController::class, 'getPending'])->middleware('auth');
     Route::post('/push-notifications/test', [App\Http\Controllers\Api\PushNotificationController::class, 'sendTest'])->middleware('auth');
+    
+    // PWA Authentication Routes
+    Route::prefix('pwa/auth')->group(function () {
+        Route::post('/login', [App\Http\Controllers\Api\PWAAuthController::class, 'login'])->name('api.pwa.auth.login');
+        Route::post('/logout', [App\Http\Controllers\Api\PWAAuthController::class, 'logout'])->middleware('auth')->name('api.pwa.auth.logout');
+        Route::post('/refresh', [App\Http\Controllers\Api\PWAAuthController::class, 'refresh'])->middleware('auth')->name('api.pwa.auth.refresh');
+        Route::get('/me', [App\Http\Controllers\Api\PWAAuthController::class, 'getAuthenticatedUser'])->middleware('auth')->name('api.pwa.auth.me');
+    });
+    
+    // Cache Management (Admin only)
+    Route::post('/pwa/cache/invalidate', [App\Http\Controllers\Api\PWAAuthController::class, 'invalidateCache'])->middleware('auth')->name('api.pwa.cache.invalidate');
 });
 
 // PWA Manifest Route

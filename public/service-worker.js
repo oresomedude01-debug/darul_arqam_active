@@ -35,7 +35,8 @@ const NETWORK_FIRST_ROUTES = [
     '/student-portal',
     '/results',
     '/attendance',
-    '/grades'
+    '/grades',
+    '/blog' // Blog API should be network-first
 ];
 
 // Routes for cache-first strategy (static pages)
@@ -45,6 +46,17 @@ const CACHE_FIRST_ROUTES = [
     '/privacy',
     '/terms'
 ];
+
+// Blog-specific caching configuration
+const BLOG_CACHE_CONFIG = {
+    cache: 'blog-content-v1',
+    strategy: 'stale-while-revalidate', // Serve stale content while fetching fresh
+    ttl: 3600, // 1 hour in seconds
+    routes: [
+        '/blog',
+        '/blog/*'
+    ]
+};
 
 // ========================================
 // INSTALL EVENT - Cache static assets
@@ -114,25 +126,31 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // Strategy 1: Cache-first for images
+    // Strategy 1: Stale-while-revalidate for blog content (fresher than cache-first, better UX than network-first)
+    if (isBlogRoute(url.pathname)) {
+        event.respondWith(staleWhileRevalidateStrategy(request, BLOG_CACHE_CONFIG.cache));
+        return;
+    }
+
+    // Strategy 2: Cache-first for images
     if (isImageRequest(request)) {
         event.respondWith(cacheFirstStrategy(request, IMAGE_CACHE));
         return;
     }
 
-    // Strategy 2: Cache-first for static pages
+    // Strategy 3: Cache-first for static pages
     if (isCacheFirstRoute(url.pathname)) {
         event.respondWith(cacheFirstStrategy(request, STATIC_CACHE));
         return;
     }
 
-    // Strategy 3: Network-first for API and dynamic data
+    // Strategy 4: Network-first for API and dynamic data
     if (isNetworkFirstRoute(url.pathname)) {
         event.respondWith(networkFirstStrategy(request, DYNAMIC_CACHE));
         return;
     }
 
-    // Strategy 4: Network-first with cache fallback for HTML pages
+    // Strategy 5: Network-first with cache fallback for HTML pages
     if (request.headers.get('accept')?.includes('text/html')) {
         event.respondWith(networkFirstStrategy(request, DYNAMIC_CACHE));
         return;
@@ -316,6 +334,19 @@ function isCacheFirstRoute(pathname) {
  */
 function isNetworkFirstRoute(pathname) {
     return NETWORK_FIRST_ROUTES.some(route => pathname.startsWith(route));
+}
+
+/**
+ * Check if route is blog-related (for stale-while-revalidate strategy)
+ * This ensures blog content is fresh while maintaining excellent offline experience
+ */
+function isBlogRoute(pathname) {
+    return BLOG_CACHE_CONFIG.routes.some(route => {
+        if (route.endsWith('*')) {
+            return pathname.startsWith(route.slice(0, -1));
+        }
+        return pathname === route || pathname.startsWith(route + '/');
+    });
 }
 
 /**
