@@ -22,6 +22,7 @@ class BlogController extends Controller
     {
         $status   = $request->get('status', 'all');
         $category = $request->get('category', 'all');
+        $search   = $request->get('search', '');
 
         $query = Blog::with('author')->latest();
 
@@ -31,8 +32,14 @@ class BlogController extends Controller
         if ($category !== 'all') {
             $query->where('category', $category);
         }
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('excerpt', 'like', '%' . $search . '%');
+            });
+        }
 
-        $posts = $query->paginate(15);
+        $posts = $query->paginate(15)->withQueryString();
 
         $stats = [
             'total'     => Blog::count(),
@@ -40,7 +47,7 @@ class BlogController extends Controller
             'draft'     => Blog::where('status', 'draft')->count(),
         ];
 
-        return view('admin.blog.index', compact('posts', 'stats', 'status', 'category'));
+        return view('admin.blog.index', compact('posts', 'stats', 'status', 'category', 'search'));
     }
 
     public function create()
