@@ -4,15 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\PWAAuthService;
+use App\Services\BlogCacheService;
 use Illuminate\Http\Request;
 
 class PWAAuthController extends Controller
 {
     private PWAAuthService $authService;
+    private BlogCacheService $blogCache;
 
-    public function __construct(PWAAuthService $authService)
+    public function __construct(PWAAuthService $authService, BlogCacheService $blogCache)
     {
         $this->authService = $authService;
+        $this->blogCache   = $blogCache;
     }
 
     /**
@@ -173,11 +176,14 @@ class PWAAuthController extends Controller
 
         $cacheType = $request->get('type', 'all'); // 'blog', 'all'
 
-        \Cache::flush(); // Flush application cache
+        // Targeted cache invalidation — avoids wiping sessions on shared cache stores
+        if ($cacheType === 'blog' || $cacheType === 'all') {
+            $this->blogCache->invalidateAll();
+        }
 
         return response()->json([
-            'success' => true,
-            'message' => ucfirst($cacheType) . ' cache invalidated',
+            'success'       => true,
+            'message'       => ucfirst($cacheType) . ' cache invalidated',
             'invalidatedAt' => now()->toIso8601String()
         ]);
     }
