@@ -324,6 +324,39 @@
             scroll-behavior: smooth;
         }
 
+        /* ===== CUSTOM SMOOTH SCROLLBARS ===== */
+        /* Sidebar scrollbar – thin, subtle on dark bg */
+        #sidebar-nav {
+            scroll-behavior: smooth;
+            overflow-y: auto;
+        }
+        #sidebar-nav::-webkit-scrollbar { width: 4px; }
+        #sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        #sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.18);
+            border-radius: 99px;
+        }
+        #sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.35);
+        }
+        #sidebar-nav { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) transparent; }
+
+        /* Main content scrollbar – thin, on light bg */
+        #main-scroll-container {
+            scroll-behavior: smooth;
+            overflow-y: auto;
+        }
+        #main-scroll-container::-webkit-scrollbar { width: 6px; }
+        #main-scroll-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        #main-scroll-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 99px;
+        }
+        #main-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        #main-scroll-container { scrollbar-width: thin; scrollbar-color: #cbd5e1 #f1f5f9; }
+
         /* ===== CHECKBOXES & RADIOS ===== */
         .form-checkbox, .form-radio {
             transition: all 0.3s ease;
@@ -511,7 +544,7 @@
         </div>
 
         <!-- Navigation Menu -->
-        <nav class="flex-1 px-3 py-4 pb-24 space-y-1 overflow-y-auto overscroll-contain scrollbar-hide">
+        <nav id="sidebar-nav" class="flex-1 px-3 py-4 pb-24 space-y-1 overscroll-contain">
             <!-- Hide all admin/teacher navigation for students - Show only Student Portal -->
             @if(auth()->check() && auth()->user()->hasRole('student'))
                 <!-- Student Portal Navigation Only - Visible to students only -->
@@ -1591,28 +1624,89 @@
 
     </script>
     
-    <!-- AOS and Lenis Libraries -->
+    <!-- AOS Library -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Lenis – sidebar only (works with overflow:auto natively) -->
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+
     <script>
-        // Init Smooth Scrolling
-        const lenis = new Lenis({ 
-            duration: 1.2, 
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) 
-        });
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
+        // ── Smooth scroll for SIDEBAR (Lenis works fine here) ────────────────
+        function initSidebarLenis() {
+            const sidebarNav = document.getElementById('sidebar-nav');
+            if (sidebarNav && typeof Lenis !== 'undefined') {
+                const sidebarLenis = new Lenis({
+                    wrapper: sidebarNav,
+                    content: sidebarNav,
+                    duration: 0.9,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    smoothWheel: true,
+                });
+                function raf(time) {
+                    sidebarLenis.raf(time);
+                    requestAnimationFrame(raf);
+                }
+                requestAnimationFrame(raf);
+            }
         }
-        requestAnimationFrame(raf);
+
+        // ── Smooth scroll for MAIN CONTENT (custom lerp – works with overflow-y:auto) ──
+        // Lenis v1 element-mode requires overflow:hidden on the wrapper which
+        // conflicts with the flex layout. A wheel-event interceptor + lerp
+        // gives the exact same feel without any structural changes.
+        function initMainSmoothScroll() {
+            const el = document.getElementById('main-scroll-container');
+            if (!el) return;
+
+            let targetY   = el.scrollTop;
+            let currentY  = el.scrollTop;
+            let rafId     = null;
+            const LERP    = 0.11;   // lower = smoother / slower
+            const SPEED   = 0.85;   // wheel delta multiplier
+
+            el.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                targetY += e.deltaY * SPEED;
+                // Clamp to scrollable range
+                targetY = Math.max(0, Math.min(targetY, el.scrollHeight - el.clientHeight));
+
+                if (!rafId) {
+                    function step() {
+                        const dist = targetY - currentY;
+                        if (Math.abs(dist) < 0.5) {
+                            currentY = targetY;
+                            el.scrollTop = currentY;
+                            rafId = null;
+                            return;
+                        }
+                        currentY += dist * LERP;
+                        el.scrollTop = currentY;
+                        rafId = requestAnimationFrame(step);
+                    }
+                    rafId = requestAnimationFrame(step);
+                }
+            }, { passive: false });
+
+            // Keep targetY in sync when user drags the scrollbar
+            el.addEventListener('scroll', function() {
+                if (!rafId) {
+                    targetY  = el.scrollTop;
+                    currentY = el.scrollTop;
+                }
+            }, { passive: true });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initSidebarLenis();
+            initMainSmoothScroll();
+        });
 
         // Init Scroll Animations
         AOS.init({ duration: 800, once: true, offset: 50 });
-        
-        // Re-init AOS on SPA loaded
+
+        // Re-init AOS on SPA page load
         document.addEventListener('spaContentLoaded', () => {
             AOS.refresh();
-            // Reinitialize GSAP animations when content is loaded
             if (typeof reinitializeAnimations === 'function') {
                 reinitializeAnimations();
             }
