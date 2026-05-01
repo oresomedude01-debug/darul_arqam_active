@@ -49,6 +49,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
+    <!-- TinyMCE Rich Text Editor -->
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
+    
     <style> .lenis.lenis-smooth { scroll-behavior: auto !important; } .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; } .lenis.lenis-stopped { overflow: hidden; } .lenis.lenis-smooth iframe { pointer-events: none; } </style>
 
     <!-- Custom Tailwind Config -->

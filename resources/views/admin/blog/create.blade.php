@@ -174,12 +174,31 @@
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <label class="block text-sm font-semibold text-gray-700 mb-2">
                 Full Article <span class="text-red-500">*</span>
-                <span class="text-xs font-normal text-gray-400 ml-2">Use blank lines to separate paragraphs</span>
+                <span class="text-xs font-normal text-gray-400 ml-2">Write and format your article content</span>
             </label>
-            <textarea name="body" rows="18" required
-                      placeholder="Write the full article content here..."
-                      class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition resize-y font-mono">{{ old('body') }}</textarea>
+            <textarea name="body" id="blog-editor" required>{{ old('body') }}</textarea>
         </div>
+
+        {{-- TinyMCE Initialization Script --}}
+        <script>
+            tinymce.init({
+                selector: '#blog-editor',
+                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                toolbar: 'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor | align | bullist numlist | link image | removeformat',
+                menubar: false,
+                statusbar: true,
+                height: 400,
+                skin: 'oxide',
+                content_css: 'default',
+                promotion: false,
+                setup: function(editor) {
+                    // Ensure the editor content is properly submitted
+                    editor.on('change', function() {
+                        tinymce.triggerSave();
+                    });
+                }
+            });
+        </script>
 
         {{-- Actions --}}
         <div class="flex items-center justify-end gap-3 pb-8">

@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Mail\NewBlogMail;
+use App\Notifications\NewBlogNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class Blog extends Model
@@ -18,7 +21,14 @@ class Blog extends Model
         'published_at' => 'datetime',
     ];
 
-    // ─── Relationships ───────────────────────────────────────────────────────────
+    // ─── Mutators ────────────────────────────────────────────────────────────────
+
+    public function setBodyAttribute($value)
+    {
+        // Sanitize HTML to prevent XSS while preserving formatting
+        $allowed_tags = '<p><br><strong><b><em><i><u><s><del><a><ul><ol><li><h1><h2><h3><h4><h5><h6><blockquote><code><pre><hr><img><table><thead><tbody><tr><td><th><span>';
+        $this->attributes['body'] = strip_tags($value, $allowed_tags);
+    }
 
     public function author(): BelongsTo
     {
@@ -77,5 +87,33 @@ class Blog extends Model
             return null;
         }
         return "https://www.youtube.com/embed/{$this->youtube_video_id}";
+    }
+
+    // ─── Model Events ────────────────────────────────────────────────────────────
+
+    protected static function booted(): void
+    {
+        static::saved(function (self $blog) {
+            // Send notification when a blog is created and published
+            if ($blog->wasRecentlyCreated && $blog->status === 'published') {
+                self::notifyAllUsers($blog);
+            }
+        });
+    }
+
+    private static function notifyAllUsers(self $blog): void
+    {
+        // Get all users and send them notifications and emails
+        $users = User::all();
+
+        foreach ($users as $user) {
+            // Send in-app and push notifications
+            $user->notify(new NewBlogNotification($blog));
+
+            // Send email notification
+            if (!empty($user->email)) {
+                Mail::to($user->email)->queue(new NewBlogMail($blog));
+            }
+        }
     }
 }
