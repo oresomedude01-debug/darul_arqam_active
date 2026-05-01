@@ -176,29 +176,13 @@
                 Full Article <span class="text-red-500">*</span>
                 <span class="text-xs font-normal text-gray-400 ml-2">Write and format your article content</span>
             </label>
-            <textarea name="body" id="blog-editor" required>{{ old('body') }}</textarea>
+            
+            <!-- Quill Editor Container -->
+            <div id="blog-editor-container" class="bg-white rounded-lg border border-gray-200" style="height: 400px;"></div>
+            
+            <!-- Hidden textarea to store the content for form submission -->
+            <textarea name="body" id="blog-body-content" required style="display: none;">{{ old('body') }}</textarea>
         </div>
-
-        {{-- TinyMCE Initialization Script --}}
-        <script>
-            tinymce.init({
-                selector: '#blog-editor',
-                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                toolbar: 'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor | align | bullist numlist | link image | removeformat',
-                menubar: false,
-                statusbar: true,
-                height: 400,
-                skin: 'oxide',
-                content_css: 'default',
-                promotion: false,
-                setup: function(editor) {
-                    // Ensure the editor content is properly submitted
-                    editor.on('change', function() {
-                        tinymce.triggerSave();
-                    });
-                }
-            });
-        </script>
 
         {{-- Actions --}}
         <div class="flex items-center justify-end gap-3 pb-8">

@@ -49,8 +49,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
-    <!-- TinyMCE Rich Text Editor -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
+    <!-- Quill Rich Text Editor (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>
+    
+    <!-- Quill Custom Styling -->
+    <style>
+        /* Quill Editor Styling */
+        .ql-container { font-family: 'Inter', system-ui, sans-serif; font-size: 1rem; }
+        .ql-editor { padding: 12px; min-height: 350px; }
+        .ql-toolbar { border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; border-radius: 0; background-color: #f9fafb; }
+        .ql-toolbar.ql-snow .ql-picker-label { color: #374151; }
+        .ql-toolbar.ql-snow button:hover, .ql-toolbar.ql-snow button:focus, .ql-toolbar.ql-snow button.ql-active, .ql-toolbar.ql-snow .ql-picker-label:hover, .ql-toolbar.ql-snow .ql-picker-item:hover, .ql-toolbar.ql-snow .ql-picker-item.ql-selected { color: #0284c7; }
+        .ql-toolbar.ql-snow .ql-stroke { stroke: #d1d5db; }
+        .ql-toolbar.ql-snow .ql-stroke.ql-fill, .ql-toolbar.ql-snow .ql-fill { fill: #d1d5db; }
+        .ql-toolbar.ql-snow button:hover .ql-stroke, .ql-toolbar.ql-snow button:focus .ql-stroke, .ql-toolbar.ql-snow button.ql-active .ql-stroke, .ql-toolbar.ql-snow .ql-picker-label:hover .ql-stroke, .ql-toolbar.ql-snow .ql-picker-item:hover .ql-stroke, .ql-toolbar.ql-snow .ql-picker-item.ql-selected .ql-stroke { stroke: #0284c7; }
+        .ql-container.ql-snow { border: 1px solid #e5e7eb; border-radius: 0 0 0.5rem 0.5rem; }
+        .ql-editor.ql-blank::before { color: #9ca3af; }
+        .ql-editor { color: #374151; }
+        .ql-editor h1, .ql-editor h2, .ql-editor h3 { color: #111827; }
+    </style>
     
     <style> .lenis.lenis-smooth { scroll-behavior: auto !important; } .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; } .lenis.lenis-stopped { overflow: hidden; } .lenis.lenis-smooth iframe { pointer-events: none; } </style>
 
@@ -1608,6 +1626,43 @@
     <!-- PWA Scripts -->
     <script src="{{ asset('js/unified-pwa-manager.js') }}"></script>
     <script src="{{ asset('js/pwa.js') }}"></script>
+
+    <!-- Quill Global Initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Quill if editor element is present
+            var editorContainer = document.getElementById('blog-editor-container');
+            if (editorContainer && typeof Quill !== 'undefined') {
+                var quill = new Quill(editorContainer, {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            ['link', 'image'],
+                            ['clean']
+                        ]
+                    },
+                    placeholder: 'Write your article here...'
+                });
+                
+                // Sync Quill content to hidden textarea on form submission
+                var hiddenTextarea = document.getElementById('blog-body-content');
+                if (hiddenTextarea) {
+                    var form = hiddenTextarea.closest('form');
+                    if (form) {
+                        form.addEventListener('submit', function(e) {
+                            hiddenTextarea.value = quill.root.innerHTML;
+                        });
+                    }
+                }
+                
+                console.log('Quill editor initialized successfully');
+            }
+        });
+    </script>
 
     @stack('scripts')
 </body>
