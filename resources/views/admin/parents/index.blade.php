@@ -49,8 +49,8 @@
         </form>
     </div>
 
-    {{-- ====== MOBILE / TABLET: Card grid (hidden on lg+) ====== --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
+    {{-- ====== MOBILE: Card grid (shown below md) ====== --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
         @forelse($parents as $parent)
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
             <div class="flex items-start justify-between mb-3">
@@ -101,8 +101,8 @@
         @endforelse
     </div>
 
-    {{-- ====== DESKTOP: Table (hidden below lg) ====== --}}
-    <div class="hidden lg:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    {{-- ====== TABLET & DESKTOP: Table (shown from md up) ====== --}}
+    <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <table class="w-full">
             <thead class="bg-gray-50 border-b border-gray-100">
                 <tr>
