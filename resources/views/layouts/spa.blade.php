@@ -1419,14 +1419,14 @@
                  * @param {boolean} push - Whether to push state to history
                  */
                 async navigate(url, push = true) {
-                    // Close mobile menu
-                    this.mobileMenuOpen = false;
+                    // Prevent double-navigation
+                    if (this.loading) return;
 
-                    // Show loading state
+                    this.mobileMenuOpen = false;
                     this.loading = true;
 
                     try {
-                        // 1. Fetch page content with AJAX headers
+                        // 1. Fetch page content
                         const response = await fetch(url, {
                             method: 'GET',
                             headers: {
@@ -1437,11 +1437,9 @@
                             credentials: 'same-origin'
                         });
 
-                        // Check for redirect or error
                         if (!response.ok) {
-                            if (response.status === 302 || response.status === 301) {
-                                // Server redirected, do full page load
-                                window.location.href = response.url;
+                            if (response.status === 401 || response.status === 419) {
+                                window.location.href = '/login';
                                 return;
                             }
                             throw new Error(`HTTP ${response.status}`);
@@ -1449,116 +1447,75 @@
 
                         const html = await response.text();
 
-                        // 2. Parse the HTML response
+                        // 2. Parse
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
 
-                        // Check for parse errors
                         if (doc.body.innerHTML.includes('parsererror')) {
                             throw new Error('Failed to parse response HTML');
                         }
 
-                        // 3. Extract page title
+                        // 3. Update page title
                         const title = doc.querySelector('title');
-                        if (title) {
-                            document.title = title.textContent;
-                        }
+                        if (title) document.title = title.textContent;
 
-                        // 4. Extract new content from #spa-content
+                        // 4. Extract new content
                         const newContent = doc.querySelector('#spa-content');
-                        if (!newContent) {
-                            throw new Error('Response does not contain #spa-content element');
-                        }
+                        if (!newContent) throw new Error('Response missing #spa-content');
 
-                        // 5. Get current SPA content container
                         const spaContent = document.getElementById('spa-content');
-                        if (!spaContent) {
-                            throw new Error('Current page missing #spa-content element');
-                        }
+                        if (!spaContent) throw new Error('Page missing #spa-content');
 
-                        // 6. Replace content
+                        // 5. Swap innerHTML while still showing skeleton (loading=true)
+                        //    This means the user never sees un-initialized HTML
                         spaContent.innerHTML = newContent.innerHTML;
 
-                        // 7. Update browser history (only if push is true)
-                        if (push) {
-                            history.pushState({ url: url }, '', url);
-                        }
-
-                        // 8. Update current path
+                        // 6. Update history & path
+                        if (push) history.pushState({ url }, '', url);
                         this.currentPath = url;
 
-                        // 9. Wait briefly for DOM to be fully settled
-                        await new Promise(resolve => setTimeout(resolve, 50));
-
-                        // 10. Execute all scripts in the new content (inline and external)
+                        // 7. Execute inline / external scripts in new content
                         this.executeScripts(spaContent);
 
-                        // 11. Wait for external scripts to load if any
-                        await new Promise(resolve => setTimeout(resolve, 100));
+                        // 8. Give external scripts a tick to register before Alpine runs
+                        await new Promise(r => setTimeout(r, 80));
 
-                        // 12. Reinitialize Alpine.js on new content
+                        // 9. Re-initialize Alpine on the new subtree BEFORE revealing content
                         if (window.Alpine) {
-                            try {
-                                window.Alpine.initTree(spaContent);
-                            } catch (e) {
-                                console.warn('Alpine re-initialization warning:', e.message);
+                            try { window.Alpine.initTree(spaContent); } catch (e) {
+                                console.warn('Alpine init warning:', e.message);
                             }
                         }
 
-                        // 13. Reinitialize Bootstrap components
+                        // 10. Re-initialize Bootstrap components
                         if (typeof bootstrap !== 'undefined') {
                             try {
-                                // Tooltips
-                                const tooltips = spaContent.querySelectorAll('[data-bs-toggle="tooltip"]');
-                                tooltips.forEach(el => {
-                                    try {
-                                        bootstrap.Tooltip.getOrCreateInstance(el);
-                                    } catch (e) {
-                                        // Silent fail for individual tooltips
-                                    }
-                                });
-
-                                // Modals
-                                const modals = spaContent.querySelectorAll('.modal');
-                                modals.forEach(el => {
-                                    try {
-                                        bootstrap.Modal.getOrCreateInstance(el);
-                                    } catch (e) {
-                                        // Silent fail for individual modals
-                                    }
-                                });
-
-                                // Popovers
-                                const popovers = spaContent.querySelectorAll('[data-bs-toggle="popover"]');
-                                popovers.forEach(el => {
-                                    try {
-                                        bootstrap.Popover.getOrCreateInstance(el);
-                                    } catch (e) {
-                                        // Silent fail for individual popovers
-                                    }
-                                });
+                                spaContent.querySelectorAll('[data-bs-toggle="tooltip"]')
+                                    .forEach(el => { try { bootstrap.Tooltip.getOrCreateInstance(el); } catch(_) {} });
+                                spaContent.querySelectorAll('.modal')
+                                    .forEach(el => { try { bootstrap.Modal.getOrCreateInstance(el); } catch(_) {} });
+                                spaContent.querySelectorAll('[data-bs-toggle="popover"]')
+                                    .forEach(el => { try { bootstrap.Popover.getOrCreateInstance(el); } catch(_) {} });
                             } catch (e) {
-                                console.warn('Bootstrap re-initialization warning:', e.message);
+                                console.warn('Bootstrap re-init warning:', e.message);
                             }
                         }
 
-                        // 14. Dispatch custom event for page-specific initialization
-                        const event = new CustomEvent('spaContentLoaded', {
-                            detail: { content: spaContent, url: url }
-                        });
-                        document.dispatchEvent(event);
+                        // 11. NOW reveal content — Alpine bindings are ready, no flash
+                        this.loading = false;
 
-                        // 15. Scroll to top
-                        spaContent.scrollIntoView({ behavior: 'smooth' });
+                        // 12. Dispatch SPA event for page-specific hooks (AOS, Quill, etc.)
+                        document.dispatchEvent(new CustomEvent('spaContentLoaded', {
+                            detail: { content: spaContent, url }
+                        }));
+
+                        // 13. Reset main scroll to top
+                        const mainEl = document.getElementById('main-scroll-container');
+                        if (mainEl) mainEl.scrollTop = 0;
 
                     } catch (error) {
                         console.error('SPA Navigation Error:', error);
-                        
-                        // Fallback to full page reload on any error
                         window.location.href = url;
-                    } finally {
-                        // Always hide loading state
-                        this.loading = false;
                     }
                 },
 
