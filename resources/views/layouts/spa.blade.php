@@ -343,7 +343,7 @@
 
         /* Main content scrollbar – thin, on light bg */
         #main-scroll-container {
-            scroll-behavior: smooth;
+            scroll-behavior: auto;   /* MUST be auto – JS handles the animation */
             overflow-y: auto;
         }
         #main-scroll-container::-webkit-scrollbar { width: 6px; }
@@ -1650,49 +1650,51 @@
             }
         }
 
-        // ── Smooth scroll for MAIN CONTENT (custom lerp – works with overflow-y:auto) ──
-        // Lenis v1 element-mode requires overflow:hidden on the wrapper which
-        // conflicts with the flex layout. A wheel-event interceptor + lerp
-        // gives the exact same feel without any structural changes.
+        // ── Smooth scroll for MAIN CONTENT (velocity-decay momentum) ──────────
+        // Uses a velocity + friction model instead of lerp so scrolling starts
+        // IMMEDIATELY on the first wheel tick and decelerates naturally,
+        // matching the feel of native OS scrolling.
         function initMainSmoothScroll() {
             const el = document.getElementById('main-scroll-container');
             if (!el) return;
 
-            let targetY   = el.scrollTop;
-            let currentY  = el.scrollTop;
+            let velocity  = 0;       // px per frame
             let rafId     = null;
-            const LERP    = 0.11;   // lower = smoother / slower
-            const SPEED   = 0.85;   // wheel delta multiplier
+            const FRICTION = 0.82;   // 0–1: higher = glides longer, lower = stops faster
+            const SPEED    = 1.4;    // wheel delta multiplier (higher = faster scroll)
+            const MIN_VEL  = 0.3;    // stop threshold in px
 
             el.addEventListener('wheel', function(e) {
                 e.preventDefault();
-                targetY += e.deltaY * SPEED;
-                // Clamp to scrollable range
-                targetY = Math.max(0, Math.min(targetY, el.scrollHeight - el.clientHeight));
+                // Add wheel delta to velocity (instantly responsive)
+                velocity += e.deltaY * SPEED;
 
                 if (!rafId) {
                     function step() {
-                        const dist = targetY - currentY;
-                        if (Math.abs(dist) < 0.5) {
-                            currentY = targetY;
-                            el.scrollTop = currentY;
+                        // Apply friction each frame
+                        velocity *= FRICTION;
+
+                        // Clamp scrollTop
+                        const maxScroll = el.scrollHeight - el.clientHeight;
+                        el.scrollTop = Math.max(0, Math.min(el.scrollTop + velocity, maxScroll));
+
+                        // Stop if velocity is negligible or we've hit a boundary
+                        if (Math.abs(velocity) < MIN_VEL ||
+                            (el.scrollTop <= 0 && velocity < 0) ||
+                            (el.scrollTop >= maxScroll && velocity > 0)) {
+                            velocity = 0;
                             rafId = null;
                             return;
                         }
-                        currentY += dist * LERP;
-                        el.scrollTop = currentY;
                         rafId = requestAnimationFrame(step);
                     }
                     rafId = requestAnimationFrame(step);
                 }
             }, { passive: false });
 
-            // Keep targetY in sync when user drags the scrollbar
+            // Reset velocity if user grabs the scrollbar
             el.addEventListener('scroll', function() {
-                if (!rafId) {
-                    targetY  = el.scrollTop;
-                    currentY = el.scrollTop;
-                }
+                if (!rafId) velocity = 0;
             }, { passive: true });
         }
 
