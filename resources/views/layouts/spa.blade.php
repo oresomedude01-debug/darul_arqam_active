@@ -1629,10 +1629,10 @@
 
     <!-- Quill Global Initialization -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function initQuill() {
             // Initialize Quill if editor element is present
             var editorContainer = document.getElementById('blog-editor-container');
-            if (editorContainer && typeof Quill !== 'undefined') {
+            if (editorContainer && typeof Quill !== 'undefined' && !editorContainer.classList.contains('ql-container')) {
                 var quill = new Quill(editorContainer, {
                     theme: 'snow',
                     modules: {
@@ -1651,6 +1651,11 @@
                 // Sync Quill content to hidden textarea on form submission
                 var hiddenTextarea = document.getElementById('blog-body-content');
                 if (hiddenTextarea) {
+                    // Populate initial content if editing
+                    if (hiddenTextarea.value) {
+                        quill.clipboard.dangerouslyPasteHTML(hiddenTextarea.value);
+                    }
+
                     var form = hiddenTextarea.closest('form');
                     if (form) {
                         form.addEventListener('submit', function(e) {
@@ -1661,7 +1666,9 @@
                 
                 console.log('Quill editor initialized successfully');
             }
-        });
+        }
+        document.addEventListener('DOMContentLoaded', initQuill);
+        document.addEventListener('spaContentLoaded', initQuill);
     </script>
 
     @stack('scripts')
