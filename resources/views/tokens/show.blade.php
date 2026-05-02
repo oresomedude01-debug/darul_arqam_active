@@ -1,4 +1,4 @@
-@extends('layouts.spa')
+﻿@extends('layouts.spa')
 
 @section('title', 'Token Details')
 
@@ -245,335 +245,15 @@
                     </form>
                 @endif
 
-                <button onclick="window.print()" class="btn btn-outline">
+                <button onclick="printToken()" class="btn btn-outline">
                     <i class="fas fa-print mr-2"></i>
-                    Print
+                    Print Token
                 </button>
 
                 <button onclick="copyToClipboard('{{ $token->code }}')" class="btn btn-outline">
                     <i class="fas fa-copy mr-2"></i>
                     Copy Token
                 </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Print Section (Hidden until print) -->
-<div id="printSection" style="display: none;">
-    <style>
-        @media print {
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
-            html, body {
-                width: 100%;
-                height: auto;
-                margin: 0;
-                padding: 0;
-            }
-            
-            body * {
-                visibility: hidden;
-            }
-            
-            #printSection,
-            #printSection * {
-                visibility: visible;
-            }
-            
-            #printSection {
-                position: static !important;
-                left: auto !important;
-                top: auto !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            
-            .print-container {
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                font-family: Arial, sans-serif;
-                display: block;
-            }
-            
-            .print-page {
-                width: 210mm;
-                min-height: 297mm;
-                padding: 15mm;
-                font-family: Arial, sans-serif;
-                display: block;
-                margin: 0;
-                background: white;
-                page-break-after: always;
-                break-after: always;
-            }
-            
-            .print-page-token {
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                align-items: center;
-                text-align: center;
-                min-height: 297mm;
-            }
-            
-            .print-page-rules {
-                display: flex;
-                flex-direction: column;
-                min-height: 297mm;
-            }
-            
-            .print-header {
-                text-align: center;
-                margin-bottom: 8mm;
-                border-bottom: 2px solid #667eea;
-                padding-bottom: 3mm;
-                flex-shrink: 0;
-            }
-            
-            .print-header h1 {
-                margin: 0;
-                font-size: 16pt;
-                font-weight: bold;
-                color: #333;
-            }
-            
-            .print-header p {
-                margin: 1mm 0 0 0;
-                font-size: 9pt;
-                color: #666;
-            }
-            
-            .token-card {
-                border: 3px solid #667eea;
-                border-radius: 8px;
-                padding: 15mm;
-                text-align: center;
-                background: #f9f9f9;
-                page-break-inside: avoid;
-                break-inside: avoid;
-                flex-shrink: 0;
-                margin: 20mm 0;
-            }
-            
-            .token-title {
-                font-size: 13pt;
-                font-weight: bold;
-                color: #667eea;
-                margin-bottom: 8mm;
-                letter-spacing: 1px;
-            }
-            
-            .token-code-box {
-                border: 3px solid #667eea;
-                padding: 12mm;
-                background: white;
-                margin-bottom: 6mm;
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-            
-            .token-code {
-                font-size: 28pt;
-                font-weight: bold;
-                font-family: 'Courier New', monospace;
-                letter-spacing: 3px;
-                color: #667eea;
-                word-break: break-all;
-                line-height: 1.2;
-            }
-            
-            .token-details {
-                font-size: 9pt;
-                color: #666;
-                margin-top: 4mm;
-                line-height: 1.4;
-            }
-            
-            .rules-header {
-                text-align: center;
-                margin-bottom: 8mm;
-                border-bottom: 2px solid #667eea;
-                padding-bottom: 3mm;
-                flex-shrink: 0;
-            }
-            
-            .rules-header h2 {
-                margin: 0;
-                font-size: 13pt;
-                font-weight: bold;
-                color: #333;
-            }
-            
-            .rules-content {
-                flex: 1;
-                text-align: left;
-                font-size: 8.5pt;
-                line-height: 1.5;
-                overflow: visible;
-                display: block;
-            }
-            
-            .rules-intro {
-                font-size: 8.5pt;
-                line-height: 1.4;
-                margin-bottom: 3mm;
-                color: #333;
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-            
-            .rules-list {
-                font-size: 8.2pt;
-                line-height: 1.6;
-                margin: 0;
-                padding-left: 8mm;
-                list-style-position: outside;
-            }
-            
-            .rules-list li {
-                margin-bottom: 2mm;
-                color: #333;
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-            
-            .rules-list strong {
-                color: #667eea;
-            }
-            
-            .rules-footer {
-                font-size: 8.5pt;
-                line-height: 1.4;
-                margin-top: 3mm;
-                font-weight: bold;
-                text-align: center;
-                color: #333;
-                border-top: 1px solid #ddd;
-                padding-top: 2mm;
-                page-break-inside: avoid;
-                break-inside: avoid;
-                flex-shrink: 0;
-            }
-            
-            .print-footer {
-                text-align: center;
-                border-top: 1px solid #ddd;
-                padding-top: 2mm;
-                margin-top: auto;
-                font-size: 8pt;
-                color: #999;
-                flex-shrink: 0;
-            }
-            
-            .website-info {
-                text-align: center;
-                font-size: 9pt;
-                color: #667eea;
-                font-weight: bold;
-                margin-bottom: 2mm;
-            }
-        }
-    </style>
-
-    <div class="print-container">
-        <!-- PAGE 1: TOKEN -->
-        <div class="print-page print-page-token">
-            <!-- Header -->
-            <div class="print-header">
-                <h1>{{ config('app.name', 'Darul Arqam School') }}</h1>
-                <p>Student Registration Token</p>
-            </div>
-
-            <!-- Token Card - Centered -->
-            <div class="token-card">
-                <div class="token-title">🎓 REGISTRATION TOKEN</div>
-                <div class="token-code-box">
-                    <div class="token-code">{{ $token->code }}</div>
-                </div>
-                <div class="token-details">
-                    <div style="margin-bottom: 2mm;">
-                        <span style="color: #667eea; font-weight: bold;">Status:</span> {{ ucfirst($token->status) }}
-                    </div>
-                    <div style="margin-bottom: 2mm;">
-                        <span style="color: #667eea; font-weight: bold;">Created:</span> {{ $token->created_at->format('M d, Y') }}
-                    </div>
-                    @if($token->expires_at)
-                    <div>
-                        <span style="color: #667eea; font-weight: bold;">Expires:</span> {{ $token->expires_at->format('M d, Y') }}
-                    </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Instructions Section -->
-            <div style="text-align: center; flex: 0 0 auto; margin-top: 10mm; page-break-inside: avoid; break-inside: avoid;">
-                <h2 style="font-size: 11pt; font-weight: bold; color: #333; margin: 0 0 4mm 0;">📋 How to Enroll</h2>
-                <ol style="font-size: 8.5pt; text-align: left; margin: 2mm auto; padding-left: 16mm; line-height: 1.5; max-width: 120mm;">
-                    <li>Visit our website and click "Enroll Now"</li>
-                    <li>Enter this token code (case-sensitive)</li>
-                    <li>Complete all student and parent information</li>
-                    <li>Submit the form to complete enrollment</li>
-                </ol>
-            </div>
-
-            <!-- Footer -->
-            <div class="print-footer">
-                <div class="website-info">🌐 {{ parse_url(request()->getSchemeAndHttpHost())['host'] ?? request()->getSchemeAndHttpHost() }}</div>
-                <div>Generated: {{ now()->format('M d, Y \a\t h:i A') }}</div>
-            </div>
-        </div>
-
-        <!-- PAGE 2: RULES & REGULATIONS -->
-        <div class="print-page print-page-rules">
-            <!-- Rules Header -->
-            <div class="rules-header">
-                <h2>📋 Madrasah Rules & Regulations</h2>
-            </div>
-
-            <!-- Rules Content -->
-            <div class="rules-content">
-                <p class="rules-intro">
-                    By enrolling a child in our Madrasah, parents/guardians agree to the following:
-                </p>
-
-                <ul class="rules-list">
-                    <li><strong>Fees & Payments:</strong> All fees must be paid on time. Fees once paid are non-refundable. Outstanding fees must be cleared before promotion or withdrawal.</li>
-                    
-                    <li><strong>Attendance & Punctuality:</strong> Regular attendance and punctuality are compulsory. Parents must inform the school of any absence.</li>
-                    
-                    <li><strong>Behaviour & Discipline:</strong> Pupils must maintain good Islamic conduct. The Madrasah reserves the right to discipline pupils when necessary.</li>
-                    
-                    <li><strong>Respect for Teachers & Staff:</strong> Teachers and staff must be treated with respect. Concerns should be addressed through proper school channels. Any complaint should be directed to the Director, not the teacher.</li>
-                    
-                    <li><strong>Communication:</strong> Parents should communicate with the school during approved hours and follow official communication methods.</li>
-                    
-                    <li><strong>Dress Code:</strong> Pupils must wear the approved uniform and dress according to Islamic standards.</li>
-                    
-                    <li><strong>School Property & Materials:</strong> Parents are responsible for providing learning materials and for any damage to school property caused by their ward.</li>
-                    
-                    <li><strong>Health & Safety:</strong> Parents must inform the school of any medical condition. Sick children should not be sent to school.</li>
-                    
-                    <li><strong>Withdrawal:</strong> Withdrawal must be done in writing. Fees already paid remain non-refundable.</li>
-                    
-                    <li><strong>School Authority:</strong> The Madrasah reserves the right to amend its policies when necessary.</li>
-                </ul>
-
-                <div class="rules-footer">
-                    Enrollment signifies full acceptance of these rules.
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="print-footer">
-                <div class="website-info">🌐 {{ parse_url(request()->getSchemeAndHttpHost())['host'] ?? request()->getSchemeAndHttpHost() }}</div>
-                <div>Generated: {{ now()->format('M d, Y \a\t h:i A') }}</div>
             </div>
         </div>
     </div>
@@ -587,30 +267,396 @@ function copyToClipboard(text) {
     });
 }
 
-// Override default print behavior
-document.addEventListener('DOMContentLoaded', function() {
-    // Store original print function
-    const originalPrint = window.print;
-    
-    // Override window.print
-    window.print = function() {
-        // Show print section
-        const printSection = document.getElementById('printSection');
-        if (printSection) {
-            printSection.style.display = 'block';
-        }
-        
-        // Call original print
-        originalPrint.call(window);
-        
-        // Hide print section after print dialog closes
-        setTimeout(function() {
-            if (printSection) {
-                printSection.style.display = 'none';
-            }
-        }, 500);
-    };
-});
+function printToken() {
+    const tokenCode     = @json($token->code);
+    const tokenStatus   = @json(ucfirst($token->status));
+    const createdAt     = @json($token->created_at->format('M d, Y'));
+    const expiresAt     = @json($token->expires_at ? $token->expires_at->format('M d, Y') : null);
+    const sessionYear   = @json($token->session_year ?? 'Not specified');
+    const className     = @json($token->schoolClass ? $token->schoolClass->name : 'Any Class');
+    const schoolName    = @json(config('app.name', 'Darul Arqam School'));
+    const siteUrl       = @json(request()->getSchemeAndHttpHost());
+    const generatedAt   = @json(now()->format('M d, Y \\a\\t h:i A'));
+
+    const expiresLine = expiresAt
+        ? `<div class="detail-row"><span class="label">Expires:</span> <span>${expiresAt}</span></div>`
+        : `<div class="detail-row"><span class="label">Expiry:</span> <span style="color:#16a34a;font-weight:bold;">No Expiry</span></div>`;
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registration Token - ${tokenCode}</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: #fff;
+    color: #1e293b;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ---- PAGE 1: TOKEN ---- */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 16mm 18mm;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+    break-after: page;
+    background: #fff;
+  }
+  .page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  /* HEADER */
+  .school-header {
+    text-align: center;
+    padding-bottom: 6mm;
+    border-bottom: 3px solid #6366f1;
+    margin-bottom: 8mm;
+    flex-shrink: 0;
+  }
+  .school-name {
+    font-size: 20pt;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.5px;
+  }
+  .school-sub {
+    font-size: 10pt;
+    color: #6366f1;
+    font-weight: 600;
+    margin-top: 1mm;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* TOKEN CARD */
+  .token-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .token-card {
+    width: 100%;
+    max-width: 150mm;
+    border: 3px solid #6366f1;
+    border-radius: 12px;
+    padding: 12mm 14mm;
+    text-align: center;
+    background: #f8f7ff;
+  }
+  .token-label {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #6366f1;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6mm;
+  }
+  .token-code-box {
+    background: #fff;
+    border: 2px dashed #6366f1;
+    border-radius: 8px;
+    padding: 8mm 10mm;
+    margin-bottom: 6mm;
+  }
+  .token-code {
+    font-family: 'Courier New', 'Courier', monospace;
+    font-size: 32pt;
+    font-weight: 900;
+    color: #4f46e5;
+    letter-spacing: 5px;
+    line-height: 1.1;
+    word-break: break-all;
+  }
+  .token-hint {
+    font-size: 8pt;
+    color: #94a3b8;
+    margin-top: 3mm;
+    font-style: italic;
+  }
+  .token-details {
+    margin-top: 5mm;
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+    font-size: 9.5pt;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1.5mm;
+    padding-top: 1.5mm;
+  }
+  .label {
+    font-weight: 700;
+    color: #6366f1;
+  }
+
+  /* HOW TO ENROLL */
+  .enroll-section {
+    margin-top: 8mm;
+    flex-shrink: 0;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 6mm 8mm;
+  }
+  .enroll-title {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4mm;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .enroll-steps {
+    list-style: none;
+    counter-reset: step;
+    font-size: 9pt;
+    color: #334155;
+    line-height: 1.6;
+  }
+  .enroll-steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 3mm;
+    align-items: flex-start;
+    margin-bottom: 2mm;
+  }
+  .enroll-steps li::before {
+    content: counter(step);
+    background: #6366f1;
+    color: #fff;
+    font-size: 8pt;
+    font-weight: 700;
+    min-width: 5mm;
+    height: 5mm;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.5mm;
+  }
+
+  /* PAGE FOOTER */
+  .page-footer {
+    margin-top: 6mm;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 3mm;
+    font-size: 8pt;
+    color: #94a3b8;
+    flex-shrink: 0;
+  }
+  .page-footer .site {
+    font-weight: 700;
+    color: #6366f1;
+    font-size: 9pt;
+  }
+
+  /* ---- PAGE 2: RULES ---- */
+  .rules-header {
+    text-align: center;
+    padding-bottom: 6mm;
+    border-bottom: 3px solid #6366f1;
+    margin-bottom: 8mm;
+    flex-shrink: 0;
+  }
+  .rules-header h2 {
+    font-size: 16pt;
+    font-weight: 800;
+    color: #1e293b;
+  }
+  .rules-header p {
+    font-size: 9pt;
+    color: #64748b;
+    margin-top: 1mm;
+  }
+  .rules-body {
+    flex: 1;
+    font-size: 9pt;
+    color: #1e293b;
+    line-height: 1.7;
+  }
+  .rules-intro {
+    margin-bottom: 4mm;
+    font-style: italic;
+    color: #475569;
+  }
+  .rules-list {
+    list-style: none;
+    counter-reset: rule;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5mm;
+  }
+  .rules-list li {
+    counter-increment: rule;
+    display: flex;
+    gap: 3mm;
+    padding: 2.5mm 3mm;
+    background: #f8fafc;
+    border-left: 3px solid #6366f1;
+    border-radius: 0 6px 6px 0;
+  }
+  .rules-list li::before {
+    content: counter(rule);
+    font-size: 8pt;
+    font-weight: 800;
+    color: #6366f1;
+    min-width: 4mm;
+    flex-shrink: 0;
+    padding-top: 0.5mm;
+  }
+  .rules-list li strong {
+    color: #4f46e5;
+  }
+  .rules-acceptance {
+    margin-top: 5mm;
+    text-align: center;
+    font-size: 9pt;
+    font-weight: 700;
+    color: #1e293b;
+    padding: 3mm;
+    border: 2px solid #6366f1;
+    border-radius: 6px;
+    background: #f1f5ff;
+    flex-shrink: 0;
+  }
+
+  @media print {
+    html, body { width: 210mm; }
+    .page { margin: 0; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== PAGE 1: TOKEN ========== -->
+<div class="page">
+  <div class="school-header">
+    <div class="school-name">${schoolName}</div>
+    <div class="school-sub">Student Registration Token</div>
+  </div>
+
+  <div class="token-wrapper">
+    <div class="token-card">
+      <div class="token-label">&#127891; Registration Token</div>
+      <div class="token-code-box">
+        <div class="token-code">${tokenCode}</div>
+        <div class="token-hint">Enter this code exactly as shown (case-sensitive)</div>
+      </div>
+      <div class="token-details">
+        <div class="detail-row">
+          <span class="label">Status:</span>
+          <span style="font-weight:700;color:${tokenStatus==='Active'?'#16a34a':'#dc2626'};">${tokenStatus}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Session:</span>
+          <span>${sessionYear}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Class:</span>
+          <span>${className}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Issued:</span>
+          <span>${createdAt}</span>
+        </div>
+        ${expiresLine}
+      </div>
+    </div>
+  </div>
+
+  <div class="enroll-section">
+    <div class="enroll-title">&#128203; How to Enroll</div>
+    <ol class="enroll-steps">
+      <li>Visit the school website and click <strong>&ldquo;Enroll Now&rdquo;</strong></li>
+      <li>Enter this <strong>token code</strong> exactly as printed above</li>
+      <li>Complete all student and parent/guardian information</li>
+      <li>Submit the form &mdash; enrollment is complete!</li>
+    </ol>
+  </div>
+
+  <div class="page-footer">
+    <div class="site">&#127760; ${siteUrl}</div>
+    <div>Generated: ${generatedAt}</div>
+  </div>
+</div>
+
+<!-- ========== PAGE 2: RULES ========== -->
+<div class="page">
+  <div class="rules-header">
+    <h2>&#128209; Madrasah Rules &amp; Regulations</h2>
+    <p>${schoolName} &mdash; Parent/Guardian Agreement</p>
+  </div>
+
+  <div class="rules-body">
+    <p class="rules-intro">By enrolling a child in our Madrasah, parents/guardians agree to the following rules and conditions:</p>
+    <ul class="rules-list">
+      <li><strong>Fees &amp; Payments:</strong> All fees must be paid on time. Fees once paid are non-refundable. Outstanding fees must be cleared before promotion or withdrawal.</li>
+      <li><strong>Attendance &amp; Punctuality:</strong> Regular attendance and punctuality are compulsory. Parents must inform the school of any planned or emergency absence.</li>
+      <li><strong>Behaviour &amp; Discipline:</strong> Pupils must maintain good Islamic conduct at all times. The Madrasah reserves the right to discipline pupils when necessary.</li>
+      <li><strong>Respect for Teachers &amp; Staff:</strong> Teachers and staff must be treated with respect. Concerns should be addressed through proper school channels &mdash; any complaint must be directed to the Director, not the teacher directly.</li>
+      <li><strong>Communication:</strong> Parents should communicate with the school during approved hours using official communication methods only.</li>
+      <li><strong>Dress Code:</strong> Pupils must wear the approved Madrasah uniform and dress according to Islamic standards at all times on school premises.</li>
+      <li><strong>School Property &amp; Materials:</strong> Parents are responsible for providing required learning materials and for any damage caused by their ward to school property.</li>
+      <li><strong>Health &amp; Safety:</strong> Parents must inform the school of any medical condition or allergy. Children who are unwell must not be sent to school.</li>
+      <li><strong>Withdrawal:</strong> Withdrawal from the Madrasah must be communicated in writing with adequate notice. Fees already paid remain non-refundable.</li>
+      <li><strong>School Authority:</strong> The Madrasah reserves the right to amend its policies, rules, and regulations as deemed necessary by the management.</li>
+    </ul>
+  </div>
+
+  <div class="rules-acceptance">
+    &#9989; Enrollment into this Madrasah signifies full acceptance of all the above rules and regulations.
+  </div>
+
+  <div class="page-footer" style="margin-top:4mm;">
+    <div class="site">&#127760; ${siteUrl}</div>
+    <div>Generated: ${generatedAt}</div>
+  </div>
+</div>
+
+<script>
+  window.onload = function() {
+    window.focus();
+    window.print();
+    window.onafterprint = function() { window.close(); };
+    // Fallback for browsers that don't support onafterprint
+    setTimeout(function() {
+      if (!window.closed) window.close();
+    }, 30000);
+  };
+<\/script>
+</body>
+</html>`;
+
+    const printWin = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
+    if (!printWin) {
+        alert('Pop-up blocked! Please allow pop-ups for this site to print.');
+        return;
+    }
+    printWin.document.open();
+    printWin.document.write(html);
+    printWin.document.close();
+}
 </script>
 @endpush
 @endsection
