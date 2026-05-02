@@ -23,8 +23,8 @@
     </div>
     @endif
 
-    <form action="{{ route('admin.blog.store') }}" method="POST" enctype="multipart/form-data"
-          x-data="blogForm()" @submit="submitForm" class="space-y-6">
+    <form id="blog-create-form" action="{{ route('admin.blog.store') }}" method="POST" enctype="multipart/form-data"
+          x-data="blogForm()" @submit.prevent="submitForm" class="space-y-6">
         @csrf
 
         {{-- Title --}}
@@ -36,8 +36,7 @@
         </div>
 
         {{-- Meta --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 grid sm:grid-cols-2 gap-6"
-             x-data="{ type: '{{ old('type', 'article') }}' }">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 grid sm:grid-cols-2 gap-6">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Post Type <span class="text-red-500">*</span></label>
                 <select name="type" x-model="type" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition">
@@ -181,7 +180,7 @@
             <div id="blog-editor-container" class="bg-white rounded-lg border border-gray-200" style="height: 400px;"></div>
             
             <!-- Hidden textarea to store the content for form submission -->
-            <textarea name="body" id="blog-body-content" required style="display: none;">{{ old('body') }}</textarea>
+            <textarea name="body" id="blog-body-content" style="display: none;">{{ old('body') }}</textarea>
         </div>
 
         {{-- Actions --}}
@@ -200,60 +199,114 @@
 function blogForm() {
     return {
         isSubmitting: false,
+        type: '{{ old('type', 'article') }}',
+        errorMessage: '',
         
         init() {
-            console.log('Blog form initialized');
-            // Give Quill time to initialize before allowing submission
-            setTimeout(() => {
-                console.log('Blog form ready for submission');
-            }, 500);
+            console.log('Blog form initialized with type:', this.type);
         },
         
-        async submitForm(e) {
+        submitForm() {
             if (this.isSubmitting) {
-                e.preventDefault();
+                console.log('Form already submitting, ignoring duplicate request');
                 return;
             }
             
-            // Validate that we have content in the Quill editor
-            const hiddenTextarea = document.getElementById('blog-body-content');
-            const editorContainer = document.getElementById('blog-editor-container');
-            const form = e.target;
-            
-            // Check for required fields
-            const title = form.querySelector('input[name="title"]').value.trim();
-            const excerpt = form.querySelector('textarea[name="excerpt"]').value.trim();
-            
-            if (!title) {
-                alert('Please enter a post title');
-                e.preventDefault();
-                return;
-            }
-            
-            if (!excerpt) {
-                alert('Please enter an excerpt');
-                e.preventDefault();
-                return;
-            }
-            
-            // Ensure Quill content is synced
-            if (editorContainer && hiddenTextarea) {
-                // Wait for Quill to be available
-                if (typeof window.quillInstance !== 'undefined' && window.quillInstance) {
-                    hiddenTextarea.value = window.quillInstance.root.innerHTML;
-                    console.log('Quill content synced:', hiddenTextarea.value);
+            try {
+                // Use the specific blog form ID instead of generic querySelector
+                const form = document.getElementById('blog-create-form');
+                if (!form) {
+                    console.error('Blog form not found');
+                    alert('Form not found. Please refresh the page.');
+                    return;
                 }
+                
+                const hiddenTextarea = document.getElementById('blog-body-content');
+                if (!hiddenTextarea) {
+                    console.error('Body textarea not found');
+                    alert('Editor not properly initialized. Please refresh the page.');
+                    return;
+                }
+                
+                // Check for required fields - query within the specific form
+                const titleInput = form.querySelector('input[name="title"]');
+                const excerptInput = form.querySelector('textarea[name="excerpt"]');
+                const categorySelect = form.querySelector('select[name="category"]');
+                const statusSelect = form.querySelector('select[name="status"]');
+                
+                if (!titleInput || !excerptInput || !categorySelect || !statusSelect) {
+                    console.error('One or more form inputs not found');
+                    console.error({
+                        titleInput: !!titleInput,
+                        excerptInput: !!excerptInput,
+                        categorySelect: !!categorySelect,
+                        statusSelect: !!statusSelect
+                    });
+                    alert('Form fields not found. Please refresh the page.');
+                    return;
+                }
+                
+                const title = titleInput.value.trim();
+                const excerpt = excerptInput.value.trim();
+                const category = categorySelect.value;
+                const status = statusSelect.value;
+                
+                console.log('Validating form...');
+                console.log('Title:', title);
+                console.log('Excerpt:', excerpt);
+                console.log('Category:', category);
+                console.log('Status:', status);
+                
+                if (!title) {
+                    alert('Please enter a post title');
+                    return;
+                }
+                
+                if (!excerpt) {
+                    alert('Please enter an excerpt');
+                    return;
+                }
+                
+                if (!category) {
+                    alert('Please select a category');
+                    return;
+                }
+                
+                if (!status) {
+                    alert('Please select a status');
+                    return;
+                }
+                
+                // Ensure Quill content is synced before submission
+                if (typeof window.quillInstance !== 'undefined' && window.quillInstance) {
+                    const content = window.quillInstance.root.innerHTML;
+                    hiddenTextarea.value = content;
+                    console.log('Quill content synced, length:', content.length);
+                    
+                    // Check if body is empty
+                    if (!content.trim() || content === '<p><br></p>') {
+                        alert('Please write some content in the article body');
+                        return;
+                    }
+                } else {
+                    console.error('Quill instance not available');
+                    alert('Editor not loaded. Please refresh the page and try again.');
+                    return;
+                }
+                
+                // All validation passed, submit the form
+                this.isSubmitting = true;
+                console.log('✓ All validation passed, submitting form to:', form.action);
+                
+                // Add a small delay to ensure UI updates, then submit
+                setTimeout(() => {
+                    form.submit();
+                }, 100);
+                
+            } catch (error) {
+                console.error('Error in submitForm:', error);
+                alert('An error occurred: ' + error.message);
             }
-            
-            // Check if body is empty
-            if (!hiddenTextarea.value.trim() || hiddenTextarea.value === '<p><br></p>') {
-                alert('Please write some content in the article body');
-                e.preventDefault();
-                return;
-            }
-            
-            this.isSubmitting = true;
-            console.log('Form is being submitted');
         }
     };
 }
