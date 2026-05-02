@@ -194,3 +194,27 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function blogForm() {
+    return {
+        init() {
+            // Initialize form on load
+            console.log('Blog form initialized');
+        },
+        submitForm(e) {
+            // Ensure Quill content is synced before submission
+            const hiddenTextarea = document.getElementById('blog-body-content');
+            const editorContainer = document.getElementById('blog-editor-container');
+            
+            if (editorContainer && hiddenTextarea) {
+                // The Quill form submit listener will handle this automatically
+                // Just ensure the form can submit
+                console.log('Form submitted with content');
+            }
+        }
+    };
+}
+</script>
+@endpush
