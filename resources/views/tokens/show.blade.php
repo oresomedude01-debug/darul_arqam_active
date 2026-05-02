@@ -263,64 +263,93 @@
 <div id="printSection" style="display: none;">
     <style>
         @media print {
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            html, body {
+                width: 100%;
+                height: auto;
+                margin: 0;
+                padding: 0;
+            }
+            
             body * {
                 visibility: hidden;
             }
+            
             #printSection,
             #printSection * {
                 visibility: visible;
             }
+            
             #printSection {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
+                position: static !important;
+                left: auto !important;
+                top: auto !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
+            
             .print-container {
-                width: 210mm;
-                height: 297mm;
+                width: 100%;
                 margin: 0;
                 padding: 0;
                 font-family: Arial, sans-serif;
+                display: block;
             }
+            
             .print-page {
                 width: 210mm;
-                height: 297mm;
+                min-height: 297mm;
                 padding: 15mm;
                 font-family: Arial, sans-serif;
-                display: flex;
-                flex-direction: column;
+                display: block;
                 margin: 0;
                 background: white;
                 page-break-after: always;
+                break-after: always;
             }
+            
             .print-page-token {
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
+                justify-content: flex-start;
                 align-items: center;
                 text-align: center;
+                min-height: 297mm;
             }
+            
             .print-page-rules {
-                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                min-height: 297mm;
             }
+            
             .print-header {
                 text-align: center;
                 margin-bottom: 8mm;
                 border-bottom: 2px solid #667eea;
                 padding-bottom: 3mm;
+                flex-shrink: 0;
             }
+            
             .print-header h1 {
                 margin: 0;
                 font-size: 16pt;
                 font-weight: bold;
                 color: #333;
             }
+            
             .print-header p {
                 margin: 1mm 0 0 0;
                 font-size: 9pt;
                 color: #666;
             }
+            
             .token-card {
                 border: 3px solid #667eea;
                 border-radius: 8px;
@@ -328,9 +357,11 @@
                 text-align: center;
                 background: #f9f9f9;
                 page-break-inside: avoid;
-                flex: 0 0 auto;
+                break-inside: avoid;
+                flex-shrink: 0;
                 margin: 20mm 0;
             }
+            
             .token-title {
                 font-size: 13pt;
                 font-weight: bold;
@@ -338,12 +369,16 @@
                 margin-bottom: 8mm;
                 letter-spacing: 1px;
             }
+            
             .token-code-box {
                 border: 3px solid #667eea;
                 padding: 12mm;
                 background: white;
                 margin-bottom: 6mm;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
+            
             .token-code {
                 font-size: 28pt;
                 font-weight: bold;
@@ -351,51 +386,68 @@
                 letter-spacing: 3px;
                 color: #667eea;
                 word-break: break-all;
+                line-height: 1.2;
             }
+            
             .token-details {
                 font-size: 9pt;
                 color: #666;
                 margin-top: 4mm;
                 line-height: 1.4;
             }
+            
             .rules-header {
                 text-align: center;
                 margin-bottom: 8mm;
                 border-bottom: 2px solid #667eea;
                 padding-bottom: 3mm;
+                flex-shrink: 0;
             }
+            
             .rules-header h2 {
                 margin: 0;
                 font-size: 13pt;
                 font-weight: bold;
                 color: #333;
             }
+            
             .rules-content {
                 flex: 1;
                 text-align: left;
                 font-size: 8.5pt;
                 line-height: 1.5;
-                overflow: hidden;
+                overflow: visible;
+                display: block;
             }
+            
             .rules-intro {
                 font-size: 8.5pt;
                 line-height: 1.4;
                 margin-bottom: 3mm;
                 color: #333;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
+            
             .rules-list {
                 font-size: 8.2pt;
                 line-height: 1.6;
                 margin: 0;
                 padding-left: 8mm;
+                list-style-position: outside;
             }
+            
             .rules-list li {
                 margin-bottom: 2mm;
                 color: #333;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
+            
             .rules-list strong {
                 color: #667eea;
             }
+            
             .rules-footer {
                 font-size: 8.5pt;
                 line-height: 1.4;
@@ -405,15 +457,21 @@
                 color: #333;
                 border-top: 1px solid #ddd;
                 padding-top: 2mm;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                flex-shrink: 0;
             }
+            
             .print-footer {
                 text-align: center;
                 border-top: 1px solid #ddd;
                 padding-top: 2mm;
-                margin-top: 8mm;
+                margin-top: auto;
                 font-size: 8pt;
                 color: #999;
+                flex-shrink: 0;
             }
+            
             .website-info {
                 text-align: center;
                 font-size: 9pt;
@@ -455,9 +513,9 @@
             </div>
 
             <!-- Instructions Section -->
-            <div style="text-align: center; flex: 0 0 auto; margin-top: 15mm;">
+            <div style="text-align: center; flex: 0 0 auto; margin-top: 10mm; page-break-inside: avoid; break-inside: avoid;">
                 <h2 style="font-size: 11pt; font-weight: bold; color: #333; margin: 0 0 4mm 0;">📋 How to Enroll</h2>
-                <ol style="font-size: 8.5pt; text-align: left; margin: 2mm 0; padding-left: 16mm; line-height: 1.5;">
+                <ol style="font-size: 8.5pt; text-align: left; margin: 2mm auto; padding-left: 16mm; line-height: 1.5; max-width: 120mm;">
                     <li>Visit our website and click "Enroll Now"</li>
                     <li>Enter this token code (case-sensitive)</li>
                     <li>Complete all student and parent information</li>
