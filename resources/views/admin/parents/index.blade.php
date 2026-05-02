@@ -1,171 +1,300 @@
 @extends('layouts.spa')
-
 @section('title', 'Parent Management')
 
-@section('content')
-<div class="p-4 sm:p-6">
+@section('breadcrumb')
+    <span class="text-gray-400">Admin</span>
+    <span class="text-gray-400">/</span>
+    <span class="font-semibold text-gray-900">Parents</span>
+@endsection
 
-    {{-- Header --}}
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+@section('content')
+<div x-data="parentsPage()" class="space-y-6">
+
+    {{-- Page Header --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Parent Management</h1>
-            <p class="mt-1 text-gray-500 text-sm">Manage all parents registered in the system</p>
+            <h1 class="text-3xl font-bold text-gray-900">Parent Management</h1>
+            <p class="text-sm text-gray-600 mt-1">Manage all registered parents</p>
         </div>
-        <a href="{{ route('admin.parents.create') }}"
-           class="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl font-medium text-sm transition shadow-sm self-start sm:self-auto">
-            <i class="fas fa-plus"></i> Add Parent
-        </a>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.parents.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus mr-2"></i>Add Parent
+            </a>
+        </div>
     </div>
 
     {{-- Alerts --}}
     @if($message = session('success'))
-    <div class="mb-5 flex items-center gap-3 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl text-sm">
-        <i class="fas fa-check-circle text-green-500"></i>{{ $message }}
+    <div class="flex items-center gap-3 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl text-sm">
+        <i class="fas fa-check-circle text-green-500 flex-shrink-0"></i>{{ $message }}
     </div>
     @endif
     @if($message = session('error'))
-    <div class="mb-5 flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm">
-        <i class="fas fa-exclamation-circle text-red-500"></i>{{ $message }}
+    <div class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm">
+        <i class="fas fa-exclamation-circle text-red-500 flex-shrink-0"></i>{{ $message }}
     </div>
     @endif
 
-    {{-- Search --}}
-    <div class="mb-5">
-        <form action="{{ route('admin.parents.index') }}" method="GET" class="flex gap-2">
-            <div class="relative flex-1">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                <input type="text" name="search" value="{{ request('search') }}"
-                       placeholder="Search by name or email…"
-                       class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 transition">
-            </div>
-            <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition">
-                Search
-            </button>
-            @if(request('search'))
-            <a href="{{ route('admin.parents.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-medium transition">
-                Clear
-            </a>
-            @endif
-        </form>
-    </div>
-
-    {{-- ====== MOBILE: Card grid (shown below md) ====== --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
-        @forelse($parents as $parent)
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-            <div class="flex items-start justify-between mb-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <span class="text-purple-700 font-bold text-sm">{{ strtoupper(substr($parent->name, 0, 2)) }}</span>
-                    </div>
+    {{-- Stats Cards --}}
+    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+        <div class="card hover:shadow-lg transition-all duration-200">
+            <div class="card-body">
+                <div class="flex flex-col items-start justify-between gap-2">
                     <div>
-                        <p class="font-semibold text-gray-900 text-sm leading-tight">{{ $parent->name }}</p>
-                        <p class="text-xs text-gray-500 mt-0.5">{{ $parent->email }}</p>
+                        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Parents</p>
+                        <p class="text-2xl md:text-3xl font-bold text-gray-900 mt-1">{{ number_format($stats['total']) }}</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user-friends text-white text-lg md:text-2xl"></i>
                     </div>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-4">
-                <div>
-                    <span class="text-gray-400 block mb-0.5">Phone</span>
-                    <span class="font-medium">{{ $parent->profile?->phone ?? '—' }}</span>
-                </div>
-                <div>
-                    <span class="text-gray-400 block mb-0.5">Occupation</span>
-                    <span class="font-medium">{{ $parent->profile?->occupation ?? '—' }}</span>
+        </div>
+
+        <div class="card hover:shadow-lg transition-all duration-200">
+            <div class="card-body">
+                <div class="flex flex-col items-start justify-between gap-2">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">With Children</p>
+                        <p class="text-2xl md:text-3xl font-bold text-green-600 mt-1">{{ number_format($stats['with_children']) }}</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-child text-white text-lg md:text-2xl"></i>
+                    </div>
                 </div>
             </div>
-            <div class="flex items-center gap-2 pt-3 border-t border-gray-100">
-                <a href="{{ route('admin.parents.show', $parent) }}"
-                   class="flex-1 text-center bg-purple-50 hover:bg-purple-100 text-purple-700 py-1.5 rounded-lg text-xs font-medium transition">
-                    <i class="fas fa-eye mr-1"></i>View
-                </a>
-                <a href="{{ route('admin.parents.edit', $parent) }}"
-                   class="flex-1 text-center bg-blue-50 hover:bg-blue-100 text-blue-700 py-1.5 rounded-lg text-xs font-medium transition">
-                    <i class="fas fa-edit mr-1"></i>Edit
-                </a>
-                <form action="{{ route('admin.parents.destroy', $parent) }}" method="POST"
-                      class="flex-1" onsubmit="return confirm('Delete this parent?');">
-                    @csrf @method('DELETE')
-                    <button type="submit"
-                            class="w-full bg-red-50 hover:bg-red-100 text-red-700 py-1.5 rounded-lg text-xs font-medium transition">
-                        <i class="fas fa-trash mr-1"></i>Delete
+        </div>
+
+        <div class="card hover:shadow-lg transition-all duration-200">
+            <div class="card-body">
+                <div class="flex flex-col items-start justify-between gap-2">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">No Children</p>
+                        <p class="text-2xl md:text-3xl font-bold text-amber-600 mt-1">{{ number_format($stats['without_children']) }}</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-amber-400 to-amber-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user-slash text-white text-lg md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card hover:shadow-lg transition-all duration-200">
+            <div class="card-body">
+                <div class="flex flex-col items-start justify-between gap-2">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">With Occupation</p>
+                        <p class="text-2xl md:text-3xl font-bold text-blue-600 mt-1">{{ number_format($stats['with_occupation']) }}</p>
+                    </div>
+                    <div class="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-briefcase text-white text-lg md:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Search & Filters --}}
+    <div class="card">
+        <div class="card-body">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Search & Filters</h3>
+                <button @click="showFilters = !showFilters" class="btn btn-sm btn-outline lg:hidden">
+                    <i class="fas fa-filter mr-2"></i>
+                    <span x-text="showFilters ? 'Hide Filters' : 'Show Filters'"></span>
+                </button>
+            </div>
+
+            <form method="GET" action="{{ route('admin.parents.index') }}" class="space-y-4">
+                <div class="form-group">
+                    <div class="relative">
+                        <input type="text" name="search" value="{{ request('search') }}"
+                               placeholder="Search by name or email…"
+                               class="form-input pl-10">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search mr-2"></i>Search
                     </button>
-                </form>
+                    <a href="{{ route('admin.parents.index') }}" class="btn btn-outline">
+                        <i class="fas fa-times mr-2"></i>Clear
+                    </a>
+                    <button type="button" @click="toggleView()"
+                            class="btn btn-outline ml-auto hidden md:inline-flex">
+                        <i :class="viewMode === 'table' ? 'fas fa-th' : 'fas fa-table'" class="mr-2"></i>
+                        <span x-text="viewMode === 'table' ? 'Grid View' : 'Table View'"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Parents List --}}
+    <div class="card pb-16 md:pb-0">
+        <div class="card-header flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">
+                Parents ({{ $parents->total() }})
+            </h3>
+            <div class="text-sm text-gray-600">
+                Showing {{ $parents->firstItem() ?? 0 }} – {{ $parents->lastItem() ?? 0 }} of {{ $parents->total() }}
             </div>
         </div>
-        @empty
-        <div class="col-span-full bg-white rounded-2xl border border-gray-100 px-6 py-12 text-center text-gray-400">
-            <i class="fas fa-users text-4xl mb-3 block opacity-30"></i>
-            <p class="font-medium">No parents found</p>
-        </div>
-        @endforelse
-    </div>
 
-    {{-- ====== TABLET & DESKTOP: Table (shown from md up) ====== --}}
-    <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-50 border-b border-gray-100">
-                <tr>
-                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Parent</th>
-                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone</th>
-                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Occupation</th>
-                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-50">
-                @forelse($parents as $parent)
-                <tr class="hover:bg-gray-50/70 transition">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <span class="text-purple-700 font-bold text-xs">{{ strtoupper(substr($parent->name, 0, 2)) }}</span>
+        {{-- Desktop Table View --}}
+        <div x-show="viewMode === 'table'" class="hidden md:block overflow-x-auto">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Parent</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Occupation</th>
+                        <th>Children</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($parents as $parent)
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                                    {{ strtoupper(substr($parent->name, 0, 2)) }}
+                                </div>
+                                <span class="font-semibold text-gray-900">{{ $parent->name }}</span>
                             </div>
-                            <span class="font-medium text-gray-900 text-sm">{{ $parent->name }}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $parent->email }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $parent->profile?->phone ?? '—' }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $parent->profile?->occupation ?? '—' }}</td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.parents.show', $parent) }}"
-                               class="p-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-xs transition" title="View">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('admin.parents.edit', $parent) }}"
-                               class="p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs transition" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('admin.parents.destroy', $parent) }}" method="POST"
-                                  class="inline" onsubmit="return confirm('Delete this parent?');">
-                                @csrf @method('DELETE')
-                                <button type="submit"
-                                        class="p-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs transition" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="px-6 py-12 text-center text-gray-400">
-                        <i class="fas fa-users text-4xl mb-3 block opacity-30"></i>
-                        <p class="font-medium">No parents found</p>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                        </td>
+                        <td class="text-sm text-gray-600">{{ $parent->email }}</td>
+                        <td class="text-sm text-gray-600">{{ $parent->profile?->phone ?? '—' }}</td>
+                        <td class="text-sm text-gray-600">{{ $parent->profile?->occupation ?? '—' }}</td>
+                        <td>
+                            @php $childCount = $parent->children()->count(); @endphp
+                            @if($childCount > 0)
+                                <span class="badge badge-success">{{ $childCount }} {{ Str::plural('child', $childCount) }}</span>
+                            @else
+                                <span class="badge badge-warning">None</span>
+                            @endif
+                        </td>
+                        <td class="text-right">
+                            <div class="inline-flex items-center gap-2">
+                                <a href="{{ route('admin.parents.show', $parent) }}" class="btn btn-sm btn-outline" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.parents.edit', $parent) }}" class="btn btn-sm btn-primary" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('admin.parents.destroy', $parent) }}" method="POST"
+                                      class="inline" onsubmit="return confirm('Delete this parent?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="text-center py-12">
+                            <div class="flex flex-col items-center justify-center text-gray-500">
+                                <i class="fas fa-user-friends text-6xl mb-4 text-gray-300"></i>
+                                <p class="text-lg font-semibold">No parents found</p>
+                                <p class="text-sm mt-1">Try adjusting your search</p>
+                                <a href="{{ route('admin.parents.create') }}" class="btn btn-primary mt-4">
+                                    <i class="fas fa-plus mr-2"></i>Add First Parent
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-    {{-- Pagination --}}
-    @if($parents->hasPages())
-    <div class="mt-5">
-        {{ $parents->links() }}
+        {{-- Mobile / Grid Card View --}}
+        <div x-show="viewMode === 'grid' || window.innerWidth < 768" class="md:hidden p-4 space-y-4">
+            @forelse($parents as $parent)
+            <div class="table-card hover:shadow-lg transition-all duration-200">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold flex-shrink-0">
+                            {{ strtoupper(substr($parent->name, 0, 2)) }}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900">{{ $parent->name }}</h4>
+                            <p class="text-sm text-gray-500">{{ $parent->email }}</p>
+                        </div>
+                    </div>
+                    @php $childCount = $parent->children()->count(); @endphp
+                    @if($childCount > 0)
+                        <span class="badge badge-success">{{ $childCount }} {{ Str::plural('child', $childCount) }}</span>
+                    @else
+                        <span class="badge badge-warning">No children</span>
+                    @endif
+                </div>
+
+                <div class="space-y-2 text-sm text-gray-600">
+                    @if($parent->profile?->phone)
+                    <p><i class="fas fa-phone mr-2 text-gray-400 w-4"></i>{{ $parent->profile->phone }}</p>
+                    @endif
+                    @if($parent->profile?->occupation)
+                    <p><i class="fas fa-briefcase mr-2 text-gray-400 w-4"></i>{{ $parent->profile->occupation }}</p>
+                    @endif
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <a href="{{ route('admin.parents.show', $parent) }}" class="btn btn-sm btn-outline flex-1">
+                        <i class="fas fa-eye mr-1"></i>View
+                    </a>
+                    <a href="{{ route('admin.parents.edit', $parent) }}" class="btn btn-sm btn-primary flex-1">
+                        <i class="fas fa-edit mr-1"></i>Edit
+                    </a>
+                </div>
+            </div>
+            @empty
+            <div class="text-center py-12">
+                <div class="flex flex-col items-center justify-center text-gray-500">
+                    <i class="fas fa-user-friends text-6xl mb-4 text-gray-300"></i>
+                    <p class="text-lg font-semibold">No parents found</p>
+                    <a href="{{ route('admin.parents.create') }}" class="btn btn-primary mt-4">
+                        <i class="fas fa-plus mr-2"></i>Add First Parent
+                    </a>
+                </div>
+            </div>
+            @endforelse
+        </div>
+
+        {{-- Pagination --}}
+        @if($parents->hasPages())
+        <div class="card-footer">
+            {{ $parents->links() }}
+        </div>
+        @endif
     </div>
-    @endif
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function parentsPage() {
+        return {
+            viewMode: window.innerWidth >= 768 ? 'table' : 'grid',
+            showFilters: window.innerWidth >= 1024,
+
+            toggleView() {
+                this.viewMode = this.viewMode === 'table' ? 'grid' : 'table';
+            },
+
+            init() {
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth < 768) this.viewMode = 'grid';
+                });
+            },
+        };
+    }
+</script>
+@endpush

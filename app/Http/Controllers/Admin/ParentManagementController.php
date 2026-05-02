@@ -13,15 +13,26 @@ class ParentManagementController extends Controller
      */
     public function index(Request $request)
     {
-        // Get users with parent role
-        $query = User::whereHas('roles', function($q) {
+        // Base query – users with parent role
+        $baseQuery = User::whereHas('roles', function ($q) {
             $q->where('slug', 'parent');
         });
 
-        // Search by name or email
+        // Stats (always unfiltered)
+        $stats = [
+            'total'            => (clone $baseQuery)->count(),
+            'with_children'    => (clone $baseQuery)->whereHas('children')->count(),
+            'without_children' => (clone $baseQuery)->whereDoesntHave('children')->count(),
+            'with_occupation'  => (clone $baseQuery)->whereHas('profile', function ($q) {
+                $q->whereNotNull('occupation')->where('occupation', '!=', '');
+            })->count(),
+        ];
+
+        // Filtered / searchable query
+        $query = clone $baseQuery;
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%");
             });
@@ -29,11 +40,10 @@ class ParentManagementController extends Controller
 
         $parents = $query->with('profile')
             ->orderBy('name')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
-        return view('admin.parents.index', [
-            'parents' => $parents,
-        ]);
+        return view('admin.parents.index', compact('parents', 'stats'));
     }
 
     /**
@@ -50,25 +60,25 @@ class ParentManagementController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:500',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'phone'    => 'nullable|string|max:20',
+            'address'  => 'nullable|string|max:500',
             'occupation' => 'nullable|string|max:255',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $parent = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
+            'name'      => $validated['name'],
+            'email'     => $validated['email'],
+            'password'  => bcrypt($validated['password']),
             'is_active' => true,
         ]);
 
         // Create user profile
         $parent->profile()->create([
-            'phone' => $validated['phone'] ?? null,
-            'address' => $validated['address'] ?? null,
+            'phone'      => $validated['phone'] ?? null,
+            'address'    => $validated['address'] ?? null,
             'occupation' => $validated['occupation'] ?? null,
         ]);
 
@@ -88,9 +98,7 @@ class ParentManagementController extends Controller
     public function edit(User $parent)
     {
         $parent->load('profile');
-        return view('admin.parents.edit', [
-            'parent' => $parent,
-        ]);
+        return view('admin.parents.edit', ['parent' => $parent]);
     }
 
     /**
@@ -99,31 +107,30 @@ class ParentManagementController extends Controller
     public function show(User $parent)
     {
         $parent->load('profile');
-        
+
         // Get all students to allow assignment
-        $allStudents = User::whereHas('roles', function($q) {
+        $allStudents = User::whereHas('roles', function ($q) {
             $q->where('slug', 'student');
         })->orderBy('name')->get();
 
         // Get children through user_profile.parent_id relationship
-        $children = User::whereHas('profile', function($q) use ($parent) {
+        $children = User::whereHas('profile', function ($q) use ($parent) {
             $q->where('parent_id', $parent->id);
         })->with('profile', 'roles')->orderBy('name')->get();
 
         // Get outstanding bills for this parent's children
-        $childrenIds = $children->pluck('id')->toArray();
+        $childrenIds    = $children->pluck('id')->toArray();
         $outstandingBills = \App\Models\StudentBill::whereIn('student_id', $childrenIds)
             ->whereIn('status', ['pending', 'partial'])
             ->with('student', 'feeStructure')
             ->get();
 
-        // Calculate total outstanding (balance_due)
         $totalOutstanding = $outstandingBills->sum('balance_due');
 
         return view('admin.parents.show', [
-            'parent' => $parent,
-            'children' => $children,
-            'allStudents' => $allStudents,
+            'parent'           => $parent,
+            'children'         => $children,
+            'allStudents'      => $allStudents,
             'outstandingBills' => $outstandingBills,
             'totalOutstanding' => $totalOutstanding,
         ]);
@@ -139,8 +146,7 @@ class ParentManagementController extends Controller
         ]);
 
         $student = User::findOrFail($validated['student_id']);
-        
-        // Update the student's profile with parent_id
+
         $student->profile()->updateOrCreate(
             ['user_id' => $student->id],
             ['parent_id' => $parent->id]
@@ -155,7 +161,6 @@ class ParentManagementController extends Controller
      */
     public function unassignChild(User $parent, User $student)
     {
-        // Check if student is assigned to this parent
         $studentProfile = $student->profile;
         if (!$studentProfile || $studentProfile->parent_id != $parent->id) {
             return redirect()->route('admin.parents.show', $parent)
@@ -175,16 +180,16 @@ class ParentManagementController extends Controller
     public function update(Request $request, User $parent)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $parent->id,
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:500',
+            'name'       => 'required|string|max:255',
+            'email'      => 'required|email|unique:users,email,' . $parent->id,
+            'phone'      => 'nullable|string|max:20',
+            'address'    => 'nullable|string|max:500',
             'occupation' => 'nullable|string|max:255',
-            'password' => 'nullable|string|min:8|confirmed',
+            'password'   => 'nullable|string|min:8|confirmed',
         ]);
 
         $parent->update([
-            'name' => $validated['name'],
+            'name'  => $validated['name'],
             'email' => $validated['email'],
         ]);
 
@@ -192,12 +197,11 @@ class ParentManagementController extends Controller
             $parent->update(['password' => bcrypt($validated['password'])]);
         }
 
-        // Update or create profile
         $parent->profile()->updateOrCreate(
             ['user_id' => $parent->id],
             [
-                'phone' => $validated['phone'] ?? null,
-                'address' => $validated['address'] ?? null,
+                'phone'      => $validated['phone'] ?? null,
+                'address'    => $validated['address'] ?? null,
                 'occupation' => $validated['occupation'] ?? null,
             ]
         );
@@ -211,7 +215,6 @@ class ParentManagementController extends Controller
      */
     public function destroy(User $parent)
     {
-        // Check if parent has children
         if ($parent->children()->count() > 0) {
             return redirect()->route('admin.parents.index')
                 ->with('error', "Cannot delete parent '{$parent->name}' - has linked children. Remove children first.");
@@ -232,8 +235,6 @@ class ParentManagementController extends Controller
     public function showChildren(User $parent)
     {
         $parent->load('children');
-        return view('admin.parents.children', [
-            'parent' => $parent,
-        ]);
+        return view('admin.parents.children', ['parent' => $parent]);
     }
 }
