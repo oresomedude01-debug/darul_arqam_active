@@ -1701,6 +1701,9 @@
                     placeholder: 'Write your article here...'
                 });
                 
+                // Store Quill instance globally for form access
+                window.quillInstance = quill;
+                
                 // Sync Quill content to hidden textarea on form submission
                 var hiddenTextarea = document.getElementById('blog-body-content');
                 if (hiddenTextarea) {
@@ -1713,6 +1716,7 @@
                     if (form) {
                         form.addEventListener('submit', function(e) {
                             hiddenTextarea.value = quill.root.innerHTML;
+                            console.log('Synced Quill content to textarea:', hiddenTextarea.value.substring(0, 50));
                         });
                     }
                 }

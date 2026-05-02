@@ -24,7 +24,7 @@
     @endif
 
     <form action="{{ route('admin.blog.store') }}" method="POST" enctype="multipart/form-data"
-          x-data="blogForm()" class="space-y-6">
+          x-data="blogForm()" @submit="submitForm" class="space-y-6">
         @csrf
 
         {{-- Title --}}
@@ -199,20 +199,61 @@
 <script>
 function blogForm() {
     return {
+        isSubmitting: false,
+        
         init() {
-            // Initialize form on load
             console.log('Blog form initialized');
+            // Give Quill time to initialize before allowing submission
+            setTimeout(() => {
+                console.log('Blog form ready for submission');
+            }, 500);
         },
-        submitForm(e) {
-            // Ensure Quill content is synced before submission
+        
+        async submitForm(e) {
+            if (this.isSubmitting) {
+                e.preventDefault();
+                return;
+            }
+            
+            // Validate that we have content in the Quill editor
             const hiddenTextarea = document.getElementById('blog-body-content');
             const editorContainer = document.getElementById('blog-editor-container');
+            const form = e.target;
             
-            if (editorContainer && hiddenTextarea) {
-                // The Quill form submit listener will handle this automatically
-                // Just ensure the form can submit
-                console.log('Form submitted with content');
+            // Check for required fields
+            const title = form.querySelector('input[name="title"]').value.trim();
+            const excerpt = form.querySelector('textarea[name="excerpt"]').value.trim();
+            
+            if (!title) {
+                alert('Please enter a post title');
+                e.preventDefault();
+                return;
             }
+            
+            if (!excerpt) {
+                alert('Please enter an excerpt');
+                e.preventDefault();
+                return;
+            }
+            
+            // Ensure Quill content is synced
+            if (editorContainer && hiddenTextarea) {
+                // Wait for Quill to be available
+                if (typeof window.quillInstance !== 'undefined' && window.quillInstance) {
+                    hiddenTextarea.value = window.quillInstance.root.innerHTML;
+                    console.log('Quill content synced:', hiddenTextarea.value);
+                }
+            }
+            
+            // Check if body is empty
+            if (!hiddenTextarea.value.trim() || hiddenTextarea.value === '<p><br></p>') {
+                alert('Please write some content in the article body');
+                e.preventDefault();
+                return;
+            }
+            
+            this.isSubmitting = true;
+            console.log('Form is being submitted');
         }
     };
 }
