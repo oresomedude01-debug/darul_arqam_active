@@ -265,6 +265,7 @@
 </div>
 
 @push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
@@ -678,16 +679,7 @@ async function shareToken() {
         ? `<div class="detail-row"><span class="label">Expires:</span> <span>${expiresAt}</span></div>`
         : `<div class="detail-row"><span class="label">Expiry:</span> <span style="color:#16a34a;font-weight:bold;">No Expiry</span></div>`;
 
-    if (typeof html2pdf === 'undefined') {
-        Toast.info('Preparing PDF document...');
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-        script.onload = () => generateAndSharePDF();
-        script.onerror = () => Toast.error('Failed to load PDF library. Please check your internet connection.');
-        document.head.appendChild(script);
-    } else {
-        generateAndSharePDF();
-    }
+    generateAndSharePDF();
 
     function generateAndSharePDF() {
         const container = document.createElement('div');
