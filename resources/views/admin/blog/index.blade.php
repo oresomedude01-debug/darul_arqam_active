@@ -152,6 +152,9 @@
                         {{ $post->published_at ? $post->published_at->format('d M Y') : $post->created_at->format('d M Y') }}
                         &bull; {{ $post->author->name ?? '—' }}
                     </p>
+                    <p class="text-xs text-blue-600 font-semibold mb-3">
+                        <i class="fas fa-eye"></i> {{ number_format($post->view_count ?? 0) }} views
+                    </p>
 
                     {{-- Actions row --}}
                     <div class="flex items-center gap-1 mt-auto pt-3 border-t border-gray-100">
@@ -198,6 +201,7 @@
                         <th class="text-left px-4 py-4 font-semibold text-gray-600 hidden lg:table-cell">Author</th>
                         <th class="text-left px-4 py-4 font-semibold text-gray-600">Status</th>
                         <th class="text-left px-4 py-4 font-semibold text-gray-600">Date</th>
+                        <th class="text-center px-4 py-4 font-semibold text-gray-600">Views</th>
                         <th class="text-center px-4 py-4 font-semibold text-gray-600 w-40">Actions</th>
                     </tr>
                 </thead>
@@ -250,6 +254,13 @@
                         {{-- Date --}}
                         <td class="px-4 py-4 text-gray-500 text-xs whitespace-nowrap">
                             {{ $post->published_at ? $post->published_at->format('d M Y') : $post->created_at->format('d M Y') }}
+                        </td>
+                        {{-- Views --}}
+                        <td class="px-4 py-4 text-center">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">
+                                <i class="fas fa-eye text-blue-500"></i>
+                                {{ number_format($post->view_count ?? 0) }}
+                            </span>
                         </td>
                         {{-- Actions — dropdown --}}
                         <td class="px-4 py-4">

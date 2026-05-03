@@ -28,6 +28,11 @@ class BlogController extends Controller
         $post = $this->cacheService->getPostBySlug($slug);
         $related = $this->cacheService->getRelatedPosts($post, 3);
 
+        // Increment view count
+        if ($post) {
+            $post->incrementViewCount();
+        }
+
         return view('blog.show', compact('post', 'related'));
     }
 }

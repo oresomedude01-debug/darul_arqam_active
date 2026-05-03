@@ -14,7 +14,7 @@ class Blog extends Model
     protected $fillable = [
         'author_id', 'title', 'slug', 'category', 'type',
         'cover_color', 'cover_icon', 'excerpt', 'body',
-        'featured_image', 'youtube_video_id', 'status', 'published_at',
+        'featured_image', 'youtube_video_id', 'status', 'published_at', 'view_count',
     ];
 
     protected $casts = [
@@ -81,6 +81,11 @@ class Blog extends Model
         };
     }
 
+    public function incrementViewCount(): void
+    {
+        $this->increment('view_count');
+    }
+
     public function getYoutubeEmbedUrlAttribute(): ?string
     {
         if (!$this->youtube_video_id) {
@@ -103,16 +108,16 @@ class Blog extends Model
 
     private static function notifyAllUsers(self $blog): void
     {
-        // Get all users and send them notifications and emails
+        // Get all users
         $users = User::all();
 
         foreach ($users as $user) {
-            // Send in-app and push notifications
+            // Send in-app and push notifications to all users
             $user->notify(new NewBlogNotification($blog));
 
-            // Send email notification
-            if (!empty($user->email)) {
-                Mail::to($user->email)->queue(new NewBlogMail($blog));
+            // Send email notification to all users EXCEPT students
+            if (!empty($user->email) && !$user->hasRole('student')) {
+                Mail::to($user->email)->send(new NewBlogMail($blog));
             }
         }
     }
