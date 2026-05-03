@@ -682,14 +682,7 @@ async function shareToken() {
     generateAndSharePDF();
 
     function generateAndSharePDF() {
-        const container = document.createElement('div');
-        container.style.position = 'absolute';
-        container.style.left = '-9999px';
-        container.style.top = '0';
-        container.style.width = '210mm'; // Set exact A4 width
-        container.style.backgroundColor = '#ffffff';
-
-        container.innerHTML = `
+        const htmlString = `
         <div id="pdf-content">
 <style>
   #pdf-content { font-family: 'Inter', Arial, sans-serif; background:#fff; color:#1e293b; }
@@ -789,18 +782,15 @@ async function shareToken() {
 </div>
         </div>`;
 
-        document.body.appendChild(container);
-
         const opt = {
             margin:       0,
             filename:     `token-${tokenCode}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
+            html2canvas:  { scale: 2, useCORS: true, logging: false },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().set(opt).from(container).output('blob').then(async function(pdfBlob) {
-            document.body.removeChild(container);
+        html2pdf().set(opt).from(htmlString).output('blob').then(async function(pdfBlob) {
 
             const fileName = `token-${tokenCode}.pdf`;
             const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
@@ -821,7 +811,7 @@ async function shareToken() {
                 downloadPdfFallback(file, fileName);
             }
         }).catch(err => {
-             document.body.removeChild(container);
+             console.error('PDF Generation Error:', err);
              Toast.error('An error occurred while generating the PDF.');
         });
     }
