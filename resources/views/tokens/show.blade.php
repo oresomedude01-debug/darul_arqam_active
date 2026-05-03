@@ -685,38 +685,43 @@ async function shareToken() {
         const htmlString = `
         <div id="pdf-content">
 <style>
-  #pdf-content { font-family: 'Inter', Arial, sans-serif; background:#fff; color:#1e293b; }
-  #pdf-content * { box-sizing: border-box; }
-  .pdf-page { width: 210mm; min-height: 297mm; padding: 16mm 18mm; background: #fff; page-break-after: always; }
-  .school-header { text-align:center; padding-bottom:6mm; border-bottom:3px solid #6366f1; margin-bottom:8mm; }
-  .school-name { font-size:20pt; font-weight:800; color:#1e293b; letter-spacing:-0.5px; }
-  .school-sub { font-size:10pt; color:#6366f1; font-weight:600; margin-top:1mm; text-transform:uppercase; letter-spacing:2px; }
-  .token-wrapper { display:flex; flex-direction:column; align-items:center; justify-content:center; padding-top: 10mm; padding-bottom: 10mm;}
-  .token-card { width:100%; max-width:150mm; border:3px solid #6366f1; border-radius:12px; padding:12mm 14mm; text-align:center; background:#f8f7ff; margin: 0 auto; }
-  .token-label { font-size:10pt; font-weight:700; color:#6366f1; letter-spacing:3px; text-transform:uppercase; margin-bottom:6mm; }
-  .token-code-box { background:#fff; border:2px dashed #6366f1; border-radius:8px; padding:8mm 10mm; margin-bottom:6mm; }
-  .token-code { font-family:'Courier New','Courier',monospace; font-size:32pt; font-weight:900; color:#4f46e5; letter-spacing:5px; line-height:1.1; word-break:break-all; }
-  .token-hint { font-size:8pt; color:#94a3b8; margin-top:3mm; font-style:italic; }
-  .token-details { margin-top:5mm; display:flex; flex-direction:column; gap:2mm; font-size:9.5pt; text-align: left;}
-  .detail-row { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:1.5mm; padding-top:1.5mm; }
-  .label { font-weight:700; color:#6366f1; }
-  .enroll-section { margin-top:8mm; background:#f1f5f9; border-radius:8px; padding:6mm 8mm; }
-  .enroll-title { font-size:10pt; font-weight:700; color:#1e293b; margin-bottom:4mm; text-align:center; text-transform:uppercase; letter-spacing:1.5px; }
-  .enroll-steps { list-style:none; padding-left: 0; font-size:9pt; color:#334155; line-height:1.6; }
-  .enroll-steps li { display:flex; gap:3mm; align-items:flex-start; margin-bottom:2mm; }
-  .step-num { background:#6366f1; color:#fff; font-size:8pt; font-weight:700; min-width:5mm; height:5mm; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:0.5mm; }
-  .page-footer { margin-top:6mm; text-align:center; border-top:1px solid #e2e8f0; padding-top:3mm; font-size:8pt; color:#94a3b8; }
-  .page-footer .site { font-weight:700; color:#6366f1; font-size:9pt; }
-  .rules-header { text-align:center; padding-bottom:6mm; border-bottom:3px solid #6366f1; margin-bottom:8mm; }
-  .rules-header h2 { font-size:16pt; font-weight:800; color:#1e293b; margin:0; }
-  .rules-header p { font-size:9pt; color:#64748b; margin-top:1mm; margin-bottom:0; }
-  .rules-body { font-size:9pt; color:#1e293b; line-height:1.7; }
-  .rules-intro { margin-bottom:4mm; font-style:italic; color:#475569; }
-  .rules-list { list-style:none; padding:0; display:flex; flex-direction:column; gap:2.5mm; margin:0;}
-  .rules-list li { display:flex; gap:3mm; padding:2.5mm 3mm; background:#f8fafc; border-left:3px solid #6366f1; border-radius:0 6px 6px 0; }
-  .rule-num { font-size:8pt; font-weight:800; color:#6366f1; min-width:4mm; flex-shrink:0; padding-top:0.5mm; }
-  .rules-list li strong { color:#4f46e5; }
-  .rules-acceptance { margin-top:5mm; text-align:center; font-size:9pt; font-weight:700; color:#1e293b; padding:3mm; border:2px solid #6366f1; border-radius:6px; background:#f1f5ff; }
+  #pdf-content { font-family: 'Inter', Helvetica, Arial, sans-serif; background:#fff; color:#1e293b; padding: 0 10px; }
+  * { box-sizing: border-box; }
+  .pdf-page { page-break-after: always; padding-bottom: 20px; }
+  .school-header { text-align:center; padding-bottom:15px; border-bottom:2px solid #6366f1; margin-bottom:20px; }
+  .school-name { font-size:24px; font-weight:bold; color:#1e293b; }
+  .school-sub { font-size:12px; color:#6366f1; font-weight:bold; margin-top:5px; text-transform:uppercase; letter-spacing:1px; }
+  
+  .token-card { border:2px solid #6366f1; border-radius:8px; padding:20px; text-align:center; background:#f8f7ff; margin: 0 auto 20px auto; max-width: 600px;}
+  .token-label { font-size:12px; font-weight:bold; color:#6366f1; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
+  .token-code-box { background:#fff; border:2px dashed #6366f1; border-radius:6px; padding:15px; margin-bottom:15px; }
+  .token-code { font-family:'Courier New', Courier, monospace; font-size:36px; font-weight:bold; color:#4f46e5; letter-spacing:3px; }
+  .token-hint { font-size:11px; color:#94a3b8; font-style:italic; }
+  
+  .detail-row { padding: 8px 0; border-bottom: 1px solid #e2e8f0; overflow: hidden; clear: both; text-align: left; }
+  .detail-row .label { float: left; font-weight: bold; color: #6366f1; font-size: 13px; }
+  .detail-row span:not(.label) { float: right; font-size: 13px; font-weight: bold; }
+  
+  .enroll-section { background:#f1f5f9; border-radius:8px; padding:15px; margin-bottom: 20px; }
+  .enroll-title { font-size:14px; font-weight:bold; color:#1e293b; margin-bottom:10px; text-align:center; text-transform:uppercase; }
+  .enroll-steps { list-style:none; padding: 0; margin: 0; font-size:13px; color:#334155; line-height:1.5; text-align: left; }
+  .enroll-steps li { margin-bottom: 8px; overflow: hidden; clear: both; }
+  .step-num { display: inline-block; background:#6366f1; color:#fff; font-size:11px; font-weight:bold; width:20px; height:20px; text-align: center; line-height: 20px; border-radius:50%; margin-right: 10px; float: left; }
+  .step-text { display: block; margin-left: 30px; }
+  
+  .rules-header { text-align:center; padding-bottom:15px; border-bottom:2px solid #6366f1; margin-bottom:20px; }
+  .rules-header h2 { font-size:20px; font-weight:bold; color:#1e293b; margin:0; }
+  .rules-header p { font-size:13px; color:#64748b; margin-top:5px; margin-bottom:0; }
+  .rules-body { font-size:12px; color:#1e293b; line-height:1.6; text-align: left; }
+  .rules-intro { margin-bottom:10px; font-style:italic; color:#475569; }
+  .rules-list { list-style:none; padding:0; margin:0; }
+  .rules-list li { background:#f8fafc; border-left:3px solid #6366f1; padding:8px 10px; margin-bottom:8px; overflow: hidden; clear: both; }
+  .rule-num { font-weight:bold; color:#6366f1; float: left; width: 25px; }
+  .rule-text { display: block; margin-left: 25px; }
+  .rules-acceptance { text-align:center; font-size:13px; font-weight:bold; color:#1e293b; padding:12px; border:2px solid #6366f1; border-radius:6px; background:#f1f5ff; margin-top: 15px; }
+  
+  .page-footer { text-align:center; border-top:1px solid #e2e8f0; padding-top:10px; font-size:11px; color:#94a3b8; margin-top: 20px; }
+  .page-footer .site { font-weight:bold; color:#6366f1; font-size:13px; margin-bottom:5px; }
 </style>
 <div class="pdf-page">
   <div class="school-header">
@@ -742,10 +747,10 @@ async function shareToken() {
   <div class="enroll-section">
     <div class="enroll-title">&#128203; How to Enroll</div>
     <ul class="enroll-steps">
-      <li><span class="step-num">1</span> <div>Visit the school website and click <strong>&ldquo;Enroll Now&rdquo;</strong></div></li>
-      <li><span class="step-num">2</span> <div>Enter this <strong>token code</strong> exactly as printed above</div></li>
-      <li><span class="step-num">3</span> <div>Complete all student and parent/guardian information</div></li>
-      <li><span class="step-num">4</span> <div>Submit the form &mdash; enrollment is complete!</div></li>
+      <li><span class="step-num">1</span> <span class="step-text">Visit the school website and click <strong>&ldquo;Enroll Now&rdquo;</strong></span></li>
+      <li><span class="step-num">2</span> <span class="step-text">Enter this <strong>token code</strong> exactly as printed above</span></li>
+      <li><span class="step-num">3</span> <span class="step-text">Complete all student and parent/guardian information</span></li>
+      <li><span class="step-num">4</span> <span class="step-text">Submit the form &mdash; enrollment is complete!</span></li>
     </ul>
   </div>
   <div class="page-footer">
@@ -753,8 +758,8 @@ async function shareToken() {
     <div>Generated: ${generatedAt}</div>
   </div>
 </div>
-<div class="html2pdf__page-break"></div>
-<div class="pdf-page">
+
+<div class="pdf-page" style="page-break-after: auto;">
   <div class="rules-header">
     <h2>&#128209; Madrasah Rules &amp; Regulations</h2>
     <p>${schoolName} &mdash; Parent/Guardian Agreement</p>
@@ -762,20 +767,20 @@ async function shareToken() {
   <div class="rules-body">
     <p class="rules-intro">By enrolling a child in our Madrasah, parents/guardians agree to the following rules and conditions:</p>
     <ul class="rules-list">
-      <li><span class="rule-num">1.</span> <div><strong>Fees &amp; Payments:</strong> All fees must be paid on time. Fees once paid are non-refundable. Outstanding fees must be cleared before promotion or withdrawal.</div></li>
-      <li><span class="rule-num">2.</span> <div><strong>Attendance &amp; Punctuality:</strong> Regular attendance and punctuality are compulsory. Parents must inform the school of any planned or emergency absence.</div></li>
-      <li><span class="rule-num">3.</span> <div><strong>Behaviour &amp; Discipline:</strong> Pupils must maintain good Islamic conduct at all times. The Madrasah reserves the right to discipline pupils when necessary.</div></li>
-      <li><span class="rule-num">4.</span> <div><strong>Respect for Teachers &amp; Staff:</strong> Teachers and staff must be treated with respect. Concerns should be addressed through proper school channels &mdash; any complaint must be directed to the Director, not the teacher directly.</div></li>
-      <li><span class="rule-num">5.</span> <div><strong>Communication:</strong> Parents should communicate with the school during approved hours using official communication methods only.</div></li>
-      <li><span class="rule-num">6.</span> <div><strong>Dress Code:</strong> Pupils must wear the approved Madrasah uniform and dress according to Islamic standards at all times on school premises.</div></li>
-      <li><span class="rule-num">7.</span> <div><strong>School Property &amp; Materials:</strong> Parents are responsible for providing required learning materials and for any damage caused by their ward to school property.</div></li>
-      <li><span class="rule-num">8.</span> <div><strong>Health &amp; Safety:</strong> Parents must inform the school of any medical condition or allergy. Children who are unwell must not be sent to school.</div></li>
-      <li><span class="rule-num">9.</span> <div><strong>Withdrawal:</strong> Withdrawal from the Madrasah must be communicated in writing with adequate notice. Fees already paid remain non-refundable.</div></li>
-      <li><span class="rule-num">10.</span> <div><strong>School Authority:</strong> The Madrasah reserves the right to amend its policies, rules, and regulations as deemed necessary by the management.</div></li>
+      <li><span class="rule-num">1.</span> <span class="rule-text"><strong>Fees &amp; Payments:</strong> All fees must be paid on time. Fees once paid are non-refundable. Outstanding fees must be cleared before promotion or withdrawal.</span></li>
+      <li><span class="rule-num">2.</span> <span class="rule-text"><strong>Attendance &amp; Punctuality:</strong> Regular attendance and punctuality are compulsory. Parents must inform the school of any planned or emergency absence.</span></li>
+      <li><span class="rule-num">3.</span> <span class="rule-text"><strong>Behaviour &amp; Discipline:</strong> Pupils must maintain good Islamic conduct at all times. The Madrasah reserves the right to discipline pupils when necessary.</span></li>
+      <li><span class="rule-num">4.</span> <span class="rule-text"><strong>Respect for Teachers &amp; Staff:</strong> Teachers and staff must be treated with respect. Concerns should be addressed through proper school channels &mdash; any complaint must be directed to the Director, not the teacher directly.</span></li>
+      <li><span class="rule-num">5.</span> <span class="rule-text"><strong>Communication:</strong> Parents should communicate with the school during approved hours using official communication methods only.</span></li>
+      <li><span class="rule-num">6.</span> <span class="rule-text"><strong>Dress Code:</strong> Pupils must wear the approved Madrasah uniform and dress according to Islamic standards at all times on school premises.</span></li>
+      <li><span class="rule-num">7.</span> <span class="rule-text"><strong>School Property &amp; Materials:</strong> Parents are responsible for providing required learning materials and for any damage caused by their ward to school property.</span></li>
+      <li><span class="rule-num">8.</span> <span class="rule-text"><strong>Health &amp; Safety:</strong> Parents must inform the school of any medical condition or allergy. Children who are unwell must not be sent to school.</span></li>
+      <li><span class="rule-num">9.</span> <span class="rule-text"><strong>Withdrawal:</strong> Withdrawal from the Madrasah must be communicated in writing with adequate notice. Fees already paid remain non-refundable.</span></li>
+      <li><span class="rule-num">10.</span> <span class="rule-text"><strong>School Authority:</strong> The Madrasah reserves the right to amend its policies, rules, and regulations as deemed necessary by the management.</span></li>
     </ul>
   </div>
   <div class="rules-acceptance">&#9989; Enrollment into this Madrasah signifies full acceptance of all the above rules and regulations.</div>
-  <div class="page-footer" style="margin-top:4mm;">
+  <div class="page-footer">
     <div class="site">&#127760; ${siteUrl}</div>
     <div>Generated: ${generatedAt}</div>
   </div>
@@ -783,11 +788,12 @@ async function shareToken() {
         </div>`;
 
         const opt = {
-            margin:       0,
+            margin:       10, // 10mm margins on all sides
             filename:     `token-${tokenCode}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true, logging: false },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['css', 'legacy'] }
         };
 
         html2pdf().set(opt).from(htmlString).output('blob').then(async function(pdfBlob) {
