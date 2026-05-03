@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\SendBlogNotifications;
 use App\Mail\NewBlogMail;
 use App\Notifications\NewBlogNotification;
 use Illuminate\Database\Eloquent\Model;
@@ -99,15 +100,16 @@ class Blog extends Model
     protected static function booted(): void
     {
         static::saved(function (self $blog) {
-            // Send notification when a blog is created and published
+            // Dispatch job to send notifications asynchronously when a blog is created and published
             if ($blog->wasRecentlyCreated && $blog->status === 'published') {
-                self::notifyAllUsers($blog);
+                SendBlogNotifications::dispatch($blog);
             }
         });
     }
 
     private static function notifyAllUsers(self $blog): void
     {
+        // This method is now called via the SendBlogNotifications job
         // Get all users
         $users = User::all();
 
