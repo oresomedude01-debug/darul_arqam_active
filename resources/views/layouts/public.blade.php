@@ -66,11 +66,12 @@
 
     <div class="h-1.5 w-full bg-gradient-to-r from-brand-600 via-purple-500 to-accent"></div>
 
-    <nav x-data="{ mobileMenu: false }" class="glass sticky top-0 z-50 border-b border-slate-200">
+    <nav x-data="{ mobileMenu: false, mobileMenuOpen: false }" class="glass sticky top-0 z-50 border-b border-slate-200">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20">
-                <div class="flex items-center">
-                    <a href="/" class="flex items-center gap-3 transition hover:opacity-90">
+            <div class="flex justify-between items-center h-16 lg:h-20">
+                <!-- Logo Section -->
+                <div class="flex items-center gap-3 flex-shrink-0">
+                    <a href="/" class="flex items-center gap-2 sm:gap-3 transition hover:opacity-90">
                         @if($schoolSettings->school_logo)
                             <img src="{{ asset('storage/' . $schoolSettings->school_logo) }}" alt="Logo" class="h-10 w-auto object-contain">
                         @else
@@ -79,39 +80,110 @@
                             </div>
                         @endif
                         <div class="hidden sm:block">
-                            <span class="block text-lg font-heading font-bold leading-none text-slate-800">
+                            <span class="block text-base lg:text-lg font-heading font-bold leading-none text-slate-800">
                                 {{ $schoolSettings->school_name ?? 'School Name' }}
                             </span>
-                            <span class="text-[11px] uppercase tracking-widest font-semibold text-brand-600">
-                                Enrollment Portal
+                            <span class="text-[10px] lg:text-[11px] uppercase tracking-widest font-semibold text-brand-600">
+                                Enrollment
                             </span>
                         </div>
                     </a>
                 </div>
 
-                <div class="hidden md:flex items-center gap-8">
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center gap-1">
+                    <a href="{{ route('landing') }}" class="px-4 py-2 text-slate-600 font-medium hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="{{ route('about') }}" class="px-4 py-2 text-slate-600 font-medium hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all">
+                        <i class="fas fa-info-circle mr-2"></i>About
+                    </a>
+                    <a href="{{ route('gallery') }}" class="px-4 py-2 text-slate-600 font-medium hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all">
+                        <i class="fas fa-images mr-2"></i>Gallery
+                    </a>
+                    <a href="{{ route('blog.index') }}" class="px-4 py-2 text-slate-600 font-medium hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all">
+                        <i class="fas fa-newspaper mr-2"></i>Blog
+                    </a>
+                    @auth
+                        <a href="{{ url('/dashboard') }}" class="px-4 py-2 text-brand-600 font-bold hover:bg-brand-100 rounded-lg transition-all">
+                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                        </a>
+                    @endauth
+                </div>
+
+                <!-- Right Section -->
+                <div class="hidden md:flex items-center gap-4">
                     <div class="flex flex-col items-end">
                         <span class="text-xs text-slate-500 font-medium">Support Line</span>
                         <a href="tel:{{ $schoolSettings->school_phone }}" class="text-sm font-bold text-slate-700 hover:text-brand-600 transition">
                             {{ $schoolSettings->school_phone ?? '+1 (234) 567-890' }}
                         </a>
                     </div>
-                    <a href="#" class="px-5 py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-full hover:bg-brand-700 transition shadow-md shadow-brand-100">
-                        Check Status
-                    </a>
+                    @auth
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="px-5 py-2.5 bg-red-50 text-red-600 text-sm font-semibold rounded-full hover:bg-red-100 transition">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('enrollment.token') }}" class="px-5 py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-full hover:bg-brand-700 transition shadow-md shadow-brand-100">
+                            <i class="fas fa-edit mr-2"></i>Enroll
+                        </a>
+                    @endauth
                 </div>
 
-                <div class="md:hidden flex items-center">
-                    <button @click="mobileMenu = !mobileMenu" class="text-slate-600 p-2">
-                        <i class="fa-solid fa-bars-staggered text-2xl"></i>
-                    </button>
-                </div>
+                <!-- Mobile Menu Button -->
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden flex items-center justify-center p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                    <i :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'" class="fas text-xl"></i>
+                </button>
             </div>
         </div>
 
-        <div x-show="mobileMenu" x-cloak class="md:hidden border-t border-slate-100 bg-white p-4">
-            <a href="#" class="block py-2 text-slate-700 font-medium">Check Enrollment Status</a>
-            <a href="tel:{{ $schoolSettings->school_phone }}" class="block py-2 text-slate-700 font-medium">Contact Support</a>
+        <!-- Mobile Navigation Menu -->
+        <div x-show="mobileMenuOpen" x-transition class="lg:hidden border-t border-slate-100 bg-white shadow-lg">
+            <div class="px-4 py-2 space-y-1">
+                <!-- Mobile Navigation Links -->
+                <a href="{{ route('landing') }}" class="flex items-center px-4 py-3 text-slate-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                    <i class="fas fa-home w-5 mr-3"></i>Home
+                </a>
+                <a href="{{ route('about') }}" class="flex items-center px-4 py-3 text-slate-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                    <i class="fas fa-info-circle w-5 mr-3"></i>About
+                </a>
+                <a href="{{ route('gallery') }}" class="flex items-center px-4 py-3 text-slate-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                    <i class="fas fa-images w-5 mr-3"></i>Gallery
+                </a>
+                <a href="{{ route('blog.index') }}" class="flex items-center px-4 py-3 text-slate-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                    <i class="fas fa-newspaper w-5 mr-3"></i>Blog
+                </a>
+
+                <div class="border-t border-slate-100 mt-2 pt-2 space-y-1">
+                    <!-- Support Section -->
+                    <a href="tel:{{ $schoolSettings->school_phone }}" class="flex items-center px-4 py-3 text-slate-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                        <i class="fas fa-phone w-5 mr-3"></i>Call Support
+                    </a>
+
+                    <!-- Auth Section -->
+                    @auth
+                        <a href="{{ url('/dashboard') }}" class="flex items-center px-4 py-3 text-brand-600 font-bold hover:bg-brand-50 rounded-lg transition-colors">
+                            <i class="fas fa-tachometer-alt w-5 mr-3"></i>Dashboard
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" class="block">
+                            @csrf
+                            <button type="submit" class="w-full text-left flex items-center px-4 py-3 text-red-600 font-medium hover:bg-red-50 rounded-lg transition-colors">
+                                <i class="fas fa-sign-out-alt w-5 mr-3"></i>Logout
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="flex items-center px-4 py-3 text-slate-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                            <i class="fas fa-sign-in-alt w-5 mr-3"></i>Login
+                        </a>
+                        <a href="{{ route('enrollment.token') }}" class="flex items-center px-4 py-3 bg-brand-600 text-white font-bold rounded-lg hover:bg-brand-700 transition-colors">
+                            <i class="fas fa-edit w-5 mr-3"></i>Start Enrollment
+                        </a>
+                    @endauth
+                </div>
+            </div>
         </div>
     </nav>
 

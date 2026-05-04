@@ -238,17 +238,43 @@
             </div>
         </nav>
 
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
-            <div class="px-4 py-4 space-y-3">
-                <a href="#home" class="block py-2 text-gray-700 font-medium">Home</a>
-                <a href="{{ route('about') }}" class="block py-2 text-gray-700 font-medium">About</a>
-                <a href="#programs" class="block py-2 text-gray-700 font-medium">Programs</a>
-                <a href="{{ route('gallery') }}" class="block py-2 text-gray-700 font-medium">Gallery</a>
-                <a href="{{ route('blog.index') }}" class="block py-2 text-gray-700 font-medium">Blog</a>
-                <a href="#contact" class="block py-2 text-gray-700 font-medium">Contact</a>
-                @guest
-                    <a href="{{ route('login') }}" class="block py-2 text-gray-700 font-medium">Log in</a>
-                @endguest
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t shadow-lg">
+            <div class="px-4 py-4 space-y-2">
+                <a href="#home" class="block px-4 py-3 text-gray-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                    <i class="fas fa-home mr-3"></i>Home
+                </a>
+                <a href="{{ route('about') }}" class="block px-4 py-3 text-gray-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                    <i class="fas fa-info-circle mr-3"></i>About
+                </a>
+                <a href="#programs" class="block px-4 py-3 text-gray-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                    <i class="fas fa-book mr-3"></i>Programs
+                </a>
+                <a href="{{ route('gallery') }}" class="block px-4 py-3 text-gray-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                    <i class="fas fa-images mr-3"></i>Gallery
+                </a>
+                <a href="{{ route('blog.index') }}" class="block px-4 py-3 text-gray-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                    <i class="fas fa-newspaper mr-3"></i>Blog
+                </a>
+                <a href="#contact" class="block px-4 py-3 text-gray-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                    <i class="fas fa-envelope mr-3"></i>Contact
+                </a>
+                <div class="border-t pt-2 mt-2">
+                    @auth
+                        <a href="{{ url('/dashboard') }}" class="block px-4 py-3 text-brand-600 font-bold hover:bg-brand-50 rounded-lg transition-colors">
+                            <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" class="inline w-full">
+                            @csrf
+                            <button type="submit" class="w-full text-left block px-4 py-3 text-red-600 font-medium hover:bg-red-50 rounded-lg transition-colors">
+                                <i class="fas fa-sign-out-alt mr-3"></i>Logout
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="block px-4 py-3 text-gray-700 font-medium hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors">
+                            <i class="fas fa-sign-in-alt mr-3"></i>Log in
+                        </a>
+                    @endauth
+                </div>
             </div>
         </div>
     </header>
