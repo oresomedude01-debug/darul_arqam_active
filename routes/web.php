@@ -36,6 +36,7 @@ use App\Http\Controllers\MailTestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
+use App\Http\Controllers\Admin\GalleryController;
 
 // Landing Page (Public)
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -538,6 +539,21 @@ Route::middleware(['auth', 'role.redirect'])->group(function () {
             Route::put('/{blog}', [AdminBlogController::class, 'update'])->name('update');
             Route::delete('/{blog}', [AdminBlogController::class, 'destroy'])->name('destroy');
             Route::patch('/{blog}/toggle', [AdminBlogController::class, 'toggleStatus'])->name('toggle');
+        });
+
+        // Gallery Management
+        Route::prefix('gallery')->name('gallery.')->group(function () {
+            Route::get('/', [GalleryController::class, 'index'])->name('index');
+            Route::get('/create', [GalleryController::class, 'create'])->name('create');
+            Route::post('/', [GalleryController::class, 'store'])->name('store');
+            Route::get('/{gallery}/edit', [GalleryController::class, 'edit'])->name('edit');
+            Route::put('/{gallery}', [GalleryController::class, 'update'])->name('update');
+            Route::delete('/{gallery}', [GalleryController::class, 'destroy'])->name('destroy');
+            Route::patch('/{gallery}/toggle', [GalleryController::class, 'toggleStatus'])->name('toggle');
+            Route::post('/{gallery}/upload', [GalleryController::class, 'uploadImage'])->name('upload');
+            Route::delete('/image/{item}', [GalleryController::class, 'deleteImage'])->name('delete-image');
+            Route::post('/image/{item}/toggle-visibility', [GalleryController::class, 'toggleImageVisibility'])->name('toggle-image');
+            Route::post('/{gallery}/reorder-images', [GalleryController::class, 'reorderImages'])->name('reorder-images');
         });
     });
 });

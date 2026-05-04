@@ -158,6 +158,27 @@ class RoleAndPermissionSeeder extends Seeder
                 ['name' => 'Manage Registration Tokens', 'slug' => 'manage-registration-tokens', 'group' => 'enrollment'],
             ],
 
+            // Blog Management
+            'blog' => [
+                ['name' => 'Manage Blog', 'slug' => 'manage-blog', 'group' => 'blog'],
+                ['name' => 'View Blog Posts', 'slug' => 'view-blog-posts', 'group' => 'blog'],
+                ['name' => 'Create Blog Post', 'slug' => 'create-blog-post', 'group' => 'blog'],
+                ['name' => 'Edit Blog Post', 'slug' => 'edit-blog-post', 'group' => 'blog'],
+                ['name' => 'Delete Blog Post', 'slug' => 'delete-blog-post', 'group' => 'blog'],
+                ['name' => 'Publish Blog Post', 'slug' => 'publish-blog-post', 'group' => 'blog'],
+            ],
+
+            // Gallery Management
+            'gallery' => [
+                ['name' => 'Manage Gallery', 'slug' => 'manage-gallery', 'group' => 'gallery'],
+                ['name' => 'View Galleries', 'slug' => 'view-galleries', 'group' => 'gallery'],
+                ['name' => 'Create Gallery', 'slug' => 'create-gallery', 'group' => 'gallery'],
+                ['name' => 'Edit Gallery', 'slug' => 'edit-gallery', 'group' => 'gallery'],
+                ['name' => 'Delete Gallery', 'slug' => 'delete-gallery', 'group' => 'gallery'],
+                ['name' => 'Upload Gallery Images', 'slug' => 'upload-gallery-images', 'group' => 'gallery'],
+                ['name' => 'Publish Gallery', 'slug' => 'publish-gallery', 'group' => 'gallery'],
+            ],
+
             // Parent Portal
             'parent_portal' => [
                 ['name' => 'View Own Children', 'slug' => 'view-own-children', 'group' => 'parent_portal'],

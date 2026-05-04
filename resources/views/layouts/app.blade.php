@@ -320,12 +320,21 @@
                 </div>
                 @endif
 
-                <!-- Blog - Admin -->
-                @if(auth()->user()->hasRole('admin'))
+                <!-- Blog - With Permission -->
+                @if(auth()->user()->hasPermission('manage-blog') || auth()->user()->hasRole('admin'))
                 <a href="{{ route('admin.blog.index') }}"
                    class="nav-item {{ request()->routeIs('admin.blog.*') ? 'active' : '' }}">
                     <i class="fas fa-newspaper w-5"></i>
-                    <span>Blog</span>
+                    <span>{{ __('blog.title') }}</span>
+                </a>
+                @endif
+
+                <!-- Gallery - With Permission -->
+                @if(auth()->user()->hasPermission('manage-gallery') || auth()->user()->hasRole('admin'))
+                <a href="{{ route('admin.gallery.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.gallery.*') ? 'active' : '' }}">
+                    <i class="fas fa-images w-5"></i>
+                    <span>{{ __('gallery.title') }}</span>
                 </a>
                 @endif
 
