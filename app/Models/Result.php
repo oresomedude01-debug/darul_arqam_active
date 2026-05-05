@@ -44,6 +44,14 @@ class Result extends Model
         'affective_perseverance',
         'affective_control',
         'affective_initiative',
+        // Denormalized snapshot fields (immutable copies at exam time)
+        'subject_name_snapshot',
+        'subject_code_snapshot',
+        'class_name_snapshot',
+        'class_students_count_snapshot',
+        'class_subjects_snapshot',
+        'student_name_snapshot',
+        'student_admission_no_snapshot',
     ];
 
     protected $casts = [
@@ -53,6 +61,7 @@ class Result extends Model
         'submitted_at' => 'datetime',
         'approved_at' => 'datetime',
         'released_at' => 'datetime',
+        'class_subjects_snapshot' => 'json',
     ];
 
     /**
@@ -441,11 +450,57 @@ class Result extends Model
     }
 
     /**
+     * Capture immutable snapshots of class/subject/student state at exam time
+     * This preserves historical data and prevents future changes from affecting past results
+     */
+    public function captureSnapshots()
+    {
+        // Capture subject snapshot
+        if ($this->subject) {
+            $this->subject_name_snapshot = $this->subject->name;
+            $this->subject_code_snapshot = $this->subject->code ?? null;
+        }
+
+        // Capture student snapshot
+        if ($this->student) {
+            $this->student_name_snapshot = $this->student->first_name . ' ' . $this->student->last_name;
+            $this->student_admission_no_snapshot = $this->student->admission_number;
+        }
+
+        // Capture class snapshot
+        if ($this->schoolClass) {
+            $this->class_name_snapshot = $this->schoolClass->name;
+            $this->class_students_count_snapshot = $this->schoolClass->students()->where('status', 'active')->count();
+            
+            // Capture all subjects taught in this class
+            $classSubjects = $this->schoolClass->subjects()
+                ->get()
+                ->map(function ($subject) {
+                    return [
+                        'id' => $subject->id,
+                        'name' => $subject->name,
+                        'code' => $subject->code,
+                    ];
+                })
+                ->toArray();
+            
+            $this->class_subjects_snapshot = !empty($classSubjects) ? $classSubjects : null;
+        }
+
+        return $this;
+    }
+
+    /**
      * Auto-calculate scores and grades when saving
      */
     protected static function booted()
     {
         static::saving(function ($result) {
+            // Capture snapshots on create or if relationships are loaded
+            if ($result->wasRecentlyCreated || !$result->subject_name_snapshot) {
+                $result->captureSnapshots();
+            }
+
             // Calculate total score if CA and Exam score are present
             if ($result->ca_score !== null && $result->exam_score !== null) {
                 $result->total_score = $result->calculateTotalScore();

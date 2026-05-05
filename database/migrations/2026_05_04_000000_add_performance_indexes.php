@@ -21,8 +21,8 @@ return new class extends Migration
                 if (!$this->hasIndex('results', 'results_student_subject_index')) {
                     $table->index(['student_id', 'subject_id'], 'results_student_subject_index');
                 }
-                if (!$this->hasIndex('results', 'idx_results_total_score')) {
-                    $table->index('total_score');
+                if (!$this->hasIndex('results', 'results_total_score_index')) {
+                    $table->index('total_score', 'results_total_score_index');
                 }
             });
         }
@@ -31,7 +31,7 @@ return new class extends Migration
         if (Schema::hasTable('class_subjects')) {
             Schema::table('class_subjects', function (Blueprint $table) {
                 if (!$this->hasIndex('class_subjects', 'class_subjects_teacher_id_index')) {
-                    $table->index('teacher_id');
+                    $table->index('teacher_id', 'class_subjects_teacher_id_index');
                 }
                 if (!$this->hasIndex('class_subjects', 'class_subjects_school_class_teacher_index')) {
                     $table->index(['school_class_id', 'teacher_id'], 'class_subjects_school_class_teacher_index');
@@ -43,7 +43,7 @@ return new class extends Migration
         if (Schema::hasTable('user_roles')) {
             Schema::table('user_roles', function (Blueprint $table) {
                 if (!$this->hasIndex('user_roles', 'user_roles_role_id_index')) {
-                    $table->index('role_id');
+                    $table->index('role_id', 'user_roles_role_id_index');
                 }
             });
         }
@@ -55,7 +55,7 @@ return new class extends Migration
                     $table->index(['user_profile_id', 'status'], 'attendance_user_profile_status_index');
                 }
                 if (!$this->hasIndex('attendance', 'attendance_attendance_date_index')) {
-                    $table->index('attendance_date');
+                    $table->index('attendance_date', 'attendance_attendance_date_index');
                 }
             });
         }
@@ -67,7 +67,7 @@ return new class extends Migration
                     $table->index(['student_id', 'status'], 'student_bills_student_status_index');
                 }
                 if (!$this->hasIndex('student_bills', 'student_bills_created_at_index')) {
-                    $table->index('created_at');
+                    $table->index('created_at', 'student_bills_created_at_index');
                 }
             });
         }
@@ -79,7 +79,7 @@ return new class extends Migration
                     $table->index(['student_id', 'created_at'], 'payments_student_created_index');
                 }
                 if (!$this->hasIndex('payments', 'payments_status_index')) {
-                    $table->index('status');
+                    $table->index('status', 'payments_status_index');
                 }
             });
         }
@@ -88,10 +88,10 @@ return new class extends Migration
         if (Schema::hasTable('time_tables')) {
             Schema::table('time_tables', function (Blueprint $table) {
                 if (!$this->hasIndex('time_tables', 'time_tables_school_class_index')) {
-                    $table->index('school_class_id');
+                    $table->index('school_class_id', 'time_tables_school_class_index');
                 }
                 if (!$this->hasIndex('time_tables', 'time_tables_subject_index')) {
-                    $table->index('subject_id');
+                    $table->index('subject_id', 'time_tables_subject_index');
                 }
             });
         }
@@ -100,10 +100,10 @@ return new class extends Migration
         if (Schema::hasTable('blogs')) {
             Schema::table('blogs', function (Blueprint $table) {
                 if (!$this->hasIndex('blogs', 'blogs_status_published_index')) {
-                    $table->index(['status', 'published_at']);
+                    $table->index(['status', 'published_at'], 'blogs_status_published_index');
                 }
                 if (!$this->hasIndex('blogs', 'blogs_slug_index')) {
-                    $table->index('slug');
+                    $table->index('slug', 'blogs_slug_index');
                 }
             });
         }
@@ -112,10 +112,10 @@ return new class extends Migration
         if (Schema::hasTable('user_profiles')) {
             Schema::table('user_profiles', function (Blueprint $table) {
                 if (!$this->hasIndex('user_profiles', 'user_profiles_school_class_status_index')) {
-                    $table->index(['school_class_id', 'status']);
+                    $table->index(['school_class_id', 'status'], 'user_profiles_school_class_status_index');
                 }
                 if (!$this->hasIndex('user_profiles', 'user_profiles_parent_index')) {
-                    $table->index('parent_id');
+                    $table->index('parent_id', 'user_profiles_parent_index');
                 }
             });
         }
