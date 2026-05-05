@@ -476,6 +476,9 @@ Route::middleware(['auth', 'role.redirect'])->group(function () {
 
     // Admin Routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        // RBAC Dashboard
+        Route::get('rbac', [RBACController::class, 'dashboard'])->name('rbac.index');
+
         Route::prefix('roles')->name('roles.')->group(function () {
             Route::get('/', [RBACController::class, 'listRoles'])->name('index');
             Route::get('/create', [RBACController::class, 'createRole'])->name('create');
