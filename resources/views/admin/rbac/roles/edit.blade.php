@@ -46,6 +46,17 @@
                 <label class="block text-sm font-semibold text-gray-900 mb-4">
                     Assign Permissions
                 </label>
+                
+                <!-- Filter Input -->
+                <div class="mb-4">
+                    <input type="text"
+                           id="permission-search"
+                           placeholder="🔍 Search permissions by name or group..."
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">Filter permissions by name, group, or description</p>
+                </div>
+
+                <!-- Permissions Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border border-gray-300 rounded-lg p-4 bg-gray-50">
                     @if($permissions->isEmpty())
                     <p class="col-span-2 text-gray-500 py-4">
@@ -53,7 +64,10 @@
                     </p>
                     @else
                     @foreach($permissions as $permission)
-                    <label class="flex items-center space-x-3 cursor-pointer hover:bg-white p-2 rounded transition">
+                    <label class="permission-item flex items-center space-x-3 cursor-pointer hover:bg-white p-2 rounded transition"
+                           data-name="{{ strtolower($permission->name) }}"
+                           data-group="{{ strtolower($permission->group) }}"
+                           data-description="{{ strtolower($permission->description ?? '') }}">
                         <input type="checkbox"
                                name="permissions[]"
                                value="{{ $permission->id }}"
@@ -64,10 +78,17 @@
                             @if($permission->description)
                             <p class="text-xs text-gray-500">{{ $permission->description }}</p>
                             @endif
+                            <p class="text-xs text-gray-400 mt-0.5">Group: <span class="font-medium">{{ ucfirst($permission->group) }}</span></p>
                         </div>
                     </label>
                     @endforeach
                     @endif
+                </div>
+                
+                <!-- No Results Message -->
+                <div id="no-results" class="hidden text-center py-8 text-gray-500">
+                    <i class="fas fa-search text-2xl mb-2 opacity-50"></i>
+                    <p>No permissions match your search</p>
                 </div>
             </div>
 
@@ -90,4 +111,52 @@
         </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('permission-search');
+        const permissionItems = document.querySelectorAll('.permission-item');
+        const noResults = document.getElementById('no-results');
+        const permissionsGrid = document.querySelector('.grid');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            permissionItems.forEach(item => {
+                const name = item.getAttribute('data-name');
+                const group = item.getAttribute('data-group');
+                const description = item.getAttribute('data-description');
+
+                // Check if search term matches any attribute
+                const matches = !searchTerm ||
+                    name.includes(searchTerm) ||
+                    group.includes(searchTerm) ||
+                    description.includes(searchTerm);
+
+                if (matches) {
+                    item.style.display = 'label';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Show/hide no results message
+            if (visibleCount === 0 && searchTerm) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+        });
+
+        // Optional: Clear search on Escape key
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                this.dispatchEvent(new Event('input'));
+            }
+        });
+    });
+</script>
 @endsection
